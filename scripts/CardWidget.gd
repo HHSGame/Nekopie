@@ -9,7 +9,18 @@ signal clicked(card_id: String)
 @onready var cost_label: Label = $MarginContainer/VBoxContainer/Header/CostLabel
 @onready var desc_label: Label = $MarginContainer/VBoxContainer/DescriptionLabel
 
+var pending_card_data: Dictionary = {}
+
+func _ready() -> void:
+	if not pending_card_data.is_empty():
+		_apply_card_data(pending_card_data)
+
 func set_card(card_data: Dictionary) -> void:
+	pending_card_data = card_data
+	if is_node_ready():
+		_apply_card_data(card_data)
+
+func _apply_card_data(card_data: Dictionary) -> void:
 	card_id = card_data.get("id", "")
 	name_label.text = card_data.get("name", "未知卡牌")
 	cost_label.text = "费用 %s" % str(card_data.get("cost", 0))

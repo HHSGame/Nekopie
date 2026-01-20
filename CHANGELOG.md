@@ -10,3 +10,4 @@
 - Upgraded the project config to Godot 4.3 and added 4.3 layout metadata.
 - Fixed autoload singleton name conflicts and typed-variable warnings.
 - Fixed UI node bindings to avoid `%` unique-name lookup errors.
+- Made card widgets apply data after ready to avoid nil label errors.
