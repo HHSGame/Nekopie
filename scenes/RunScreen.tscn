@@ -50,6 +50,12 @@ text = "敌人：未知魔物"
 [node name="EnemyHpLabel" type="Label" parent="MarginContainer/VBoxContainer/EnemyPanel"]
 text = "敌人生命：0"
 
+[node name="EnemyBlockLabel" type="Label" parent="MarginContainer/VBoxContainer/EnemyPanel"]
+text = "敌人护甲：0"
+
+[node name="EnemyIntentLabel" type="Label" parent="MarginContainer/VBoxContainer/EnemyPanel"]
+text = "意图：未知"
+
 [node name="EnemyDescLabel" type="Label" parent="MarginContainer/VBoxContainer/EnemyPanel"]
 text = "敌人描述"
 autowrap_mode = 3

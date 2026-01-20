@@ -11,3 +11,5 @@
 - Fixed autoload singleton name conflicts and typed-variable warnings.
 - Fixed UI node bindings to avoid `%` unique-name lookup errors.
 - Made card widgets apply data after ready to avoid nil label errors.
+- Added enemy intent behaviors with guard/charge/multi-attack/drain patterns.
+- Added post-battle random events for healing, damage, or card rewards.
