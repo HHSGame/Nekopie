@@ -1,44 +1,57 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=2 format=3 uid="uid://c5uvr0venq7br"]
 
 [ext_resource type="Script" path="res://scripts/Main.gd" id="1_6y6v6"]
 
 [node name="Main" type="Control"]
+layout_mode = 3
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("1_6y6v6")
 
 [node name="Background" type="ColorRect" parent="."]
+layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 color = Color(0.08, 0.08, 0.1, 1)
 
 [node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 
 [node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer"]
+layout_mode = 2
 theme_override_constants/separation = 16
 alignment = 1
 
 [node name="TitleLabel" type="Label" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
 text = "异世界冒险：隐魔之岭"
 horizontal_alignment = 1
 
 [node name="StoryLabel" type="Label" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
 text = "你穿越到异世界，被委托征服一座藏有魔物的山。\\n攀爬到山顶，击退守关魔物，即为通关。"
 horizontal_alignment = 1
 autowrap_mode = 3
 
 [node name="GoalLabel" type="Label" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
 text = "主线目标：通过卡组构筑与战斗，登顶并获得通关。"
 horizontal_alignment = 1
 autowrap_mode = 3
 
 [node name="StartButton" type="Button" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
 text = "开始征途"
 
 [node name="DeckButton" type="Button" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
 text = "卡组构筑"
 
 [node name="QuitButton" type="Button" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
 text = "退出"

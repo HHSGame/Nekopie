@@ -1,7 +1,7 @@
 # Collaboration Notes
 
 ## Project Constraints
-- Engine version: Godot 4.2.
+- Engine version: Godot 4.3.
 - Theme and goal: isekai adventure, climb a monster-filled mountain and reach the summit.
 - Card art stays as placeholder blocks for now.
 
@@ -13,3 +13,6 @@
 ## Code Structure
 - Keep the current scene/script split: Main / DeckBuilder / RunScreen / CardWidget.
 - `GameData` and `RunState` remain autoload singletons for card and run data.
+- Combat loop lives in `RunScreen` and uses hand/draw/discard plus energy each turn.
+- Enemy roster and encounter order are defined in `GameData`.
+- Avoid `class_name` on autoload scripts to prevent singleton name conflicts.

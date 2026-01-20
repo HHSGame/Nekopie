@@ -5,3 +5,7 @@
 - Added card data, starter deck, and run state management.
 - Added `PROJECT.md`, `CHANGELOG.md`, `AGENTS.md`, and `.gitignore`.
 - Standardized documentation language and collaboration notes.
+- Implemented a basic combat loop with hand/draw/discard, energy, and enemy turns.
+- Added mountain enemy roster and encounter sequencing.
+- Upgraded the project config to Godot 4.3 and added 4.3 layout metadata.
+- Fixed autoload singleton name conflicts and typed-variable warnings.

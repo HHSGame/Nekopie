@@ -21,7 +21,7 @@ theme_override_constants/margin_top = 24
 theme_override_constants/margin_bottom = 24
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
-theme_override_constants/separation = 14
+theme_override_constants/separation = 12
 
 [node name="Header" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
 theme_override_constants/separation = 12
@@ -41,12 +41,58 @@ autowrap_mode = 3
 [node name="ProgressLabel" type="Label" parent="MarginContainer/VBoxContainer"]
 text = "攀登进度：0 / 0"
 
-[node name="DeckLabel" type="Label" parent="MarginContainer/VBoxContainer"]
-text = "当前卡组：0 张牌"
+[node name="EnemyPanel" type="VBoxContainer" parent="MarginContainer/VBoxContainer"]
+theme_override_constants/separation = 4
+
+[node name="EnemyNameLabel" type="Label" parent="MarginContainer/VBoxContainer/EnemyPanel"]
+text = "敌人：未知魔物"
+
+[node name="EnemyHpLabel" type="Label" parent="MarginContainer/VBoxContainer/EnemyPanel"]
+text = "敌人生命：0"
+
+[node name="EnemyDescLabel" type="Label" parent="MarginContainer/VBoxContainer/EnemyPanel"]
+text = "敌人描述"
+autowrap_mode = 3
+
+[node name="PlayerPanel" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+theme_override_constants/separation = 16
+
+[node name="PlayerHpLabel" type="Label" parent="MarginContainer/VBoxContainer/PlayerPanel"]
+text = "生命：0 / 0"
+
+[node name="PlayerBlockLabel" type="Label" parent="MarginContainer/VBoxContainer/PlayerPanel"]
+text = "护甲：0"
+
+[node name="EnergyLabel" type="Label" parent="MarginContainer/VBoxContainer/PlayerPanel"]
+text = "能量：0"
+
+[node name="DrawLabel" type="Label" parent="MarginContainer/VBoxContainer/PlayerPanel"]
+text = "抽牌堆：0"
+
+[node name="DiscardLabel" type="Label" parent="MarginContainer/VBoxContainer/PlayerPanel"]
+text = "弃牌堆：0"
 
 [node name="ResultLabel" type="Label" parent="MarginContainer/VBoxContainer"]
 text = "准备迎战。"
 autowrap_mode = 3
 
-[node name="NextButton" type="Button" parent="MarginContainer/VBoxContainer"]
+[node name="HandLabel" type="Label" parent="MarginContainer/VBoxContainer"]
+text = "手牌"
+
+[node name="HandScroll" type="ScrollContainer" parent="MarginContainer/VBoxContainer"]
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="HandContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/HandScroll"]
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+
+[node name="Actions" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+theme_override_constants/separation = 12
+
+[node name="EndTurnButton" type="Button" parent="MarginContainer/VBoxContainer/Actions"]
+text = "结束回合"
+
+[node name="NextButton" type="Button" parent="MarginContainer/VBoxContainer/Actions"]
 text = "继续攀登"
+visible = false
