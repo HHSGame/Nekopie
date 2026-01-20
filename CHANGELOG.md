@@ -13,3 +13,5 @@
 - Made card widgets apply data after ready to avoid nil label errors.
 - Added enemy intent behaviors with guard/charge/multi-attack/drain patterns.
 - Added post-battle random events for healing, damage, or card rewards.
+- Bundled Noto Sans CJK SC font and set a global theme to fix HTML5 Chinese text rendering.
+- Ignored HTML5 export output directory in `.gitignore`.

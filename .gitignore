@@ -2,4 +2,5 @@
 .import/
 .mono/
 export_*/
+public/
 .DS_Store

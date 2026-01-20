@@ -19,3 +19,4 @@
 - Use explicit `$` node paths unless nodes are marked as unique names for `%` access.
 - `CardWidget` caches card data until ready so it can be populated before adding to the tree.
 - Enemy intents and event definitions live in `GameData`, with combat execution in `RunScreen`.
+- Keep the bundled Noto Sans CJK SC font and global theme for HTML5 Chinese text rendering.

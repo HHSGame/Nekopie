@@ -13,6 +13,7 @@ A Godot 4.3 deck-building prototype set in an isekai adventure. The main goal is
 - UI node bindings use explicit paths for Godot 4.3 compatibility.
 - Card widgets now safely accept data before entering the scene tree.
 - Post-battle event nodes (heal, damage, or card reward).
+- Bundled Noto Sans CJK SC font via a global theme for HTML5 Chinese rendering.
 
 ## Scene and Script Layout
 - `scenes/Main.tscn` + `scripts/Main.gd`: main menu and navigation.
