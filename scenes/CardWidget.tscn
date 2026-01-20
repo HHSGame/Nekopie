@@ -1,9 +1,11 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/CardWidget.gd" id="1_lgshh"]
+[ext_resource type="Theme" path="res://themes/default_theme.tres" id="2_s5q7b"]
 
 [node name="CardWidget" type="PanelContainer"]
 custom_minimum_size = Vector2(220, 160)
+theme = ExtResource("2_s5q7b")
 script = ExtResource("1_lgshh")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]

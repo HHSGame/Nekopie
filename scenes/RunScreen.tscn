@@ -1,10 +1,12 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/RunScreen.gd" id="1_3jvb6"]
+[ext_resource type="Theme" path="res://themes/default_theme.tres" id="2_xk0w6"]
 
 [node name="RunScreen" type="Control"]
 anchor_right = 1.0
 anchor_bottom = 1.0
+theme = ExtResource("2_xk0w6")
 script = ExtResource("1_3jvb6")
 
 [node name="Background" type="ColorRect" parent="."]

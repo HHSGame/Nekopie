@@ -30,3 +30,4 @@ window/stretch/mode="canvas_items"
 [gui]
 
 theme/custom="res://themes/default_theme.tres"
+theme/custom_font="res://fonts/NotoSansCJKsc-Regular.otf"
