@@ -21,3 +21,4 @@
 - Enemy intents and event definitions live in `GameData`, with combat execution in `RunScreen`.
 - Keep the bundled Noto Sans CJK SC font and global theme for HTML5 Chinese text rendering.
 - UI scene roots explicitly reference the global theme for export reliability.
+- Track `export_presets.cfg` in Git to share HTML5 export settings.
