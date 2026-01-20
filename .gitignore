@@ -4,3 +4,4 @@
 export_*/
 public/
 .DS_Store
+docs/*.import

@@ -17,6 +17,7 @@ A Godot 4.3 deck-building prototype set in an isekai adventure. The main goal is
 - Applied the global theme explicitly to UI scenes for HTML5 consistency.
 - Export presets are tracked in `export_presets.cfg`.
 - Post-battle rewards now include add, upgrade, and remove options.
+- Reward selection is presented as a modal overlay (no scroll in main UI).
 
 ## Scene and Script Layout
 - `scenes/Main.tscn` + `scripts/Main.gd`: main menu and navigation.

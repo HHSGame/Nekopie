@@ -21,17 +21,17 @@ const ENERGY_PER_TURN := 3
 @onready var end_turn_button: Button = $MarginContainer/VBoxContainer/Actions/EndTurnButton
 @onready var next_button: Button = $MarginContainer/VBoxContainer/Actions/NextButton
 @onready var back_button: Button = $MarginContainer/VBoxContainer/Header/BackButton
-@onready var reward_panel: VBoxContainer = $MarginContainer/VBoxContainer/RewardPanel
-@onready var reward_options: HBoxContainer = $MarginContainer/VBoxContainer/RewardPanel/RewardOptions
-@onready var reward_add_button: Button = $MarginContainer/VBoxContainer/RewardPanel/RewardOptions/RewardAddButton
-@onready var reward_upgrade_button: Button = $MarginContainer/VBoxContainer/RewardPanel/RewardOptions/RewardUpgradeButton
-@onready var reward_remove_button: Button = $MarginContainer/VBoxContainer/RewardPanel/RewardOptions/RewardRemoveButton
-@onready var reward_skip_button: Button = $MarginContainer/VBoxContainer/RewardPanel/RewardOptions/RewardSkipButton
-@onready var reward_choice_label: Label = $MarginContainer/VBoxContainer/RewardPanel/RewardChoiceLabel
-@onready var reward_choice_scroll: ScrollContainer = $MarginContainer/VBoxContainer/RewardPanel/RewardChoiceScroll
-@onready var reward_choice_container: HBoxContainer = $MarginContainer/VBoxContainer/RewardPanel/RewardChoiceScroll/RewardChoiceContainer
-@onready var reward_deck_scroll: ScrollContainer = $MarginContainer/VBoxContainer/RewardPanel/RewardDeckScroll
-@onready var reward_deck_list: VBoxContainer = $MarginContainer/VBoxContainer/RewardPanel/RewardDeckScroll/RewardDeckList
+@onready var reward_overlay: Control = $RewardOverlay
+@onready var reward_options: HBoxContainer = $RewardOverlay/CenterContainer/RewardPanel/RewardMargin/RewardVBox/RewardOptions
+@onready var reward_add_button: Button = $RewardOverlay/CenterContainer/RewardPanel/RewardMargin/RewardVBox/RewardOptions/RewardAddButton
+@onready var reward_upgrade_button: Button = $RewardOverlay/CenterContainer/RewardPanel/RewardMargin/RewardVBox/RewardOptions/RewardUpgradeButton
+@onready var reward_remove_button: Button = $RewardOverlay/CenterContainer/RewardPanel/RewardMargin/RewardVBox/RewardOptions/RewardRemoveButton
+@onready var reward_skip_button: Button = $RewardOverlay/CenterContainer/RewardPanel/RewardMargin/RewardVBox/RewardOptions/RewardSkipButton
+@onready var reward_choice_label: Label = $RewardOverlay/CenterContainer/RewardPanel/RewardMargin/RewardVBox/RewardChoiceLabel
+@onready var reward_choice_scroll: ScrollContainer = $RewardOverlay/CenterContainer/RewardPanel/RewardMargin/RewardVBox/RewardChoiceScroll
+@onready var reward_choice_container: HBoxContainer = $RewardOverlay/CenterContainer/RewardPanel/RewardMargin/RewardVBox/RewardChoiceScroll/RewardChoiceContainer
+@onready var reward_deck_scroll: ScrollContainer = $RewardOverlay/CenterContainer/RewardPanel/RewardMargin/RewardVBox/RewardDeckScroll
+@onready var reward_deck_list: VBoxContainer = $RewardOverlay/CenterContainer/RewardPanel/RewardMargin/RewardVBox/RewardDeckScroll/RewardDeckList
 
 var draw_pile: Array = []
 var hand: Array = []
@@ -118,7 +118,7 @@ func _update_ui() -> void:
 	discard_label.text = "弃牌堆：%d" % discard_pile.size()
 	end_turn_button.disabled = combat_over
 	var show_rewards := combat_over and not run_complete and next_step == "reward_options"
-	reward_panel.visible = show_rewards
+	reward_overlay.visible = show_rewards
 	next_button.visible = combat_over and not show_rewards
 	if combat_over and next_button.visible:
 		if run_complete:

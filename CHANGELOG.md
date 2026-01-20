@@ -18,3 +18,5 @@
 - Applied the global theme on UI scenes to ensure font usage in HTML5 exports.
 - Added `export_presets.cfg` to track HTML5 export settings.
 - Added post-battle reward options for adding, upgrading, or removing cards.
+- Moved reward selection into a modal overlay to avoid scrolling the main UI.
+- Ignored `docs/*.import` metadata files from export previews.

@@ -105,43 +105,67 @@ text = "结束回合"
 text = "继续攀登"
 visible = false
 
-[node name="RewardPanel" type="VBoxContainer" parent="MarginContainer/VBoxContainer"]
+[node name="RewardOverlay" type="Control" parent="."]
 visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="Dimmer" type="ColorRect" parent="RewardOverlay"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0, 0, 0, 0.55)
+mouse_filter = 2
+
+[node name="CenterContainer" type="CenterContainer" parent="RewardOverlay"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="RewardPanel" type="PanelContainer" parent="RewardOverlay/CenterContainer"]
+custom_minimum_size = Vector2(820, 460)
+
+[node name="RewardMargin" type="MarginContainer" parent="RewardOverlay/CenterContainer/RewardPanel"]
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="RewardVBox" type="VBoxContainer" parent="RewardOverlay/CenterContainer/RewardPanel/RewardMargin"]
 theme_override_constants/separation = 8
 
-[node name="RewardTitleLabel" type="Label" parent="MarginContainer/VBoxContainer/RewardPanel"]
+[node name="RewardTitleLabel" type="Label" parent="RewardOverlay/CenterContainer/RewardPanel/RewardMargin/RewardVBox"]
 text = "战利品"
 
-[node name="RewardOptions" type="HBoxContainer" parent="MarginContainer/VBoxContainer/RewardPanel"]
+[node name="RewardOptions" type="HBoxContainer" parent="RewardOverlay/CenterContainer/RewardPanel/RewardMargin/RewardVBox"]
 theme_override_constants/separation = 8
 
-[node name="RewardAddButton" type="Button" parent="MarginContainer/VBoxContainer/RewardPanel/RewardOptions"]
+[node name="RewardAddButton" type="Button" parent="RewardOverlay/CenterContainer/RewardPanel/RewardMargin/RewardVBox/RewardOptions"]
 text = "获得新卡"
 
-[node name="RewardUpgradeButton" type="Button" parent="MarginContainer/VBoxContainer/RewardPanel/RewardOptions"]
+[node name="RewardUpgradeButton" type="Button" parent="RewardOverlay/CenterContainer/RewardPanel/RewardMargin/RewardVBox/RewardOptions"]
 text = "强化卡牌"
 
-[node name="RewardRemoveButton" type="Button" parent="MarginContainer/VBoxContainer/RewardPanel/RewardOptions"]
+[node name="RewardRemoveButton" type="Button" parent="RewardOverlay/CenterContainer/RewardPanel/RewardMargin/RewardVBox/RewardOptions"]
 text = "移除卡牌"
 
-[node name="RewardSkipButton" type="Button" parent="MarginContainer/VBoxContainer/RewardPanel/RewardOptions"]
+[node name="RewardSkipButton" type="Button" parent="RewardOverlay/CenterContainer/RewardPanel/RewardMargin/RewardVBox/RewardOptions"]
 text = "跳过"
 
-[node name="RewardChoiceLabel" type="Label" parent="MarginContainer/VBoxContainer/RewardPanel"]
+[node name="RewardChoiceLabel" type="Label" parent="RewardOverlay/CenterContainer/RewardPanel/RewardMargin/RewardVBox"]
 text = "选择奖励"
 
-[node name="RewardChoiceScroll" type="ScrollContainer" parent="MarginContainer/VBoxContainer/RewardPanel"]
+[node name="RewardChoiceScroll" type="ScrollContainer" parent="RewardOverlay/CenterContainer/RewardPanel/RewardMargin/RewardVBox"]
 size_flags_horizontal = 3
 size_flags_vertical = 2
 
-[node name="RewardChoiceContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/RewardPanel/RewardChoiceScroll"]
+[node name="RewardChoiceContainer" type="HBoxContainer" parent="RewardOverlay/CenterContainer/RewardPanel/RewardMargin/RewardVBox/RewardChoiceScroll"]
 size_flags_horizontal = 3
 theme_override_constants/separation = 10
 
-[node name="RewardDeckScroll" type="ScrollContainer" parent="MarginContainer/VBoxContainer/RewardPanel"]
+[node name="RewardDeckScroll" type="ScrollContainer" parent="RewardOverlay/CenterContainer/RewardPanel/RewardMargin/RewardVBox"]
 size_flags_horizontal = 3
 size_flags_vertical = 2
 
-[node name="RewardDeckList" type="VBoxContainer" parent="MarginContainer/VBoxContainer/RewardPanel/RewardDeckScroll"]
+[node name="RewardDeckList" type="VBoxContainer" parent="RewardOverlay/CenterContainer/RewardPanel/RewardMargin/RewardVBox/RewardDeckScroll"]
 size_flags_horizontal = 3
 theme_override_constants/separation = 8
