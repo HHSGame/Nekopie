@@ -1,0 +1,5 @@
+.godot/
+.import/
+.mono/
+export_*/
+.DS_Store

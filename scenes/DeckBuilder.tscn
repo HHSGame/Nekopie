@@ -1,0 +1,76 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/DeckBuilder.gd" id="1_2u6gw"]
+
+[node name="DeckBuilder" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_2u6gw")
+
+[node name="Background" type="ColorRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.07, 0.07, 0.1, 1)
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_bottom = 24
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+theme_override_constants/separation = 12
+
+[node name="Header" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+theme_override_constants/separation = 12
+
+[node name="BackButton" type="Button" parent="MarginContainer/VBoxContainer/Header"]
+text = "返回"
+
+[node name="TitleLabel" type="Label" parent="MarginContainer/VBoxContainer/Header"]
+text = "卡组构筑"
+size_flags_horizontal = 3
+horizontal_alignment = 1
+
+[node name="StoryLabel" type="Label" parent="MarginContainer/VBoxContainer"]
+text = "整理你的卡组，准备攀爬山巅。"
+autowrap_mode = 3
+
+[node name="Content" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+size_flags_vertical = 3
+theme_override_constants/separation = 24
+
+[node name="LibraryPanel" type="VBoxContainer" parent="MarginContainer/VBoxContainer/Content"]
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="LibraryTitle" type="Label" parent="MarginContainer/VBoxContainer/Content/LibraryPanel"]
+text = "卡池"
+
+[node name="LibraryScroll" type="ScrollContainer" parent="MarginContainer/VBoxContainer/Content/LibraryPanel"]
+size_flags_vertical = 3
+size_flags_horizontal = 3
+
+[node name="LibraryList" type="VBoxContainer" parent="MarginContainer/VBoxContainer/Content/LibraryPanel/LibraryScroll"]
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="DeckPanel" type="VBoxContainer" parent="MarginContainer/VBoxContainer/Content"]
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="DeckTitle" type="Label" parent="MarginContainer/VBoxContainer/Content/DeckPanel"]
+text = "牌组"
+
+[node name="DeckCountLabel" type="Label" parent="MarginContainer/VBoxContainer/Content/DeckPanel"]
+text = "牌组数量：0"
+
+[node name="DeckScroll" type="ScrollContainer" parent="MarginContainer/VBoxContainer/Content/DeckPanel"]
+size_flags_vertical = 3
+size_flags_horizontal = 3
+
+[node name="DeckList" type="VBoxContainer" parent="MarginContainer/VBoxContainer/Content/DeckPanel/DeckScroll"]
+size_flags_horizontal = 3
+theme_override_constants/separation = 8

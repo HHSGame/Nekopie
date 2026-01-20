@@ -1,0 +1,52 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/RunScreen.gd" id="1_3jvb6"]
+
+[node name="RunScreen" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_3jvb6")
+
+[node name="Background" type="ColorRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.06, 0.06, 0.09, 1)
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_bottom = 24
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+theme_override_constants/separation = 14
+
+[node name="Header" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+theme_override_constants/separation = 12
+
+[node name="BackButton" type="Button" parent="MarginContainer/VBoxContainer/Header"]
+text = "返回"
+
+[node name="TitleLabel" type="Label" parent="MarginContainer/VBoxContainer/Header"]
+text = "攀登旅程"
+size_flags_horizontal = 3
+horizontal_alignment = 1
+
+[node name="StoryLabel" type="Label" parent="MarginContainer/VBoxContainer"]
+text = "旅程开始。"
+autowrap_mode = 3
+
+[node name="ProgressLabel" type="Label" parent="MarginContainer/VBoxContainer"]
+text = "攀登进度：0 / 0"
+
+[node name="DeckLabel" type="Label" parent="MarginContainer/VBoxContainer"]
+text = "当前卡组：0 张牌"
+
+[node name="ResultLabel" type="Label" parent="MarginContainer/VBoxContainer"]
+text = "准备迎战。"
+autowrap_mode = 3
+
+[node name="NextButton" type="Button" parent="MarginContainer/VBoxContainer"]
+text = "继续攀登"
