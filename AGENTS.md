@@ -16,3 +16,4 @@
 - Combat loop lives in `RunScreen` and uses hand/draw/discard plus energy each turn.
 - Enemy roster and encounter order are defined in `GameData`.
 - Avoid `class_name` on autoload scripts to prevent singleton name conflicts.
+- Use explicit `$` node paths unless nodes are marked as unique names for `%` access.

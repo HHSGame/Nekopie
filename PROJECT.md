@@ -10,6 +10,7 @@ A Godot 4.3 deck-building prototype set in an isekai adventure. The main goal is
 - Card UI widget with blank art block.
 - Autoload data/state for cards, run progress, and player HP.
 - Mountain enemy roster and encounter order.
+- UI node bindings use explicit paths for Godot 4.3 compatibility.
 
 ## Scene and Script Layout
 - `scenes/Main.tscn` + `scripts/Main.gd`: main menu and navigation.

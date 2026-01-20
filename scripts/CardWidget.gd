@@ -5,9 +5,9 @@ signal clicked(card_id: String)
 
 @export var card_id := ""
 
-@onready var name_label: Label = %NameLabel
-@onready var cost_label: Label = %CostLabel
-@onready var desc_label: Label = %DescriptionLabel
+@onready var name_label: Label = $MarginContainer/VBoxContainer/Header/NameLabel
+@onready var cost_label: Label = $MarginContainer/VBoxContainer/Header/CostLabel
+@onready var desc_label: Label = $MarginContainer/VBoxContainer/DescriptionLabel
 
 func set_card(card_data: Dictionary) -> void:
 	card_id = card_data.get("id", "")

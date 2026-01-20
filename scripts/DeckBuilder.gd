@@ -2,11 +2,11 @@ extends Control
 
 const CARD_WIDGET_SCENE := preload("res://scenes/CardWidget.tscn")
 
-@onready var library_list: VBoxContainer = %LibraryList
-@onready var deck_list: VBoxContainer = %DeckList
-@onready var deck_count_label: Label = %DeckCountLabel
-@onready var back_button: Button = %BackButton
-@onready var story_label: Label = %StoryLabel
+@onready var library_list: VBoxContainer = $MarginContainer/VBoxContainer/Content/LibraryPanel/LibraryScroll/LibraryList
+@onready var deck_list: VBoxContainer = $MarginContainer/VBoxContainer/Content/DeckPanel/DeckScroll/DeckList
+@onready var deck_count_label: Label = $MarginContainer/VBoxContainer/Content/DeckPanel/DeckCountLabel
+@onready var back_button: Button = $MarginContainer/VBoxContainer/Header/BackButton
+@onready var story_label: Label = $MarginContainer/VBoxContainer/StoryLabel
 
 func _ready() -> void:
 	back_button.pressed.connect(_on_back_pressed)

@@ -1,8 +1,8 @@
 extends Control
 
-@onready var start_button: Button = %StartButton
-@onready var deck_button: Button = %DeckButton
-@onready var quit_button: Button = %QuitButton
+@onready var start_button: Button = $CenterContainer/VBoxContainer/StartButton
+@onready var deck_button: Button = $CenterContainer/VBoxContainer/DeckButton
+@onready var quit_button: Button = $CenterContainer/VBoxContainer/QuitButton
 
 func _ready() -> void:
 	start_button.pressed.connect(_on_start_pressed)
