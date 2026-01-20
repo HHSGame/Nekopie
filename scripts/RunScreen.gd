@@ -21,6 +21,17 @@ const ENERGY_PER_TURN := 3
 @onready var end_turn_button: Button = $MarginContainer/VBoxContainer/Actions/EndTurnButton
 @onready var next_button: Button = $MarginContainer/VBoxContainer/Actions/NextButton
 @onready var back_button: Button = $MarginContainer/VBoxContainer/Header/BackButton
+@onready var reward_panel: VBoxContainer = $MarginContainer/VBoxContainer/RewardPanel
+@onready var reward_options: HBoxContainer = $MarginContainer/VBoxContainer/RewardPanel/RewardOptions
+@onready var reward_add_button: Button = $MarginContainer/VBoxContainer/RewardPanel/RewardOptions/RewardAddButton
+@onready var reward_upgrade_button: Button = $MarginContainer/VBoxContainer/RewardPanel/RewardOptions/RewardUpgradeButton
+@onready var reward_remove_button: Button = $MarginContainer/VBoxContainer/RewardPanel/RewardOptions/RewardRemoveButton
+@onready var reward_skip_button: Button = $MarginContainer/VBoxContainer/RewardPanel/RewardOptions/RewardSkipButton
+@onready var reward_choice_label: Label = $MarginContainer/VBoxContainer/RewardPanel/RewardChoiceLabel
+@onready var reward_choice_scroll: ScrollContainer = $MarginContainer/VBoxContainer/RewardPanel/RewardChoiceScroll
+@onready var reward_choice_container: HBoxContainer = $MarginContainer/VBoxContainer/RewardPanel/RewardChoiceScroll/RewardChoiceContainer
+@onready var reward_deck_scroll: ScrollContainer = $MarginContainer/VBoxContainer/RewardPanel/RewardDeckScroll
+@onready var reward_deck_list: VBoxContainer = $MarginContainer/VBoxContainer/RewardPanel/RewardDeckScroll/RewardDeckList
 
 var draw_pile: Array = []
 var hand: Array = []
@@ -40,17 +51,27 @@ var combat_over := false
 var run_complete := false
 var pending_event: Dictionary = {}
 var next_step := "encounter"
+var reward_mode := "none"
+var last_reward_mode := ""
+var reward_cards: Array = []
 
 func _ready() -> void:
 	story_label.text = "你踏上 %s 的山道，魔物在雾中伺机。" % GameData.MOUNTAIN_NAME
 	back_button.pressed.connect(_on_back_pressed)
 	end_turn_button.pressed.connect(_on_end_turn_pressed)
 	next_button.pressed.connect(_on_next_pressed)
+	reward_add_button.pressed.connect(_on_reward_add_pressed)
+	reward_upgrade_button.pressed.connect(_on_reward_upgrade_pressed)
+	reward_remove_button.pressed.connect(_on_reward_remove_pressed)
+	reward_skip_button.pressed.connect(_on_reward_skip_pressed)
 	_start_encounter()
 
 func _start_encounter() -> void:
 	combat_over = false
 	run_complete = false
+	reward_mode = "none"
+	last_reward_mode = ""
+	reward_cards.clear()
 	player_block = 0
 	energy = ENERGY_PER_TURN
 	draw_pile = RunState.deck.duplicate(true)
@@ -72,9 +93,10 @@ func _start_encounter() -> void:
 	pending_event = {}
 	next_step = "encounter"
 	if RunState.next_encounter_first_strike:
-		var strike_damage := GameData.FIRST_STRIKE_DAMAGE
+		var strike_damage := GameData.FIRST_STRIKE_DAMAGE + RunState.next_encounter_first_strike_bonus
 		enemy_hp = max(enemy_hp - strike_damage, 0)
 		RunState.next_encounter_first_strike = false
+		RunState.next_encounter_first_strike_bonus = 0
 		result_label.text = "你先手出击，对魔物造成%d点伤害。" % strike_damage
 	else:
 		result_label.text = "遭遇了新的魔物，准备战斗。"
@@ -95,8 +117,10 @@ func _update_ui() -> void:
 	draw_label.text = "抽牌堆：%d" % draw_pile.size()
 	discard_label.text = "弃牌堆：%d" % discard_pile.size()
 	end_turn_button.disabled = combat_over
-	next_button.visible = combat_over
-	if combat_over:
+	var show_rewards := combat_over and not run_complete and next_step == "reward_options"
+	reward_panel.visible = show_rewards
+	next_button.visible = combat_over and not show_rewards
+	if combat_over and next_button.visible:
 		if run_complete:
 			next_button.text = "返回主菜单"
 		elif next_step == "event":
@@ -104,13 +128,15 @@ func _update_ui() -> void:
 		else:
 			next_button.text = "继续攀登"
 	_refresh_hand()
+	if show_rewards:
+		_refresh_reward_ui()
 
 func _refresh_hand() -> void:
 	for child in hand_container.get_children():
 		child.queue_free()
 	for index in hand.size():
 		var card_id: String = hand[index]
-		var card_data := GameData.get_card(card_id)
+		var card_data := GameData.get_card_data(card_id, RunState.is_upgraded(card_id))
 		var widget: CardWidget = CARD_WIDGET_SCENE.instantiate()
 		widget.set_card(card_data)
 		widget.clicked.connect(_on_hand_card_clicked.bind(index))
@@ -129,7 +155,7 @@ func _draw_cards(count: int) -> void:
 func _on_hand_card_clicked(card_id: String, index: int) -> void:
 	if combat_over:
 		return
-	var card_data := GameData.get_card(card_id)
+	var card_data := GameData.get_card_data(card_id, RunState.is_upgraded(card_id))
 	var cost := int(card_data.get("cost", 0))
 	if cost > energy:
 		result_label.text = "能量不足，无法打出 %s。" % card_data.get("name", "卡牌")
@@ -162,6 +188,7 @@ func _apply_card_effect(card_data: Dictionary) -> void:
 		result_label.text = "你抽了%d张牌。" % draw_count
 	if bool(card_data.get("initiative", false)):
 		RunState.next_encounter_first_strike = true
+		RunState.next_encounter_first_strike_bonus += int(card_data.get("initiative_bonus", 0))
 		result_label.text = "你踏勘山势，下场战斗将先手出击。"
 
 func _remove_card_from_hand(card_id: String, index: int) -> void:
@@ -221,7 +248,7 @@ func _on_next_pressed() -> void:
 		_apply_event(pending_event)
 		pending_event = {}
 		if not run_complete:
-			next_step = "event_result"
+			_enter_reward_options()
 		_update_ui()
 		return
 	_start_encounter()
@@ -310,7 +337,7 @@ func _queue_post_battle_step() -> void:
 	if roll <= GameData.EVENT_CHANCE:
 		pending_event = GameData.get_random_event()
 	if pending_event.is_empty():
-		result_label.text = "你击退了魔物，继续向山顶攀登。"
+		_enter_reward_options()
 		return
 	next_step = "event"
 	result_label.text = "遭遇事件：%s - %s" % [
@@ -339,7 +366,123 @@ func _apply_event(event_data: Dictionary) -> void:
 				result_label.text = "你未能找到合适的补给。"
 			else:
 				RunState.deck.append(card_id)
-				var card_name: String = str(GameData.get_card(card_id).get("name", "新卡牌"))
+				var card_name: String = str(GameData.get_card_data(card_id, false).get("name", "新卡牌"))
 				result_label.text = "你获得了一张卡牌：%s。" % card_name
 		_:
 			result_label.text = "事件无事发生。"
+	if RunState.player_hp > 0 and not run_complete:
+		_enter_reward_options()
+
+func _enter_reward_options() -> void:
+	next_step = "reward_options"
+	reward_mode = "options"
+	last_reward_mode = ""
+	reward_cards.clear()
+	_refresh_reward_ui()
+
+func _refresh_reward_ui() -> void:
+	reward_options.visible = reward_mode == "options"
+	var show_choices := reward_mode in ["add", "upgrade", "remove"]
+	reward_choice_label.visible = show_choices
+	reward_choice_scroll.visible = reward_mode == "add"
+	reward_deck_scroll.visible = reward_mode in ["upgrade", "remove"]
+	match reward_mode:
+		"add":
+			reward_choice_label.text = "选择一张卡牌加入牌组"
+		"upgrade":
+			reward_choice_label.text = "选择一张卡牌强化"
+		"remove":
+			reward_choice_label.text = "选择一张卡牌移除"
+		_:
+			reward_choice_label.text = ""
+	if reward_mode != last_reward_mode:
+		if reward_mode == "add":
+			_populate_reward_cards()
+		elif reward_mode in ["upgrade", "remove"]:
+			_populate_reward_deck()
+		last_reward_mode = reward_mode
+
+func _populate_reward_cards() -> void:
+	_clear_container(reward_choice_container)
+	if reward_cards.is_empty():
+		reward_cards = _roll_reward_cards()
+	for card_id in reward_cards:
+		var card_data := GameData.get_card_data(card_id, false)
+		var widget: CardWidget = CARD_WIDGET_SCENE.instantiate()
+		widget.set_card(card_data)
+		widget.clicked.connect(_on_reward_card_selected)
+		reward_choice_container.add_child(widget)
+
+func _roll_reward_cards(count: int = 3) -> Array:
+	var card_ids: Array = GameData.all_card_ids()
+	card_ids.shuffle()
+	var result: Array = []
+	for i in min(count, card_ids.size()):
+		result.append(str(card_ids[i]))
+	return result
+
+func _populate_reward_deck() -> void:
+	_clear_container(reward_deck_list)
+	var any_available := false
+	for index in RunState.deck.size():
+		var card_id: String = RunState.deck[index]
+		if reward_mode == "upgrade" and RunState.is_upgraded(card_id):
+			continue
+		any_available = true
+		var card_data := GameData.get_card_data(card_id, RunState.is_upgraded(card_id))
+		var widget: CardWidget = CARD_WIDGET_SCENE.instantiate()
+		widget.set_card(card_data)
+		widget.clicked.connect(_on_reward_deck_card_selected.bind(index))
+		reward_deck_list.add_child(widget)
+	if not any_available:
+		if reward_mode == "upgrade":
+			result_label.text = "没有可强化的卡牌。"
+		else:
+			result_label.text = "牌组为空，无法移除。"
+		reward_mode = "options"
+		last_reward_mode = ""
+		_refresh_reward_ui()
+
+func _on_reward_add_pressed() -> void:
+	reward_mode = "add"
+	last_reward_mode = ""
+	_refresh_reward_ui()
+
+func _on_reward_upgrade_pressed() -> void:
+	reward_mode = "upgrade"
+	last_reward_mode = ""
+	_refresh_reward_ui()
+
+func _on_reward_remove_pressed() -> void:
+	reward_mode = "remove"
+	last_reward_mode = ""
+	_refresh_reward_ui()
+
+func _on_reward_skip_pressed() -> void:
+	result_label.text = "你放弃了战利品。"
+	_start_encounter()
+
+func _on_reward_card_selected(card_id: String) -> void:
+	RunState.deck.append(card_id)
+	var card_name: String = str(GameData.get_card_data(card_id, false).get("name", "新卡牌"))
+	result_label.text = "你获得了一张卡牌：%s。" % card_name
+	_start_encounter()
+
+func _on_reward_deck_card_selected(card_id: String, index: int) -> void:
+	if reward_mode == "remove":
+		if index >= 0 and index < RunState.deck.size():
+			RunState.deck.remove_at(index)
+		var card_name: String = str(GameData.get_card_data(card_id, RunState.is_upgraded(card_id)).get("name", "卡牌"))
+		result_label.text = "已移除卡牌：%s。" % card_name
+		_start_encounter()
+		return
+	if reward_mode == "upgrade":
+		RunState.upgrade_card(card_id)
+		var card_name: String = str(GameData.get_card_data(card_id, true).get("name", "卡牌"))
+		result_label.text = "已强化卡牌：%s。" % card_name
+		_start_encounter()
+		return
+
+func _clear_container(container: Node) -> void:
+	for child in container.get_children():
+		child.queue_free()

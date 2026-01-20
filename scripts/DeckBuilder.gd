@@ -17,14 +17,15 @@ func _refresh_lists() -> void:
 	_clear_container(library_list)
 	_clear_container(deck_list)
 
-	for card_data in GameData.all_cards():
+	for card_id in GameData.all_card_ids():
+		var card_data := GameData.get_card_data(card_id, false)
 		var widget: CardWidget = CARD_WIDGET_SCENE.instantiate()
 		widget.set_card(card_data)
 		widget.clicked.connect(_on_library_card_clicked)
 		library_list.add_child(widget)
 
 	for card_id in RunState.deck:
-		var card_data := GameData.get_card(card_id)
+		var card_data := GameData.get_card_data(card_id, RunState.is_upgraded(card_id))
 		var widget: CardWidget = CARD_WIDGET_SCENE.instantiate()
 		widget.set_card(card_data)
 		widget.clicked.connect(_on_deck_card_clicked)

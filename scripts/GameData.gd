@@ -5,6 +5,14 @@ const WORLD_TAGLINE := "异世界冒险：征服山巅，穿越魔物之影。"
 const FIRST_STRIKE_DAMAGE := 4
 const EVENT_CHANCE := 0.5
 
+const UPGRADE_LIBRARY := {
+	"strike": {"damage": 3},
+	"defend": {"block": 3},
+	"flare": {"damage": 4},
+	"focus": {"draw": 1},
+	"explore": {"initiative_bonus": 2}
+}
+
 const CARD_LIBRARY := {
 	"strike": {
 		"id": "strike",
@@ -153,8 +161,43 @@ static func get_card(card_id: String) -> Dictionary:
 static func all_cards() -> Array:
 	return CARD_LIBRARY.values()
 
+static func all_card_ids() -> Array:
+	return CARD_LIBRARY.keys()
+
 static func get_enemy(enemy_id: String) -> Dictionary:
 	return ENEMY_LIBRARY.get(enemy_id, {})
+
+static func get_card_data(card_id: String, upgraded: bool = false) -> Dictionary:
+	var base: Dictionary = CARD_LIBRARY.get(card_id, {}).duplicate(true)
+	if base.is_empty():
+		return {}
+	if upgraded:
+		var upgrade: Dictionary = UPGRADE_LIBRARY.get(card_id, {})
+		for key in upgrade.keys():
+			match String(key):
+				"damage", "block", "draw":
+					base[key] = int(base.get(key, 0)) + int(upgrade[key])
+				"initiative_bonus":
+					base[key] = int(base.get(key, 0)) + int(upgrade[key])
+		base["name"] = "%s+" % str(base.get("name", ""))
+	base["desc"] = build_description(base)
+	return base
+
+static func build_description(card_data: Dictionary) -> String:
+	var parts: Array = []
+	if card_data.has("damage"):
+		parts.append("造成%d点伤害。" % int(card_data.get("damage", 0)))
+	if card_data.has("block"):
+		parts.append("获得%d点护甲。" % int(card_data.get("block", 0)))
+	if card_data.has("draw"):
+		parts.append("抽%d张牌。" % int(card_data.get("draw", 0)))
+	if bool(card_data.get("initiative", false)):
+		var bonus: int = int(card_data.get("initiative_bonus", 0))
+		var strike: int = FIRST_STRIKE_DAMAGE + bonus
+		parts.append("查看山势，下场战斗先手造成%d点伤害。" % strike)
+	if parts.is_empty():
+		return str(card_data.get("desc", ""))
+	return "".join(parts)
 
 static func get_random_card_id() -> String:
 	var card_ids := CARD_LIBRARY.keys()

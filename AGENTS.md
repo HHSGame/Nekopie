@@ -22,3 +22,4 @@
 - Keep the bundled Noto Sans CJK SC font and global theme for HTML5 Chinese text rendering.
 - UI scene roots explicitly reference the global theme for export reliability.
 - Track `export_presets.cfg` in Git to share HTML5 export settings.
+- Card upgrades are tracked per card id in `RunState` and apply to all copies.

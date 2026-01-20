@@ -104,3 +104,44 @@ text = "结束回合"
 [node name="NextButton" type="Button" parent="MarginContainer/VBoxContainer/Actions"]
 text = "继续攀登"
 visible = false
+
+[node name="RewardPanel" type="VBoxContainer" parent="MarginContainer/VBoxContainer"]
+visible = false
+theme_override_constants/separation = 8
+
+[node name="RewardTitleLabel" type="Label" parent="MarginContainer/VBoxContainer/RewardPanel"]
+text = "战利品"
+
+[node name="RewardOptions" type="HBoxContainer" parent="MarginContainer/VBoxContainer/RewardPanel"]
+theme_override_constants/separation = 8
+
+[node name="RewardAddButton" type="Button" parent="MarginContainer/VBoxContainer/RewardPanel/RewardOptions"]
+text = "获得新卡"
+
+[node name="RewardUpgradeButton" type="Button" parent="MarginContainer/VBoxContainer/RewardPanel/RewardOptions"]
+text = "强化卡牌"
+
+[node name="RewardRemoveButton" type="Button" parent="MarginContainer/VBoxContainer/RewardPanel/RewardOptions"]
+text = "移除卡牌"
+
+[node name="RewardSkipButton" type="Button" parent="MarginContainer/VBoxContainer/RewardPanel/RewardOptions"]
+text = "跳过"
+
+[node name="RewardChoiceLabel" type="Label" parent="MarginContainer/VBoxContainer/RewardPanel"]
+text = "选择奖励"
+
+[node name="RewardChoiceScroll" type="ScrollContainer" parent="MarginContainer/VBoxContainer/RewardPanel"]
+size_flags_horizontal = 3
+size_flags_vertical = 2
+
+[node name="RewardChoiceContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/RewardPanel/RewardChoiceScroll"]
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+
+[node name="RewardDeckScroll" type="ScrollContainer" parent="MarginContainer/VBoxContainer/RewardPanel"]
+size_flags_horizontal = 3
+size_flags_vertical = 2
+
+[node name="RewardDeckList" type="VBoxContainer" parent="MarginContainer/VBoxContainer/RewardPanel/RewardDeckScroll"]
+size_flags_horizontal = 3
+theme_override_constants/separation = 8

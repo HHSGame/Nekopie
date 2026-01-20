@@ -16,6 +16,7 @@ A Godot 4.3 deck-building prototype set in an isekai adventure. The main goal is
 - Bundled Noto Sans CJK SC font via a global theme for HTML5 Chinese rendering.
 - Applied the global theme explicitly to UI scenes for HTML5 consistency.
 - Export presets are tracked in `export_presets.cfg`.
+- Post-battle rewards now include add, upgrade, and remove options.
 
 ## Scene and Script Layout
 - `scenes/Main.tscn` + `scripts/Main.gd`: main menu and navigation.
@@ -27,13 +28,12 @@ A Godot 4.3 deck-building prototype set in an isekai adventure. The main goal is
 
 ## Current Gaps
 - No enemy intent telegraph UI beyond text labels.
-- No rewards, card upgrades, or meta progression beyond simple events.
+- No meta progression beyond per-run rewards.
 - No art/audio resources beyond placeholders.
 
 ## How to Run
 Open the project in Godot 4.3 and run the main scene at `res://scenes/Main.tscn`.
 
 ## Next Implementation Plan
-1. Rewards and deck growth: post-battle rewards, upgrades, and removals.
-2. UI polish: combat UI, intent icons, card details, feedback, and animations.
-3. Persistence: run logging and save/load.
+1. UI polish: combat UI, intent icons, card details, feedback, and animations.
+2. Persistence: run logging and save/load.

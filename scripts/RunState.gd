@@ -7,7 +7,9 @@ var run_active := false
 var player_max_hp := 40
 var player_hp := 40
 var next_encounter_first_strike := false
+var next_encounter_first_strike_bonus := 0
 var current_enemy_id := ""
+var upgraded_cards: Dictionary = {}
 
 func _ready() -> void:
 	if deck.is_empty():
@@ -20,7 +22,9 @@ func reset_run() -> void:
 	run_active = false
 	player_hp = player_max_hp
 	next_encounter_first_strike = false
+	next_encounter_first_strike_bonus = 0
 	current_enemy_id = ""
+	upgraded_cards.clear()
 
 func start_run() -> void:
 	run_active = true
@@ -28,7 +32,9 @@ func start_run() -> void:
 	max_encounters = GameData.ENCOUNTERS.size()
 	player_hp = player_max_hp
 	next_encounter_first_strike = false
+	next_encounter_first_strike_bonus = 0
 	current_enemy_id = ""
+	upgraded_cards.clear()
 
 func get_current_enemy_id() -> String:
 	if encounters_completed < max_encounters:
@@ -44,3 +50,9 @@ func complete_encounter() -> bool:
 		encounters_completed += 1
 	current_enemy_id = ""
 	return encounters_completed >= max_encounters
+
+func is_upgraded(card_id: String) -> bool:
+	return bool(upgraded_cards.get(card_id, false))
+
+func upgrade_card(card_id: String) -> void:
+	upgraded_cards[card_id] = true
