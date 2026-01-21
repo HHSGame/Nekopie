@@ -20,3 +20,5 @@
 - Added post-battle reward options for adding, upgrading, or removing cards.
 - Moved reward selection into a modal overlay to avoid scrolling the main UI.
 - Ignored `docs/*.import` metadata files from export previews.
+- Fixed reward list containers to ensure upgrade/remove options render.
+- Added card hover detail panel and colored intent text.

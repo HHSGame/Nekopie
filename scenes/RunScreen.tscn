@@ -156,7 +156,8 @@ text = "选择奖励"
 
 [node name="RewardChoiceScroll" type="ScrollContainer" parent="RewardOverlay/CenterContainer/RewardPanel/RewardMargin/RewardVBox"]
 size_flags_horizontal = 3
-size_flags_vertical = 2
+size_flags_vertical = 3
+custom_minimum_size = Vector2(0, 200)
 
 [node name="RewardChoiceContainer" type="HBoxContainer" parent="RewardOverlay/CenterContainer/RewardPanel/RewardMargin/RewardVBox/RewardChoiceScroll"]
 size_flags_horizontal = 3
@@ -164,8 +165,37 @@ theme_override_constants/separation = 10
 
 [node name="RewardDeckScroll" type="ScrollContainer" parent="RewardOverlay/CenterContainer/RewardPanel/RewardMargin/RewardVBox"]
 size_flags_horizontal = 3
-size_flags_vertical = 2
+size_flags_vertical = 3
+custom_minimum_size = Vector2(0, 220)
 
 [node name="RewardDeckList" type="VBoxContainer" parent="RewardOverlay/CenterContainer/RewardPanel/RewardMargin/RewardVBox/RewardDeckScroll"]
 size_flags_horizontal = 3
 theme_override_constants/separation = 8
+
+[node name="CardDetailPanel" type="PanelContainer" parent="."]
+visible = false
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -320.0
+offset_top = 16.0
+offset_right = -16.0
+offset_bottom = 200.0
+
+[node name="CardDetailMargin" type="MarginContainer" parent="CardDetailPanel"]
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_bottom = 12
+
+[node name="CardDetailVBox" type="VBoxContainer" parent="CardDetailPanel/CardDetailMargin"]
+theme_override_constants/separation = 6
+
+[node name="CardDetailName" type="Label" parent="CardDetailPanel/CardDetailMargin/CardDetailVBox"]
+text = "卡牌"
+
+[node name="CardDetailCost" type="Label" parent="CardDetailPanel/CardDetailMargin/CardDetailVBox"]
+text = "费用 0"
+
+[node name="CardDetailDesc" type="Label" parent="CardDetailPanel/CardDetailMargin/CardDetailVBox"]
+text = "描述"
+autowrap_mode = 3

@@ -24,3 +24,5 @@
 - Track `export_presets.cfg` in Git to share HTML5 export settings.
 - Card upgrades are tracked per card id in `RunState` and apply to all copies.
 - Reward selection uses a modal overlay to avoid stacking in the main UI.
+- Reward list containers require a minimum height to stay visible.
+- Card hover detail panel lives in `RunScreen` and uses `CardWidget` hover signals.

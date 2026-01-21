@@ -32,6 +32,10 @@ const ENERGY_PER_TURN := 3
 @onready var reward_choice_container: HBoxContainer = $RewardOverlay/CenterContainer/RewardPanel/RewardMargin/RewardVBox/RewardChoiceScroll/RewardChoiceContainer
 @onready var reward_deck_scroll: ScrollContainer = $RewardOverlay/CenterContainer/RewardPanel/RewardMargin/RewardVBox/RewardDeckScroll
 @onready var reward_deck_list: VBoxContainer = $RewardOverlay/CenterContainer/RewardPanel/RewardMargin/RewardVBox/RewardDeckScroll/RewardDeckList
+@onready var card_detail_panel: PanelContainer = $CardDetailPanel
+@onready var card_detail_name: Label = $CardDetailPanel/CardDetailMargin/CardDetailVBox/CardDetailName
+@onready var card_detail_cost: Label = $CardDetailPanel/CardDetailMargin/CardDetailVBox/CardDetailCost
+@onready var card_detail_desc: Label = $CardDetailPanel/CardDetailMargin/CardDetailVBox/CardDetailDesc
 
 var draw_pile: Array = []
 var hand: Array = []
@@ -64,6 +68,7 @@ func _ready() -> void:
 	reward_upgrade_button.pressed.connect(_on_reward_upgrade_pressed)
 	reward_remove_button.pressed.connect(_on_reward_remove_pressed)
 	reward_skip_button.pressed.connect(_on_reward_skip_pressed)
+	card_detail_panel.visible = false
 	_start_encounter()
 
 func _start_encounter() -> void:
@@ -72,6 +77,7 @@ func _start_encounter() -> void:
 	reward_mode = "none"
 	last_reward_mode = ""
 	reward_cards.clear()
+	card_detail_panel.visible = false
 	player_block = 0
 	energy = ENERGY_PER_TURN
 	draw_pile = RunState.deck.duplicate(true)
@@ -111,6 +117,7 @@ func _update_ui() -> void:
 	enemy_block_label.text = "敌人护甲：%d" % enemy_block
 	enemy_intent_label.text = "意图：%s" % _intent_display(current_intent)
 	enemy_desc_label.text = enemy_data.get("desc", "")
+	enemy_intent_label.add_theme_color_override("font_color", _intent_color(current_intent))
 	player_hp_label.text = "生命：%d / %d" % [RunState.player_hp, RunState.player_max_hp]
 	player_block_label.text = "护甲：%d" % player_block
 	energy_label.text = "能量：%d" % energy
@@ -136,11 +143,13 @@ func _refresh_hand() -> void:
 		child.queue_free()
 	for index in hand.size():
 		var card_id: String = hand[index]
-		var card_data := GameData.get_card_data(card_id, RunState.is_upgraded(card_id))
-		var widget: CardWidget = CARD_WIDGET_SCENE.instantiate()
-		widget.set_card(card_data)
-		widget.clicked.connect(_on_hand_card_clicked.bind(index))
-		hand_container.add_child(widget)
+	var card_data := GameData.get_card_data(card_id, RunState.is_upgraded(card_id))
+	var widget: CardWidget = CARD_WIDGET_SCENE.instantiate()
+	widget.set_card(card_data)
+	widget.clicked.connect(_on_hand_card_clicked.bind(index))
+	widget.hovered.connect(_on_card_hovered)
+	widget.unhovered.connect(_on_card_unhovered)
+	hand_container.add_child(widget)
 
 func _draw_cards(count: int) -> void:
 	for i in count:
@@ -407,11 +416,13 @@ func _populate_reward_cards() -> void:
 	if reward_cards.is_empty():
 		reward_cards = _roll_reward_cards()
 	for card_id in reward_cards:
-		var card_data := GameData.get_card_data(card_id, false)
-		var widget: CardWidget = CARD_WIDGET_SCENE.instantiate()
-		widget.set_card(card_data)
-		widget.clicked.connect(_on_reward_card_selected)
-		reward_choice_container.add_child(widget)
+	var card_data := GameData.get_card_data(card_id, false)
+	var widget: CardWidget = CARD_WIDGET_SCENE.instantiate()
+	widget.set_card(card_data)
+	widget.clicked.connect(_on_reward_card_selected)
+	widget.hovered.connect(_on_card_hovered)
+	widget.unhovered.connect(_on_card_unhovered)
+	reward_choice_container.add_child(widget)
 
 func _roll_reward_cards(count: int = 3) -> Array:
 	var card_ids: Array = GameData.all_card_ids()
@@ -429,11 +440,13 @@ func _populate_reward_deck() -> void:
 		if reward_mode == "upgrade" and RunState.is_upgraded(card_id):
 			continue
 		any_available = true
-		var card_data := GameData.get_card_data(card_id, RunState.is_upgraded(card_id))
-		var widget: CardWidget = CARD_WIDGET_SCENE.instantiate()
-		widget.set_card(card_data)
-		widget.clicked.connect(_on_reward_deck_card_selected.bind(index))
-		reward_deck_list.add_child(widget)
+	var card_data := GameData.get_card_data(card_id, RunState.is_upgraded(card_id))
+	var widget: CardWidget = CARD_WIDGET_SCENE.instantiate()
+	widget.set_card(card_data)
+	widget.clicked.connect(_on_reward_deck_card_selected.bind(index))
+	widget.hovered.connect(_on_card_hovered)
+	widget.unhovered.connect(_on_card_unhovered)
+	reward_deck_list.add_child(widget)
 	if not any_available:
 		if reward_mode == "upgrade":
 			result_label.text = "没有可强化的卡牌。"
@@ -486,3 +499,30 @@ func _on_reward_deck_card_selected(card_id: String, index: int) -> void:
 func _clear_container(container: Node) -> void:
 	for child in container.get_children():
 		child.queue_free()
+
+func _on_card_hovered(card_id: String) -> void:
+	var card_data := GameData.get_card_data(card_id, RunState.is_upgraded(card_id))
+	if card_data.is_empty():
+		return
+	card_detail_name.text = str(card_data.get("name", "卡牌"))
+	card_detail_cost.text = "费用 %s" % str(card_data.get("cost", 0))
+	card_detail_desc.text = str(card_data.get("desc", ""))
+	card_detail_panel.visible = true
+
+func _on_card_unhovered() -> void:
+	card_detail_panel.visible = false
+
+func _intent_color(intent: Dictionary) -> Color:
+	var intent_type: String = str(intent.get("type", ""))
+	match intent_type:
+		"attack":
+			return Color(0.9, 0.35, 0.35)
+		"multi_attack":
+			return Color(0.95, 0.55, 0.2)
+		"guard":
+			return Color(0.4, 0.7, 0.95)
+		"charge":
+			return Color(0.95, 0.85, 0.3)
+		"drain":
+			return Color(0.75, 0.5, 0.95)
+	return Color(1, 1, 1)
