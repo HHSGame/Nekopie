@@ -52,8 +52,18 @@ text = "敌人：未知魔物"
 [node name="EnemyHpLabel" type="Label" parent="MarginContainer/VBoxContainer/EnemyPanel"]
 text = "敌人生命：0"
 
+[node name="EnemyHpBar" type="ProgressBar" parent="MarginContainer/VBoxContainer/EnemyPanel"]
+custom_minimum_size = Vector2(0, 12)
+show_percentage = false
+max_value = 1.0
+value = 1.0
+
 [node name="EnemyBlockLabel" type="Label" parent="MarginContainer/VBoxContainer/EnemyPanel"]
 text = "敌人护甲：0"
+
+[node name="EnemyIntentSwatch" type="ColorRect" parent="MarginContainer/VBoxContainer/EnemyPanel"]
+custom_minimum_size = Vector2(0, 6)
+color = Color(1, 1, 1, 1)
 
 [node name="EnemyIntentLabel" type="Label" parent="MarginContainer/VBoxContainer/EnemyPanel"]
 text = "意图：未知"
@@ -79,6 +89,12 @@ text = "抽牌堆：0"
 
 [node name="DiscardLabel" type="Label" parent="MarginContainer/VBoxContainer/PlayerPanel"]
 text = "弃牌堆：0"
+
+[node name="PlayerHpBar" type="ProgressBar" parent="MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 12)
+show_percentage = false
+max_value = 1.0
+value = 1.0
 
 [node name="ResultLabel" type="Label" parent="MarginContainer/VBoxContainer"]
 text = "准备迎战。"

@@ -8,7 +8,9 @@ const ENERGY_PER_TURN := 3
 @onready var progress_label: Label = $MarginContainer/VBoxContainer/ProgressLabel
 @onready var enemy_name_label: Label = $MarginContainer/VBoxContainer/EnemyPanel/EnemyNameLabel
 @onready var enemy_hp_label: Label = $MarginContainer/VBoxContainer/EnemyPanel/EnemyHpLabel
+@onready var enemy_hp_bar: ProgressBar = $MarginContainer/VBoxContainer/EnemyPanel/EnemyHpBar
 @onready var enemy_block_label: Label = $MarginContainer/VBoxContainer/EnemyPanel/EnemyBlockLabel
+@onready var enemy_intent_swatch: ColorRect = $MarginContainer/VBoxContainer/EnemyPanel/EnemyIntentSwatch
 @onready var enemy_intent_label: Label = $MarginContainer/VBoxContainer/EnemyPanel/EnemyIntentLabel
 @onready var enemy_desc_label: Label = $MarginContainer/VBoxContainer/EnemyPanel/EnemyDescLabel
 @onready var player_hp_label: Label = $MarginContainer/VBoxContainer/PlayerPanel/PlayerHpLabel
@@ -16,6 +18,7 @@ const ENERGY_PER_TURN := 3
 @onready var energy_label: Label = $MarginContainer/VBoxContainer/PlayerPanel/EnergyLabel
 @onready var draw_label: Label = $MarginContainer/VBoxContainer/PlayerPanel/DrawLabel
 @onready var discard_label: Label = $MarginContainer/VBoxContainer/PlayerPanel/DiscardLabel
+@onready var player_hp_bar: ProgressBar = $MarginContainer/VBoxContainer/PlayerHpBar
 @onready var result_label: Label = $MarginContainer/VBoxContainer/ResultLabel
 @onready var hand_container: HBoxContainer = $MarginContainer/VBoxContainer/HandScroll/HandContainer
 @onready var end_turn_button: Button = $MarginContainer/VBoxContainer/Actions/EndTurnButton
@@ -117,11 +120,17 @@ func _update_ui() -> void:
 	progress_label.text = "攀登进度：%d / %d" % [progress_current, RunState.max_encounters]
 	enemy_name_label.text = "敌人：%s" % enemy_data.get("name", "未知魔物")
 	enemy_hp_label.text = "敌人生命：%d / %d" % [enemy_hp, enemy_max_hp]
+	enemy_hp_bar.max_value = max(enemy_max_hp, 1)
+	enemy_hp_bar.value = enemy_hp
 	enemy_block_label.text = "敌人护甲：%d" % enemy_block
 	enemy_intent_label.text = "意图：%s" % _intent_display(current_intent)
 	enemy_desc_label.text = enemy_data.get("desc", "")
-	enemy_intent_label.add_theme_color_override("font_color", _intent_color(current_intent))
+	var intent_color := _intent_color(current_intent)
+	enemy_intent_label.add_theme_color_override("font_color", intent_color)
+	enemy_intent_swatch.color = intent_color
 	player_hp_label.text = "生命：%d / %d" % [RunState.player_hp, RunState.player_max_hp]
+	player_hp_bar.max_value = max(RunState.player_max_hp, 1)
+	player_hp_bar.value = RunState.player_hp
 	player_block_label.text = "护甲：%d" % player_block
 	energy_label.text = "能量：%d" % energy
 	draw_label.text = "抽牌堆：%d" % draw_pile.size()

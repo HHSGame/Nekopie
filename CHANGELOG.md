@@ -26,3 +26,4 @@
 - Fixed card list rendering indentation errors in `RunScreen`.
 - Added save/load support for run state with event logging.
 - Added save summary and clear-save controls in the main menu.
+- Added enemy/player HP bars and an intent color swatch in combat UI.

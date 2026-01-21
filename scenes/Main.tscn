@@ -36,7 +36,8 @@ horizontal_alignment = 1
 
 [node name="StoryLabel" type="Label" parent="CenterContainer/VBoxContainer"]
 layout_mode = 2
-text = "你穿越到异世界，被委托征服一座藏有魔物的山。\\n攀爬到山顶，击退守关魔物，即为通关。"
+text = "你穿越到异世界，被委托征服一座藏有魔物的山。
+攀爬到山顶，击退守关魔物，即为通关。"
 horizontal_alignment = 1
 autowrap_mode = 3
 

@@ -28,3 +28,4 @@
 - Card hover detail panel lives in `RunScreen` and uses `CardWidget` hover signals.
 - Run persistence uses `RunState.save_run/load_run` and logs events to `user://savegame.json`.
 - Main menu shows save summary and exposes a clear-save action.
+- Combat UI uses HP bars and an intent color swatch in `RunScreen`.
