@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene load_steps=12 format=3]
 
 [ext_resource type="Script" path="res://scripts/RunScreen.gd" id="1_3jvb6"]
 [ext_resource type="Theme" path="res://themes/default_theme.tres" id="2_xk0w6"]
@@ -8,6 +8,10 @@
 [ext_resource type="Texture2D" path="res://icons/icon_energy.svg" id="6_3i9em"]
 [ext_resource type="Texture2D" path="res://icons/icon_draw.svg" id="7_xd4w2"]
 [ext_resource type="Texture2D" path="res://icons/icon_discard.svg" id="8_8b7j9"]
+[ext_resource type="Texture2D" path="res://art/backgrounds/mountain_bg.svg" id="9_2f2mp"]
+[ext_resource type="AudioStream" path="res://audio/sfx_attack.wav" id="10_42l6o"]
+[ext_resource type="AudioStream" path="res://audio/sfx_block.wav" id="11_9p0r4"]
+[ext_resource type="AudioStream" path="res://audio/sfx_reward.wav" id="12_1p0d9"]
 
 [node name="RunScreen" type="Control"]
 anchor_right = 1.0
@@ -15,10 +19,16 @@ anchor_bottom = 1.0
 theme = ExtResource("2_xk0w6")
 script = ExtResource("1_3jvb6")
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="Background" type="TextureRect" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
-color = Color(0.06, 0.06, 0.09, 1)
+texture = ExtResource("9_2f2mp")
+stretch_mode = 5
+
+[node name="Backdrop" type="ColorRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0, 0, 0, 0.45)
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 anchor_right = 1.0
@@ -85,6 +95,39 @@ text = "意图：未知"
 [node name="EnemyDescLabel" type="Label" parent="MarginContainer/VBoxContainer/EnemyPanel"]
 text = "敌人描述"
 autowrap_mode = 3
+
+[node name="PortraitRow" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+theme_override_constants/separation = 16
+
+[node name="PlayerPortraitPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer/PortraitRow"]
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(0, 160)
+
+[node name="PlayerPortrait" type="TextureRect" parent="MarginContainer/VBoxContainer/PortraitRow/PlayerPortraitPanel"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+stretch_mode = 5
+
+[node name="PlayerHitFlash" type="ColorRect" parent="MarginContainer/VBoxContainer/PortraitRow/PlayerPortraitPanel"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(1, 0.3, 0.3, 0)
+visible = false
+
+[node name="EnemyPortraitPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer/PortraitRow"]
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(0, 160)
+
+[node name="EnemyPortrait" type="TextureRect" parent="MarginContainer/VBoxContainer/PortraitRow/EnemyPortraitPanel"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+stretch_mode = 5
+
+[node name="EnemyHitFlash" type="ColorRect" parent="MarginContainer/VBoxContainer/PortraitRow/EnemyPortraitPanel"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(1, 0.3, 0.3, 0)
+visible = false
 
 [node name="PlayerPanel" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
 theme_override_constants/separation = 16
@@ -254,3 +297,12 @@ text = "费用 0"
 [node name="CardDetailDesc" type="Label" parent="CardDetailPanel/CardDetailMargin/CardDetailVBox"]
 text = "描述"
 autowrap_mode = 3
+
+[node name="SfxAttack" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("10_42l6o")
+
+[node name="SfxBlock" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("11_9p0r4")
+
+[node name="SfxReward" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("12_1p0d9")

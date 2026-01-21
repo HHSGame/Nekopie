@@ -21,6 +21,10 @@ const INTENT_ICONS := {
 @onready var enemy_intent_icon: TextureRect = $MarginContainer/VBoxContainer/EnemyPanel/EnemyIntentRow/EnemyIntentIcon
 @onready var enemy_intent_label: Label = $MarginContainer/VBoxContainer/EnemyPanel/EnemyIntentRow/EnemyIntentLabel
 @onready var enemy_desc_label: Label = $MarginContainer/VBoxContainer/EnemyPanel/EnemyDescLabel
+@onready var player_portrait: TextureRect = $MarginContainer/VBoxContainer/PortraitRow/PlayerPortraitPanel/PlayerPortrait
+@onready var enemy_portrait: TextureRect = $MarginContainer/VBoxContainer/PortraitRow/EnemyPortraitPanel/EnemyPortrait
+@onready var player_hit_flash: ColorRect = $MarginContainer/VBoxContainer/PortraitRow/PlayerPortraitPanel/PlayerHitFlash
+@onready var enemy_hit_flash: ColorRect = $MarginContainer/VBoxContainer/PortraitRow/EnemyPortraitPanel/EnemyHitFlash
 @onready var player_hp_label: Label = $MarginContainer/VBoxContainer/PlayerPanel/PlayerHpLabel
 @onready var player_block_label: Label = $MarginContainer/VBoxContainer/PlayerPanel/PlayerBlockLabel
 @onready var energy_label: Label = $MarginContainer/VBoxContainer/PlayerPanel/EnergyLabel
@@ -47,6 +51,9 @@ const INTENT_ICONS := {
 @onready var card_detail_name: Label = $CardDetailPanel/CardDetailMargin/CardDetailVBox/CardDetailName
 @onready var card_detail_cost: Label = $CardDetailPanel/CardDetailMargin/CardDetailVBox/CardDetailCost
 @onready var card_detail_desc: Label = $CardDetailPanel/CardDetailMargin/CardDetailVBox/CardDetailDesc
+@onready var sfx_attack: AudioStreamPlayer = $SfxAttack
+@onready var sfx_block: AudioStreamPlayer = $SfxBlock
+@onready var sfx_reward: AudioStreamPlayer = $SfxReward
 
 var draw_pile: Array = []
 var hand: Array = []
@@ -109,6 +116,10 @@ func _start_encounter() -> void:
 	_set_next_intent()
 	pending_event = {}
 	next_step = "encounter"
+	player_portrait.texture = load(GameData.PLAYER_PORTRAIT)
+	var enemy_portrait_path: String = str(enemy_data.get("portrait", ""))
+	if not enemy_portrait_path.is_empty():
+		enemy_portrait.texture = load(enemy_portrait_path)
 	RunState.log_event("遭遇魔物：%s" % enemy_data.get("name", "未知魔物"))
 	if RunState.next_encounter_first_strike:
 		var strike_damage := GameData.FIRST_STRIKE_DAMAGE + RunState.next_encounter_first_strike_bonus
@@ -208,12 +219,15 @@ func _apply_card_effect(card_data: Dictionary) -> void:
 		if actual_damage > 0:
 			enemy_hp = max(enemy_hp - actual_damage, 0)
 			result_label.text = "你对魔物造成%d点伤害。" % actual_damage
+			sfx_attack.play()
+			_play_enemy_hit_effect()
 		else:
 			result_label.text = "敌人的护甲挡住了攻击。"
 	var block := int(card_data.get("block", 0))
 	if block > 0:
 		player_block += block
 		result_label.text = "你获得%d点护甲。" % block
+		sfx_block.play()
 	var draw_count := int(card_data.get("draw", 0))
 	if draw_count > 0:
 		_draw_cards(draw_count)
@@ -367,6 +381,8 @@ func _apply_enemy_damage(amount: int, text_template: String = "魔物反击，�
 	if damage > 0:
 		RunState.player_hp = max(RunState.player_hp - damage, 0)
 		result_label.text = text_template % damage
+		sfx_attack.play()
+		_play_player_hit_effect()
 	else:
 		result_label.text = "你挡下了魔物的攻击。"
 	return damage
@@ -513,6 +529,7 @@ func _on_reward_remove_pressed() -> void:
 func _on_reward_skip_pressed() -> void:
 	result_label.text = "你放弃了战利品。"
 	RunState.log_event("放弃了战利品。")
+	sfx_reward.play()
 	_start_encounter()
 
 func _on_reward_card_selected(card_id: String) -> void:
@@ -520,6 +537,7 @@ func _on_reward_card_selected(card_id: String) -> void:
 	var card_name: String = str(GameData.get_card_data(card_id, false).get("name", "新卡牌"))
 	result_label.text = "你获得了一张卡牌：%s。" % card_name
 	RunState.log_event("获得新卡：%s。" % card_name)
+	sfx_reward.play()
 	_start_encounter()
 
 func _on_reward_deck_card_selected(card_id: String, index: int) -> void:
@@ -529,6 +547,7 @@ func _on_reward_deck_card_selected(card_id: String, index: int) -> void:
 		var card_name: String = str(GameData.get_card_data(card_id, RunState.is_upgraded(card_id)).get("name", "卡牌"))
 		result_label.text = "已移除卡牌：%s。" % card_name
 		RunState.log_event("移除卡牌：%s。" % card_name)
+		sfx_reward.play()
 		_start_encounter()
 		return
 	if reward_mode == "upgrade":
@@ -536,12 +555,33 @@ func _on_reward_deck_card_selected(card_id: String, index: int) -> void:
 		var card_name: String = str(GameData.get_card_data(card_id, true).get("name", "卡牌"))
 		result_label.text = "已强化卡牌：%s。" % card_name
 		RunState.log_event("强化卡牌：%s。" % card_name)
+		sfx_reward.play()
 		_start_encounter()
 		return
 
 func _clear_container(container: Node) -> void:
 	for child in container.get_children():
 		child.queue_free()
+
+func _play_enemy_hit_effect() -> void:
+	_flash_rect(enemy_hit_flash, Color(1, 0.3, 0.3, 0.6))
+	_pulse_node(enemy_portrait, 1.05)
+
+func _play_player_hit_effect() -> void:
+	_flash_rect(player_hit_flash, Color(1, 0.4, 0.4, 0.6))
+	_pulse_node(player_portrait, 1.05)
+
+func _pulse_node(node: CanvasItem, scale_factor: float) -> void:
+	var tween := create_tween()
+	tween.tween_property(node, "scale", Vector2(scale_factor, scale_factor), 0.08).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	tween.tween_property(node, "scale", Vector2.ONE, 0.1).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+
+func _flash_rect(rect: ColorRect, color: Color) -> void:
+	rect.color = color
+	rect.visible = true
+	var tween := create_tween()
+	tween.tween_property(rect, "color:a", 0.0, 0.2).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	tween.tween_callback(func(): rect.visible = false)
 
 func _on_card_hovered(card_id: String) -> void:
 	var card_data := GameData.get_card_data(card_id, RunState.is_upgraded(card_id))

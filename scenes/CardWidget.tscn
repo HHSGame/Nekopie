@@ -1,12 +1,21 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://scripts/CardWidget.gd" id="1_lgshh"]
 [ext_resource type="Theme" path="res://themes/default_theme.tres" id="2_s5q7b"]
+[ext_resource type="Texture2D" path="res://art/cards/card_frame.svg" id="3_8rs4x"]
+[ext_resource type="Texture2D" path="res://art/cards/card_art_placeholder.svg" id="4_gx2tu"]
 
 [node name="CardWidget" type="PanelContainer"]
-custom_minimum_size = Vector2(220, 160)
+custom_minimum_size = Vector2(220, 260)
 theme = ExtResource("2_s5q7b")
 script = ExtResource("1_lgshh")
+
+[node name="CardFrame" type="TextureRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+texture = ExtResource("3_8rs4x")
+stretch_mode = 5
+mouse_filter = 2
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 theme_override_constants/margin_left = 8
@@ -30,9 +39,10 @@ horizontal_alignment = 2
 size_flags_horizontal = 3
 mouse_filter = 2
 
-[node name="ArtPlaceholder" type="ColorRect" parent="MarginContainer/VBoxContainer"]
-custom_minimum_size = Vector2(0, 70)
-color = Color(0.12, 0.12, 0.15, 1)
+[node name="ArtTexture" type="TextureRect" parent="MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 100)
+texture = ExtResource("4_gx2tu")
+stretch_mode = 5
 mouse_filter = 2
 
 [node name="DescriptionLabel" type="Label" parent="MarginContainer/VBoxContainer"]

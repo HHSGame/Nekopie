@@ -30,3 +30,4 @@
 - Main menu shows save summary and exposes a clear-save action.
 - Combat UI uses HP bars and an intent color swatch in `RunScreen`.
 - Intent/stat icons live under `icons/` and are referenced by `RunScreen`.
+- Portraits, card art, and background textures live under `art/`.

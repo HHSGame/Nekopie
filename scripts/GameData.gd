@@ -4,6 +4,7 @@ const MOUNTAIN_NAME := "隐魔之岭"
 const WORLD_TAGLINE := "异世界冒险：征服山巅，穿越魔物之影。"
 const FIRST_STRIKE_DAMAGE := 4
 const EVENT_CHANCE := 0.5
+const PLAYER_PORTRAIT := "res://art/portraits/player_female.svg"
 
 const UPGRADE_LIBRARY := {
 	"strike": {"damage": 3},
@@ -19,6 +20,7 @@ const CARD_LIBRARY := {
 		"name": "斩击",
 		"cost": 1,
 		"damage": 6,
+		"art": "res://art/cards/icon_strike.svg",
 		"desc": "造成6点伤害。"
 	},
 	"defend": {
@@ -26,6 +28,7 @@ const CARD_LIBRARY := {
 		"name": "格挡",
 		"cost": 1,
 		"block": 5,
+		"art": "res://art/cards/icon_defend.svg",
 		"desc": "获得5点护甲。"
 	},
 	"flare": {
@@ -33,6 +36,7 @@ const CARD_LIBRARY := {
 		"name": "星火",
 		"cost": 2,
 		"damage": 10,
+		"art": "res://art/cards/icon_flare.svg",
 		"desc": "造成10点伤害。"
 	},
 	"focus": {
@@ -40,6 +44,7 @@ const CARD_LIBRARY := {
 		"name": "专注",
 		"cost": 1,
 		"draw": 2,
+		"art": "res://art/cards/icon_focus.svg",
 		"desc": "抽2张牌。"
 	},
 	"explore": {
@@ -47,6 +52,7 @@ const CARD_LIBRARY := {
 		"name": "踏勘",
 		"cost": 1,
 		"initiative": true,
+		"art": "res://art/cards/icon_explore.svg",
 		"desc": "查看山势，下场战斗先手造成%d点伤害。" % FIRST_STRIKE_DAMAGE
 	}
 }
@@ -66,6 +72,7 @@ const ENEMY_LIBRARY := {
 		"name": "雾泽史莱姆",
 		"hp": 18,
 		"attack": 4,
+		"portrait": "res://art/portraits/enemy_slime.svg",
 		"desc": "黏液喷吐，拖慢你的步伐。",
 		"intents": [
 			{"type": "attack", "value": 4, "text": "黏液喷吐"},
@@ -77,6 +84,7 @@ const ENEMY_LIBRARY := {
 		"name": "山道哥布林",
 		"hp": 22,
 		"attack": 6,
+		"portrait": "res://art/portraits/enemy_goblin.svg",
 		"desc": "埋伏在林间的劫掠者。",
 		"intents": [
 			{"type": "attack", "value": 6, "text": "短刀突刺"},
@@ -89,6 +97,7 @@ const ENEMY_LIBRARY := {
 		"name": "幽雾之灵",
 		"hp": 20,
 		"attack": 7,
+		"portrait": "res://art/portraits/enemy_wisp.svg",
 		"desc": "飘忽的幽光，擅长扰乱心神。",
 		"intents": [
 			{"type": "attack", "value": 5, "text": "幽光震荡"},
@@ -101,6 +110,7 @@ const ENEMY_LIBRARY := {
 		"name": "裂岩巨魔",
 		"hp": 30,
 		"attack": 9,
+		"portrait": "res://art/portraits/enemy_ogre.svg",
 		"desc": "手持岩锤，守护山腰。",
 		"intents": [
 			{"type": "charge", "value": 5, "text": "裂岩蓄势"},
@@ -113,6 +123,7 @@ const ENEMY_LIBRARY := {
 		"name": "山巅魔王",
 		"hp": 38,
 		"attack": 11,
+		"portrait": "res://art/portraits/enemy_boss.svg",
 		"desc": "盘踞山巅的魔物首领。",
 		"intents": [
 			{"type": "attack", "value": 9, "text": "魔焰斩"},
