@@ -33,6 +33,7 @@ A Godot 4.3 deck-building prototype set in an isekai adventure. The main goal is
 - Adjusted scene frame scaling to fit within the viewport.
 - Docked the combat hand panel at the bottom to keep cards visible.
 - Tracked Godot import metadata for UI and FX assets.
+- Tightened RunScreen layout spacing to keep enemy and status panels visible.
 
 ## Scene and Script Layout
 - `scenes/Main.tscn` + `scripts/Main.gd`: main menu and navigation.

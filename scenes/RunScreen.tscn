@@ -53,15 +53,15 @@ mouse_filter = 2
 [node name="MarginContainer" type="MarginContainer" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_bottom = -360.0
+offset_bottom = -300.0
 clip_contents = true
-theme_override_constants/margin_left = 24
-theme_override_constants/margin_right = 24
-theme_override_constants/margin_top = 24
-theme_override_constants/margin_bottom = 24
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_bottom = 16
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
-theme_override_constants/separation = 8
+theme_override_constants/separation = 6
 
 [node name="Header" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
 theme_override_constants/separation = 12
@@ -139,7 +139,7 @@ theme_override_constants/separation = 16
 
 [node name="PlayerPortraitPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer/PortraitRow"]
 size_flags_horizontal = 3
-custom_minimum_size = Vector2(0, 140)
+custom_minimum_size = Vector2(0, 120)
 
 [node name="PlayerPortrait" type="TextureRect" parent="MarginContainer/VBoxContainer/PortraitRow/PlayerPortraitPanel"]
 anchor_right = 1.0
@@ -171,7 +171,7 @@ visible = false
 
 [node name="EnemyPortraitPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer/PortraitRow"]
 size_flags_horizontal = 3
-custom_minimum_size = Vector2(0, 140)
+custom_minimum_size = Vector2(0, 120)
 
 [node name="EnemyPortrait" type="TextureRect" parent="MarginContainer/VBoxContainer/PortraitRow/EnemyPortraitPanel"]
 anchor_right = 1.0
@@ -250,20 +250,15 @@ show_percentage = false
 max_value = 1.0
 value = 1.0
 
-[node name="ResultLabel" type="Label" parent="MarginContainer/VBoxContainer"]
-text = "准备迎战。"
-autowrap_mode = 3
-max_lines = 2
-
 [node name="HandDock" type="PanelContainer" parent="."]
 anchor_left = 0.0
 anchor_right = 1.0
 anchor_top = 1.0
 anchor_bottom = 1.0
-offset_left = 24.0
-offset_right = -24.0
-offset_top = -360.0
-offset_bottom = -24.0
+offset_left = 16.0
+offset_right = -16.0
+offset_top = -300.0
+offset_bottom = -16.0
 
 [node name="HandMargin" type="MarginContainer" parent="HandDock"]
 theme_override_constants/margin_left = 12
@@ -272,7 +267,12 @@ theme_override_constants/margin_top = 12
 theme_override_constants/margin_bottom = 12
 
 [node name="HandVBox" type="VBoxContainer" parent="HandDock/HandMargin"]
-theme_override_constants/separation = 8
+theme_override_constants/separation = 6
+
+[node name="ResultLabel" type="Label" parent="HandDock/HandMargin/HandVBox"]
+text = "准备迎战。"
+autowrap_mode = 3
+max_lines = 2
 
 [node name="HandLabel" type="Label" parent="HandDock/HandMargin/HandVBox"]
 text = "手牌"
@@ -280,7 +280,7 @@ text = "手牌"
 [node name="HandScroll" type="ScrollContainer" parent="HandDock/HandMargin/HandVBox"]
 size_flags_horizontal = 3
 size_flags_vertical = 3
-custom_minimum_size = Vector2(0, 220)
+custom_minimum_size = Vector2(0, 180)
 
 [node name="HandContainer" type="HBoxContainer" parent="HandDock/HandMargin/HandVBox/HandScroll"]
 size_flags_horizontal = 3
