@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3]
+[gd_scene load_steps=24 format=3]
 
 [ext_resource type="Script" path="res://scripts/RunScreen.gd" id="1_3jvb6"]
 [ext_resource type="Theme" path="res://themes/default_theme.tres" id="2_xk0w6"]
@@ -12,6 +12,18 @@
 [ext_resource type="AudioStream" path="res://audio/sfx_attack.wav" id="10_42l6o"]
 [ext_resource type="AudioStream" path="res://audio/sfx_block.wav" id="11_9p0r4"]
 [ext_resource type="AudioStream" path="res://audio/sfx_reward.wav" id="12_1p0d9"]
+[ext_resource type="Texture2D" path="res://art/ui/scene_frame.svg" id="13_0qu8n"]
+[ext_resource type="Texture2D" path="res://art/ui/title_banner.svg" id="14_mr2or"]
+[ext_resource type="Texture2D" path="res://art/ui/portrait_frame.svg" id="15_kj4e1"]
+[ext_resource type="Texture2D" path="res://art/fx/slash.svg" id="16_t5o0q"]
+[ext_resource type="Texture2D" path="res://art/fx/impact.svg" id="17_9xo3o"]
+[ext_resource type="Texture2D" path="res://icons/ui_back.svg" id="18_0e8pe"]
+[ext_resource type="Texture2D" path="res://icons/ui_end_turn.svg" id="19_p2ivm"]
+[ext_resource type="Texture2D" path="res://icons/ui_next.svg" id="20_trx2m"]
+[ext_resource type="Texture2D" path="res://icons/ui_add.svg" id="21_9h1wy"]
+[ext_resource type="Texture2D" path="res://icons/ui_upgrade.svg" id="22_k4j8x"]
+[ext_resource type="Texture2D" path="res://icons/ui_remove.svg" id="23_7r0c1"]
+[ext_resource type="Texture2D" path="res://icons/ui_skip.svg" id="24_05s2n"]
 
 [node name="RunScreen" type="Control"]
 anchor_right = 1.0
@@ -30,6 +42,13 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 color = Color(0, 0, 0, 0.45)
 
+[node name="SceneFrame" type="TextureRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+texture = ExtResource("13_0qu8n")
+stretch_mode = 5
+mouse_filter = 2
+
 [node name="MarginContainer" type="MarginContainer" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -46,11 +65,25 @@ theme_override_constants/separation = 12
 
 [node name="BackButton" type="Button" parent="MarginContainer/VBoxContainer/Header"]
 text = "返回"
+icon = ExtResource("18_0e8pe")
 
-[node name="TitleLabel" type="Label" parent="MarginContainer/VBoxContainer/Header"]
-text = "攀登旅程"
+[node name="TitlePanel" type="Control" parent="MarginContainer/VBoxContainer/Header"]
+custom_minimum_size = Vector2(360, 56)
 size_flags_horizontal = 3
+
+[node name="TitleBanner" type="TextureRect" parent="MarginContainer/VBoxContainer/Header/TitlePanel"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+texture = ExtResource("14_mr2or")
+stretch_mode = 5
+mouse_filter = 2
+
+[node name="TitleLabel" type="Label" parent="MarginContainer/VBoxContainer/Header/TitlePanel"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+text = "攀登旅程"
 horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="StoryLabel" type="Label" parent="MarginContainer/VBoxContainer"]
 text = "旅程开始。"
@@ -108,6 +141,23 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 stretch_mode = 5
 
+[node name="PlayerPortraitFrame" type="TextureRect" parent="MarginContainer/VBoxContainer/PortraitRow/PlayerPortraitPanel"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+texture = ExtResource("15_kj4e1")
+stretch_mode = 5
+mouse_filter = 2
+
+[node name="PlayerFxCenter" type="CenterContainer" parent="MarginContainer/VBoxContainer/PortraitRow/PlayerPortraitPanel"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="PlayerHitFx" type="TextureRect" parent="MarginContainer/VBoxContainer/PortraitRow/PlayerPortraitPanel/PlayerFxCenter"]
+custom_minimum_size = Vector2(96, 96)
+texture = ExtResource("17_9xo3o")
+stretch_mode = 5
+visible = false
+
 [node name="PlayerHitFlash" type="ColorRect" parent="MarginContainer/VBoxContainer/PortraitRow/PlayerPortraitPanel"]
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -122,6 +172,23 @@ custom_minimum_size = Vector2(0, 160)
 anchor_right = 1.0
 anchor_bottom = 1.0
 stretch_mode = 5
+
+[node name="EnemyPortraitFrame" type="TextureRect" parent="MarginContainer/VBoxContainer/PortraitRow/EnemyPortraitPanel"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+texture = ExtResource("15_kj4e1")
+stretch_mode = 5
+mouse_filter = 2
+
+[node name="EnemyFxCenter" type="CenterContainer" parent="MarginContainer/VBoxContainer/PortraitRow/EnemyPortraitPanel"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="EnemyHitFx" type="TextureRect" parent="MarginContainer/VBoxContainer/PortraitRow/EnemyPortraitPanel/EnemyFxCenter"]
+custom_minimum_size = Vector2(96, 96)
+texture = ExtResource("16_t5o0q")
+stretch_mode = 5
+visible = false
 
 [node name="EnemyHitFlash" type="ColorRect" parent="MarginContainer/VBoxContainer/PortraitRow/EnemyPortraitPanel"]
 anchor_right = 1.0
@@ -198,10 +265,12 @@ theme_override_constants/separation = 12
 
 [node name="EndTurnButton" type="Button" parent="MarginContainer/VBoxContainer/Actions"]
 text = "结束回合"
+icon = ExtResource("19_p2ivm")
 
 [node name="NextButton" type="Button" parent="MarginContainer/VBoxContainer/Actions"]
 text = "继续攀登"
 visible = false
+icon = ExtResource("20_trx2m")
 
 [node name="RewardOverlay" type="Control" parent="."]
 visible = false
@@ -239,15 +308,19 @@ theme_override_constants/separation = 8
 
 [node name="RewardAddButton" type="Button" parent="RewardOverlay/CenterContainer/RewardPanel/RewardMargin/RewardVBox/RewardOptions"]
 text = "获得新卡"
+icon = ExtResource("21_9h1wy")
 
 [node name="RewardUpgradeButton" type="Button" parent="RewardOverlay/CenterContainer/RewardPanel/RewardMargin/RewardVBox/RewardOptions"]
 text = "强化卡牌"
+icon = ExtResource("22_k4j8x")
 
 [node name="RewardRemoveButton" type="Button" parent="RewardOverlay/CenterContainer/RewardPanel/RewardMargin/RewardVBox/RewardOptions"]
 text = "移除卡牌"
+icon = ExtResource("23_7r0c1")
 
 [node name="RewardSkipButton" type="Button" parent="RewardOverlay/CenterContainer/RewardPanel/RewardMargin/RewardVBox/RewardOptions"]
 text = "跳过"
+icon = ExtResource("24_05s2n")
 
 [node name="RewardChoiceLabel" type="Label" parent="RewardOverlay/CenterContainer/RewardPanel/RewardMargin/RewardVBox"]
 text = "选择奖励"

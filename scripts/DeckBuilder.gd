@@ -2,9 +2,9 @@ extends Control
 
 const CARD_WIDGET_SCENE := preload("res://scenes/CardWidget.tscn")
 
-@onready var library_list: VBoxContainer = $MarginContainer/VBoxContainer/Content/LibraryPanel/LibraryScroll/LibraryList
-@onready var deck_list: VBoxContainer = $MarginContainer/VBoxContainer/Content/DeckPanel/DeckScroll/DeckList
-@onready var deck_count_label: Label = $MarginContainer/VBoxContainer/Content/DeckPanel/DeckCountLabel
+@onready var library_list: VBoxContainer = $MarginContainer/VBoxContainer/Content/LibraryPanel/LibraryMargin/LibraryVBox/LibraryScroll/LibraryList
+@onready var deck_list: VBoxContainer = $MarginContainer/VBoxContainer/Content/DeckPanel/DeckMargin/DeckVBox/DeckScroll/DeckList
+@onready var deck_count_label: Label = $MarginContainer/VBoxContainer/Content/DeckPanel/DeckMargin/DeckVBox/DeckCountLabel
 @onready var back_button: Button = $MarginContainer/VBoxContainer/Header/BackButton
 @onready var story_label: Label = $MarginContainer/VBoxContainer/StoryLabel
 

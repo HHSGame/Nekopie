@@ -20,7 +20,9 @@ const CARD_LIBRARY := {
 		"name": "斩击",
 		"cost": 1,
 		"damage": 6,
-		"art": "res://art/cards/icon_strike.svg",
+		"rarity": "common",
+		"icon": "res://art/cards/icon_strike.svg",
+		"art": "res://art/cards/card_art_strike.svg",
 		"desc": "造成6点伤害。"
 	},
 	"defend": {
@@ -28,7 +30,9 @@ const CARD_LIBRARY := {
 		"name": "格挡",
 		"cost": 1,
 		"block": 5,
-		"art": "res://art/cards/icon_defend.svg",
+		"rarity": "common",
+		"icon": "res://art/cards/icon_defend.svg",
+		"art": "res://art/cards/card_art_defend.svg",
 		"desc": "获得5点护甲。"
 	},
 	"flare": {
@@ -36,7 +40,9 @@ const CARD_LIBRARY := {
 		"name": "星火",
 		"cost": 2,
 		"damage": 10,
-		"art": "res://art/cards/icon_flare.svg",
+		"rarity": "rare",
+		"icon": "res://art/cards/icon_flare.svg",
+		"art": "res://art/cards/card_art_flare.svg",
 		"desc": "造成10点伤害。"
 	},
 	"focus": {
@@ -44,7 +50,9 @@ const CARD_LIBRARY := {
 		"name": "专注",
 		"cost": 1,
 		"draw": 2,
-		"art": "res://art/cards/icon_focus.svg",
+		"rarity": "uncommon",
+		"icon": "res://art/cards/icon_focus.svg",
+		"art": "res://art/cards/card_art_focus.svg",
 		"desc": "抽2张牌。"
 	},
 	"explore": {
@@ -52,7 +60,9 @@ const CARD_LIBRARY := {
 		"name": "踏勘",
 		"cost": 1,
 		"initiative": true,
-		"art": "res://art/cards/icon_explore.svg",
+		"rarity": "uncommon",
+		"icon": "res://art/cards/icon_explore.svg",
+		"art": "res://art/cards/card_art_explore.svg",
 		"desc": "查看山势，下场战斗先手造成%d点伤害。" % FIRST_STRIKE_DAMAGE
 	}
 }

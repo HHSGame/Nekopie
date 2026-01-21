@@ -27,6 +27,9 @@ A Godot 4.3 deck-building prototype set in an isekai adventure. The main goal is
 - Intent icons and stat icons are integrated into the combat UI.
 - Added illustrated portraits, card frames, and background art.
 - Added hit flash animations and basic sound effects.
+- Added scene frame overlays, title banners, and button icons.
+- Added per-card art placeholders, rarity gems, and hover glow effects.
+- Added portrait frames and slash/impact hit effects.
 
 ## Scene and Script Layout
 - `scenes/Main.tscn` + `scripts/Main.gd`: main menu and navigation.
@@ -37,13 +40,13 @@ A Godot 4.3 deck-building prototype set in an isekai adventure. The main goal is
 - `scripts/RunState.gd`: deck state and encounter progress.
 
 ## Current Gaps
-- No enemy intent telegraph UI beyond text labels.
 - No meta progression beyond per-run rewards.
-- No art/audio resources beyond placeholders.
+- Art and audio still rely on placeholder assets.
+- No advanced status effects or skill keywords beyond the basic card set.
 
 ## How to Run
 Open the project in Godot 4.3 and run the main scene at `res://scenes/Main.tscn`.
 
 ## Next Implementation Plan
-1. UI polish: combat UI, intent icons, card details, feedback, and animations.
-2. Persistence: run logging and save/load.
+1. Continue UI polish: richer panel styling, feedback animation tuning, and iconography refinement.
+2. Replace placeholder art/audio with open-licensed assets when available.

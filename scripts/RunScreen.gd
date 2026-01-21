@@ -24,7 +24,9 @@ const INTENT_ICONS := {
 @onready var player_portrait: TextureRect = $MarginContainer/VBoxContainer/PortraitRow/PlayerPortraitPanel/PlayerPortrait
 @onready var enemy_portrait: TextureRect = $MarginContainer/VBoxContainer/PortraitRow/EnemyPortraitPanel/EnemyPortrait
 @onready var player_hit_flash: ColorRect = $MarginContainer/VBoxContainer/PortraitRow/PlayerPortraitPanel/PlayerHitFlash
+@onready var player_hit_fx: TextureRect = $MarginContainer/VBoxContainer/PortraitRow/PlayerPortraitPanel/PlayerFxCenter/PlayerHitFx
 @onready var enemy_hit_flash: ColorRect = $MarginContainer/VBoxContainer/PortraitRow/EnemyPortraitPanel/EnemyHitFlash
+@onready var enemy_hit_fx: TextureRect = $MarginContainer/VBoxContainer/PortraitRow/EnemyPortraitPanel/EnemyFxCenter/EnemyHitFx
 @onready var player_hp_label: Label = $MarginContainer/VBoxContainer/PlayerPanel/PlayerHpLabel
 @onready var player_block_label: Label = $MarginContainer/VBoxContainer/PlayerPanel/PlayerBlockLabel
 @onready var energy_label: Label = $MarginContainer/VBoxContainer/PlayerPanel/EnergyLabel
@@ -47,6 +49,7 @@ const INTENT_ICONS := {
 @onready var reward_choice_container: HBoxContainer = $RewardOverlay/CenterContainer/RewardPanel/RewardMargin/RewardVBox/RewardChoiceScroll/RewardChoiceContainer
 @onready var reward_deck_scroll: ScrollContainer = $RewardOverlay/CenterContainer/RewardPanel/RewardMargin/RewardVBox/RewardDeckScroll
 @onready var reward_deck_list: VBoxContainer = $RewardOverlay/CenterContainer/RewardPanel/RewardMargin/RewardVBox/RewardDeckScroll/RewardDeckList
+@onready var reward_panel: PanelContainer = $RewardOverlay/CenterContainer/RewardPanel
 @onready var card_detail_panel: PanelContainer = $CardDetailPanel
 @onready var card_detail_name: Label = $CardDetailPanel/CardDetailMargin/CardDetailVBox/CardDetailName
 @onready var card_detail_cost: Label = $CardDetailPanel/CardDetailMargin/CardDetailVBox/CardDetailCost
@@ -76,6 +79,8 @@ var next_step := "encounter"
 var reward_mode := "none"
 var last_reward_mode := ""
 var reward_cards: Array = []
+var reward_overlay_active := false
+var reward_overlay_tween: Tween
 
 func _ready() -> void:
 	story_label.text = "你踏上 %s 的山道，魔物在雾中伺机。" % GameData.MOUNTAIN_NAME
@@ -87,6 +92,8 @@ func _ready() -> void:
 	reward_remove_button.pressed.connect(_on_reward_remove_pressed)
 	reward_skip_button.pressed.connect(_on_reward_skip_pressed)
 	card_detail_panel.visible = false
+	reward_overlay.modulate.a = 0.0
+	reward_overlay_active = reward_overlay.visible
 	_start_encounter()
 
 func _start_encounter() -> void:
@@ -158,7 +165,7 @@ func _update_ui() -> void:
 	discard_label.text = "弃牌堆：%d" % discard_pile.size()
 	end_turn_button.disabled = combat_over
 	var show_rewards := combat_over and not run_complete and next_step == "reward_options"
-	reward_overlay.visible = show_rewards
+	_set_reward_overlay_visible(show_rewards)
 	next_button.visible = combat_over and not show_rewards
 	if combat_over and next_button.visible:
 		if run_complete:
@@ -466,6 +473,24 @@ func _refresh_reward_ui() -> void:
 			_populate_reward_deck()
 		last_reward_mode = reward_mode
 
+func _set_reward_overlay_visible(active: bool) -> void:
+	if active == reward_overlay_active:
+		return
+	reward_overlay_active = active
+	if reward_overlay_tween:
+		reward_overlay_tween.kill()
+	if active:
+		reward_overlay.visible = true
+		reward_overlay.modulate.a = 0.0
+		reward_panel.scale = Vector2(0.96, 0.96)
+		reward_overlay_tween = create_tween()
+		reward_overlay_tween.tween_property(reward_overlay, "modulate:a", 1.0, 0.18).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+		reward_overlay_tween.tween_property(reward_panel, "scale", Vector2.ONE, 0.2).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	else:
+		reward_overlay_tween = create_tween()
+		reward_overlay_tween.tween_property(reward_overlay, "modulate:a", 0.0, 0.12).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+		reward_overlay_tween.tween_callback(func(): reward_overlay.visible = false)
+
 func _populate_reward_cards() -> void:
 	_clear_container(reward_choice_container)
 	if reward_cards.is_empty():
@@ -566,10 +591,12 @@ func _clear_container(container: Node) -> void:
 func _play_enemy_hit_effect() -> void:
 	_flash_rect(enemy_hit_flash, Color(1, 0.3, 0.3, 0.6))
 	_pulse_node(enemy_portrait, 1.05)
+	_play_hit_fx(enemy_hit_fx)
 
 func _play_player_hit_effect() -> void:
 	_flash_rect(player_hit_flash, Color(1, 0.4, 0.4, 0.6))
 	_pulse_node(player_portrait, 1.05)
+	_play_hit_fx(player_hit_fx)
 
 func _pulse_node(node: CanvasItem, scale_factor: float) -> void:
 	var tween := create_tween()
@@ -582,6 +609,19 @@ func _flash_rect(rect: ColorRect, color: Color) -> void:
 	var tween := create_tween()
 	tween.tween_property(rect, "color:a", 0.0, 0.2).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 	tween.tween_callback(func(): rect.visible = false)
+
+func _play_hit_fx(fx: TextureRect) -> void:
+	if not fx:
+		return
+	fx.visible = true
+	fx.modulate.a = 0.0
+	fx.scale = Vector2(0.8, 0.8)
+	fx.rotation = randf_range(-0.2, 0.2)
+	var tween := create_tween()
+	tween.tween_property(fx, "modulate:a", 1.0, 0.05).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	tween.tween_property(fx, "scale", Vector2.ONE, 0.1).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	tween.tween_property(fx, "modulate:a", 0.0, 0.18).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+	tween.tween_callback(func(): fx.visible = false)
 
 func _on_card_hovered(card_id: String) -> void:
 	var card_data := GameData.get_card_data(card_id, RunState.is_upgraded(card_id))

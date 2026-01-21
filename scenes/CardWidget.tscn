@@ -1,14 +1,24 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://scripts/CardWidget.gd" id="1_lgshh"]
 [ext_resource type="Theme" path="res://themes/default_theme.tres" id="2_s5q7b"]
 [ext_resource type="Texture2D" path="res://art/cards/card_frame.svg" id="3_8rs4x"]
 [ext_resource type="Texture2D" path="res://art/cards/card_art_placeholder.svg" id="4_gx2tu"]
+[ext_resource type="Texture2D" path="res://art/ui/card_glow.svg" id="5_5cypv"]
+[ext_resource type="Texture2D" path="res://art/ui/card_gem.svg" id="6_bv6m0"]
 
 [node name="CardWidget" type="PanelContainer"]
 custom_minimum_size = Vector2(220, 260)
 theme = ExtResource("2_s5q7b")
 script = ExtResource("1_lgshh")
+
+[node name="HoverGlow" type="TextureRect" parent="."]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+texture = ExtResource("5_5cypv")
+stretch_mode = 5
+mouse_filter = 2
 
 [node name="CardFrame" type="TextureRect" parent="."]
 anchor_right = 1.0
@@ -27,6 +37,13 @@ theme_override_constants/margin_bottom = 8
 theme_override_constants/separation = 6
 
 [node name="Header" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+theme_override_constants/separation = 6
+
+[node name="GemIcon" type="TextureRect" parent="MarginContainer/VBoxContainer/Header"]
+custom_minimum_size = Vector2(18, 18)
+texture = ExtResource("6_bv6m0")
+stretch_mode = 5
+mouse_filter = 2
 
 [node name="NameLabel" type="Label" parent="MarginContainer/VBoxContainer/Header"]
 text = "卡牌名称"
@@ -36,7 +53,12 @@ mouse_filter = 2
 [node name="CostLabel" type="Label" parent="MarginContainer/VBoxContainer/Header"]
 text = "费用 0"
 horizontal_alignment = 2
-size_flags_horizontal = 3
+size_flags_horizontal = 0
+mouse_filter = 2
+
+[node name="TypeIcon" type="TextureRect" parent="MarginContainer/VBoxContainer/Header"]
+custom_minimum_size = Vector2(18, 18)
+stretch_mode = 5
 mouse_filter = 2
 
 [node name="ArtTexture" type="TextureRect" parent="MarginContainer/VBoxContainer"]

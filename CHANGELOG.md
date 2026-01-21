@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-01-21
+- Added title banners and decorative scene frames across UI scenes.
+- Added button icons for menu, combat actions, and rewards.
+- Added panel styling adjustments in the deck builder.
+- Added per-card art placeholders, rarity gems, and hover glow for cards.
+- Added portrait frames and slash/impact hit effects in combat.
+- Added reward overlay fade/scale animation.
+- Added new UI/FX SVG assets for banners, gems, frames, and combat effects.
+- Expanded card data with rarity and icon fields plus new art references.
+
 ## 2026-01-20
 - Initialized the Godot 4.2 project with main menu, deck builder, and run flow scenes.
 - Added card data, starter deck, and run state management.

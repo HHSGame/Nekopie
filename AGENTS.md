@@ -4,6 +4,7 @@
 - Engine version: Godot 4.3.
 - Theme and goal: isekai adventure, climb a monster-filled mountain and reach the summit.
 - Card art stays as placeholder blocks for now.
+- Portraits should stay anime-styled and non-explicit; keep designs non-sexualized.
 
 ## Delivery Rules
 - After each task, update `PROJECT.md` with current status and next plan.
@@ -31,3 +32,5 @@
 - Combat UI uses HP bars and an intent color swatch in `RunScreen`.
 - Intent/stat icons live under `icons/` and are referenced by `RunScreen`.
 - Portraits, card art, and background textures live under `art/`.
+- Decorative UI assets (banners, frames, glows, FX) live under `art/ui` and `art/fx`.
+- Card data now includes `rarity` and `icon` fields for UI badges.

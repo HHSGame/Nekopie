@@ -1,8 +1,13 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=9 format=3]
 
 [ext_resource type="Script" path="res://scripts/DeckBuilder.gd" id="1_2u6gw"]
 [ext_resource type="Theme" path="res://themes/default_theme.tres" id="2_3x1o2"]
 [ext_resource type="Texture2D" path="res://art/backgrounds/mountain_bg.svg" id="3_5d1l8"]
+[ext_resource type="Texture2D" path="res://art/ui/title_banner.svg" id="4_8yw2n"]
+[ext_resource type="Texture2D" path="res://art/ui/scene_frame.svg" id="5_9g3s1"]
+[ext_resource type="Texture2D" path="res://icons/ui_back.svg" id="6_8m4uo"]
+[ext_resource type="Texture2D" path="res://icons/ui_add.svg" id="7_l9ss0"]
+[ext_resource type="Texture2D" path="res://icons/ui_deck.svg" id="8_ik9oq"]
 
 [node name="DeckBuilder" type="Control"]
 anchor_right = 1.0
@@ -21,6 +26,13 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 color = Color(0, 0, 0, 0.45)
 
+[node name="SceneFrame" type="TextureRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+texture = ExtResource("5_9g3s1")
+stretch_mode = 5
+mouse_filter = 2
+
 [node name="MarginContainer" type="MarginContainer" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -37,11 +49,25 @@ theme_override_constants/separation = 12
 
 [node name="BackButton" type="Button" parent="MarginContainer/VBoxContainer/Header"]
 text = "返回"
+icon = ExtResource("6_8m4uo")
 
-[node name="TitleLabel" type="Label" parent="MarginContainer/VBoxContainer/Header"]
-text = "卡组构筑"
+[node name="TitlePanel" type="Control" parent="MarginContainer/VBoxContainer/Header"]
+custom_minimum_size = Vector2(360, 56)
 size_flags_horizontal = 3
+
+[node name="TitleBanner" type="TextureRect" parent="MarginContainer/VBoxContainer/Header/TitlePanel"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+texture = ExtResource("4_8yw2n")
+stretch_mode = 5
+mouse_filter = 2
+
+[node name="TitleLabel" type="Label" parent="MarginContainer/VBoxContainer/Header/TitlePanel"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+text = "卡组构筑"
 horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="StoryLabel" type="Label" parent="MarginContainer/VBoxContainer"]
 text = "整理你的卡组，准备攀爬山巅。"
@@ -51,35 +77,67 @@ autowrap_mode = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 24
 
-[node name="LibraryPanel" type="VBoxContainer" parent="MarginContainer/VBoxContainer/Content"]
+[node name="LibraryPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer/Content"]
 size_flags_horizontal = 3
+
+[node name="LibraryMargin" type="MarginContainer" parent="MarginContainer/VBoxContainer/Content/LibraryPanel"]
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_bottom = 12
+
+[node name="LibraryVBox" type="VBoxContainer" parent="MarginContainer/VBoxContainer/Content/LibraryPanel/LibraryMargin"]
 theme_override_constants/separation = 8
 
-[node name="LibraryTitle" type="Label" parent="MarginContainer/VBoxContainer/Content/LibraryPanel"]
+[node name="LibraryTitleRow" type="HBoxContainer" parent="MarginContainer/VBoxContainer/Content/LibraryPanel/LibraryMargin/LibraryVBox"]
+theme_override_constants/separation = 6
+
+[node name="LibraryIcon" type="TextureRect" parent="MarginContainer/VBoxContainer/Content/LibraryPanel/LibraryMargin/LibraryVBox/LibraryTitleRow"]
+custom_minimum_size = Vector2(18, 18)
+texture = ExtResource("7_l9ss0")
+stretch_mode = 5
+
+[node name="LibraryTitle" type="Label" parent="MarginContainer/VBoxContainer/Content/LibraryPanel/LibraryMargin/LibraryVBox/LibraryTitleRow"]
 text = "卡池"
 
-[node name="LibraryScroll" type="ScrollContainer" parent="MarginContainer/VBoxContainer/Content/LibraryPanel"]
+[node name="LibraryScroll" type="ScrollContainer" parent="MarginContainer/VBoxContainer/Content/LibraryPanel/LibraryMargin/LibraryVBox"]
 size_flags_vertical = 3
 size_flags_horizontal = 3
 
-[node name="LibraryList" type="VBoxContainer" parent="MarginContainer/VBoxContainer/Content/LibraryPanel/LibraryScroll"]
+[node name="LibraryList" type="VBoxContainer" parent="MarginContainer/VBoxContainer/Content/LibraryPanel/LibraryMargin/LibraryVBox/LibraryScroll"]
 size_flags_horizontal = 3
 theme_override_constants/separation = 8
 
-[node name="DeckPanel" type="VBoxContainer" parent="MarginContainer/VBoxContainer/Content"]
+[node name="DeckPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer/Content"]
 size_flags_horizontal = 3
+
+[node name="DeckMargin" type="MarginContainer" parent="MarginContainer/VBoxContainer/Content/DeckPanel"]
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_bottom = 12
+
+[node name="DeckVBox" type="VBoxContainer" parent="MarginContainer/VBoxContainer/Content/DeckPanel/DeckMargin"]
 theme_override_constants/separation = 8
 
-[node name="DeckTitle" type="Label" parent="MarginContainer/VBoxContainer/Content/DeckPanel"]
+[node name="DeckTitleRow" type="HBoxContainer" parent="MarginContainer/VBoxContainer/Content/DeckPanel/DeckMargin/DeckVBox"]
+theme_override_constants/separation = 6
+
+[node name="DeckIcon" type="TextureRect" parent="MarginContainer/VBoxContainer/Content/DeckPanel/DeckMargin/DeckVBox/DeckTitleRow"]
+custom_minimum_size = Vector2(18, 18)
+texture = ExtResource("8_ik9oq")
+stretch_mode = 5
+
+[node name="DeckTitle" type="Label" parent="MarginContainer/VBoxContainer/Content/DeckPanel/DeckMargin/DeckVBox/DeckTitleRow"]
 text = "牌组"
 
-[node name="DeckCountLabel" type="Label" parent="MarginContainer/VBoxContainer/Content/DeckPanel"]
+[node name="DeckCountLabel" type="Label" parent="MarginContainer/VBoxContainer/Content/DeckPanel/DeckMargin/DeckVBox"]
 text = "牌组数量：0"
 
-[node name="DeckScroll" type="ScrollContainer" parent="MarginContainer/VBoxContainer/Content/DeckPanel"]
+[node name="DeckScroll" type="ScrollContainer" parent="MarginContainer/VBoxContainer/Content/DeckPanel/DeckMargin/DeckVBox"]
 size_flags_vertical = 3
 size_flags_horizontal = 3
 
-[node name="DeckList" type="VBoxContainer" parent="MarginContainer/VBoxContainer/Content/DeckPanel/DeckScroll"]
+[node name="DeckList" type="VBoxContainer" parent="MarginContainer/VBoxContainer/Content/DeckPanel/DeckMargin/DeckVBox/DeckScroll"]
 size_flags_horizontal = 3
 theme_override_constants/separation = 8
