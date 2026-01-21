@@ -10,6 +10,7 @@
 - Added new UI/FX SVG assets for banners, gems, frames, and combat effects.
 - Expanded card data with rarity and icon fields plus new art references.
 - Fixed scene frame scaling to avoid oversizing the viewport.
+- Reworked combat layout to dock the hand at the bottom and keep it visible.
 
 ## 2026-01-20
 - Initialized the Godot 4.2 project with main menu, deck builder, and run flow scenes.
