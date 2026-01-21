@@ -2,14 +2,14 @@
 
 [ext_resource type="Script" path="res://scripts/Main.gd" id="1_6y6v6"]
 [ext_resource type="Theme" path="res://themes/default_theme.tres" id="2_h1d0n"]
-[ext_resource type="Texture2D" path="res://art/backgrounds/mountain_bg.svg" id="3_h12p0"]
-[ext_resource type="Texture2D" path="res://art/ui/title_banner.svg" id="4_3r2x5"]
-[ext_resource type="Texture2D" path="res://art/ui/scene_frame.svg" id="5_43v7b"]
-[ext_resource type="Texture2D" path="res://icons/ui_start.svg" id="6_0nkdw"]
-[ext_resource type="Texture2D" path="res://icons/ui_continue.svg" id="7_jy3tl"]
-[ext_resource type="Texture2D" path="res://icons/ui_deck.svg" id="8_5kyo0"]
-[ext_resource type="Texture2D" path="res://icons/ui_remove.svg" id="9_8tt3d"]
-[ext_resource type="Texture2D" path="res://icons/ui_back.svg" id="10_l4b6w"]
+[ext_resource type="Texture2D" uid="uid://c5b15yy80o6if" path="res://art/backgrounds/mountain_bg.svg" id="3_h12p0"]
+[ext_resource type="Texture2D" uid="uid://bpuhc8w2sgxws" path="res://art/ui/title_banner.svg" id="4_3r2x5"]
+[ext_resource type="Texture2D" uid="uid://b4xbgr0hsb3ab" path="res://art/ui/scene_frame.svg" id="5_43v7b"]
+[ext_resource type="Texture2D" uid="uid://d3xuvyy60blwi" path="res://icons/ui_start.svg" id="6_0nkdw"]
+[ext_resource type="Texture2D" uid="uid://bksp341gf2x35" path="res://icons/ui_continue.svg" id="7_jy3tl"]
+[ext_resource type="Texture2D" uid="uid://dbhwen63btewv" path="res://icons/ui_deck.svg" id="8_5kyo0"]
+[ext_resource type="Texture2D" uid="uid://ogrfyvh1dnm7" path="res://icons/ui_remove.svg" id="9_8tt3d"]
+[ext_resource type="Texture2D" uid="uid://sliv3q2ppulc" path="res://icons/ui_back.svg" id="10_l4b6w"]
 
 [node name="Main" type="Control"]
 layout_mode = 3
@@ -38,9 +38,10 @@ color = Color(0, 0, 0, 0.45)
 layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
-texture = ExtResource("5_43v7b")
-stretch_mode = 5
 mouse_filter = 2
+texture = ExtResource("5_43v7b")
+expand_mode = 1
+stretch_mode = 1
 
 [node name="CenterContainer" type="CenterContainer" parent="."]
 layout_mode = 0
@@ -53,24 +54,24 @@ theme_override_constants/separation = 16
 alignment = 1
 
 [node name="TitlePanel" type="Control" parent="CenterContainer/VBoxContainer"]
-layout_mode = 2
 custom_minimum_size = Vector2(560, 72)
+layout_mode = 2
 
 [node name="TitleBanner" type="TextureRect" parent="CenterContainer/VBoxContainer/TitlePanel"]
 layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
+mouse_filter = 2
 texture = ExtResource("4_3r2x5")
 stretch_mode = 5
-mouse_filter = 2
 
 [node name="TitleLabel" type="Label" parent="CenterContainer/VBoxContainer/TitlePanel"]
 layout_mode = 2
+anchor_right = 1.0
+anchor_bottom = 1.0
 text = "异世界冒险：隐魔之岭"
 horizontal_alignment = 1
 vertical_alignment = 1
-anchor_right = 1.0
-anchor_bottom = 1.0
 
 [node name="StoryLabel" type="Label" parent="CenterContainer/VBoxContainer"]
 layout_mode = 2

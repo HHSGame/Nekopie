@@ -30,6 +30,7 @@ A Godot 4.3 deck-building prototype set in an isekai adventure. The main goal is
 - Added scene frame overlays, title banners, and button icons.
 - Added per-card art placeholders, rarity gems, and hover glow effects.
 - Added portrait frames and slash/impact hit effects.
+- Adjusted scene frame scaling to fit within the viewport.
 
 ## Scene and Script Layout
 - `scenes/Main.tscn` + `scripts/Main.gd`: main menu and navigation.
