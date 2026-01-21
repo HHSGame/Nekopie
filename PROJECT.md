@@ -24,6 +24,7 @@ A Godot 4.3 deck-building prototype set in an isekai adventure. The main goal is
 - Persistence: save/load run state and log key events to `user://savegame.json`.
 - Main menu shows save summary and allows clearing saves.
 - Combat UI includes HP bars and intent color swatches.
+- Intent icons and stat icons are integrated into the combat UI.
 
 ## Scene and Script Layout
 - `scenes/Main.tscn` + `scripts/Main.gd`: main menu and navigation.

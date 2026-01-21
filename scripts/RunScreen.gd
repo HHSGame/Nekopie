@@ -3,6 +3,13 @@ extends Control
 const CARD_WIDGET_SCENE := preload("res://scenes/CardWidget.tscn")
 const HAND_SIZE := 5
 const ENERGY_PER_TURN := 3
+const INTENT_ICONS := {
+	"attack": preload("res://icons/intent_attack.svg"),
+	"multi_attack": preload("res://icons/intent_multi.svg"),
+	"guard": preload("res://icons/intent_guard.svg"),
+	"charge": preload("res://icons/intent_charge.svg"),
+	"drain": preload("res://icons/intent_drain.svg")
+}
 
 @onready var story_label: Label = $MarginContainer/VBoxContainer/StoryLabel
 @onready var progress_label: Label = $MarginContainer/VBoxContainer/ProgressLabel
@@ -11,7 +18,8 @@ const ENERGY_PER_TURN := 3
 @onready var enemy_hp_bar: ProgressBar = $MarginContainer/VBoxContainer/EnemyPanel/EnemyHpBar
 @onready var enemy_block_label: Label = $MarginContainer/VBoxContainer/EnemyPanel/EnemyBlockLabel
 @onready var enemy_intent_swatch: ColorRect = $MarginContainer/VBoxContainer/EnemyPanel/EnemyIntentSwatch
-@onready var enemy_intent_label: Label = $MarginContainer/VBoxContainer/EnemyPanel/EnemyIntentLabel
+@onready var enemy_intent_icon: TextureRect = $MarginContainer/VBoxContainer/EnemyPanel/EnemyIntentRow/EnemyIntentIcon
+@onready var enemy_intent_label: Label = $MarginContainer/VBoxContainer/EnemyPanel/EnemyIntentRow/EnemyIntentLabel
 @onready var enemy_desc_label: Label = $MarginContainer/VBoxContainer/EnemyPanel/EnemyDescLabel
 @onready var player_hp_label: Label = $MarginContainer/VBoxContainer/PlayerPanel/PlayerHpLabel
 @onready var player_block_label: Label = $MarginContainer/VBoxContainer/PlayerPanel/PlayerBlockLabel
@@ -128,6 +136,8 @@ func _update_ui() -> void:
 	var intent_color := _intent_color(current_intent)
 	enemy_intent_label.add_theme_color_override("font_color", intent_color)
 	enemy_intent_swatch.color = intent_color
+	enemy_intent_icon.texture = _intent_icon(current_intent)
+	enemy_intent_icon.modulate = intent_color
 	player_hp_label.text = "生命：%d / %d" % [RunState.player_hp, RunState.player_max_hp]
 	player_hp_bar.max_value = max(RunState.player_max_hp, 1)
 	player_hp_bar.value = RunState.player_hp
@@ -559,3 +569,7 @@ func _intent_color(intent: Dictionary) -> Color:
 		"drain":
 			return Color(0.75, 0.5, 0.95)
 	return Color(1, 1, 1)
+
+func _intent_icon(intent: Dictionary) -> Texture2D:
+	var intent_type: String = str(intent.get("type", "attack"))
+	return INTENT_ICONS.get(intent_type, INTENT_ICONS["attack"])
