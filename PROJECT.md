@@ -20,6 +20,7 @@ A Godot 4.3 deck-building prototype set in an isekai adventure. The main goal is
 - Reward selection is presented as a modal overlay (no scroll in main UI).
 - Reward selection lists have fixed minimum heights to avoid collapsing.
 - Card hover shows a detail panel in combat/reward screens.
+- Reward selection list rendering is stabilized for upgrade/add flows.
 
 ## Scene and Script Layout
 - `scenes/Main.tscn` + `scripts/Main.gd`: main menu and navigation.

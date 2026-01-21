@@ -416,13 +416,13 @@ func _populate_reward_cards() -> void:
 	if reward_cards.is_empty():
 		reward_cards = _roll_reward_cards()
 	for card_id in reward_cards:
-	var card_data := GameData.get_card_data(card_id, false)
-	var widget: CardWidget = CARD_WIDGET_SCENE.instantiate()
-	widget.set_card(card_data)
-	widget.clicked.connect(_on_reward_card_selected)
-	widget.hovered.connect(_on_card_hovered)
-	widget.unhovered.connect(_on_card_unhovered)
-	reward_choice_container.add_child(widget)
+		var card_data := GameData.get_card_data(card_id, false)
+		var widget: CardWidget = CARD_WIDGET_SCENE.instantiate()
+		widget.set_card(card_data)
+		widget.clicked.connect(_on_reward_card_selected)
+		widget.hovered.connect(_on_card_hovered)
+		widget.unhovered.connect(_on_card_unhovered)
+		reward_choice_container.add_child(widget)
 
 func _roll_reward_cards(count: int = 3) -> Array:
 	var card_ids: Array = GameData.all_card_ids()
