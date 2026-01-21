@@ -23,3 +23,4 @@
 - Fixed reward list containers to ensure upgrade/remove options render.
 - Added card hover detail panel and colored intent text.
 - Fixed reward list rendering indentation bug in `RunScreen`.
+- Fixed card list rendering indentation errors in `RunScreen`.

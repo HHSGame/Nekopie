@@ -143,13 +143,13 @@ func _refresh_hand() -> void:
 		child.queue_free()
 	for index in hand.size():
 		var card_id: String = hand[index]
-	var card_data := GameData.get_card_data(card_id, RunState.is_upgraded(card_id))
-	var widget: CardWidget = CARD_WIDGET_SCENE.instantiate()
-	widget.set_card(card_data)
-	widget.clicked.connect(_on_hand_card_clicked.bind(index))
-	widget.hovered.connect(_on_card_hovered)
-	widget.unhovered.connect(_on_card_unhovered)
-	hand_container.add_child(widget)
+		var card_data := GameData.get_card_data(card_id, RunState.is_upgraded(card_id))
+		var widget: CardWidget = CARD_WIDGET_SCENE.instantiate()
+		widget.set_card(card_data)
+		widget.clicked.connect(_on_hand_card_clicked.bind(index))
+		widget.hovered.connect(_on_card_hovered)
+		widget.unhovered.connect(_on_card_unhovered)
+		hand_container.add_child(widget)
 
 func _draw_cards(count: int) -> void:
 	for i in count:
@@ -440,13 +440,13 @@ func _populate_reward_deck() -> void:
 		if reward_mode == "upgrade" and RunState.is_upgraded(card_id):
 			continue
 		any_available = true
-	var card_data := GameData.get_card_data(card_id, RunState.is_upgraded(card_id))
-	var widget: CardWidget = CARD_WIDGET_SCENE.instantiate()
-	widget.set_card(card_data)
-	widget.clicked.connect(_on_reward_deck_card_selected.bind(index))
-	widget.hovered.connect(_on_card_hovered)
-	widget.unhovered.connect(_on_card_unhovered)
-	reward_deck_list.add_child(widget)
+		var card_data := GameData.get_card_data(card_id, RunState.is_upgraded(card_id))
+		var widget: CardWidget = CARD_WIDGET_SCENE.instantiate()
+		widget.set_card(card_data)
+		widget.clicked.connect(_on_reward_deck_card_selected.bind(index))
+		widget.hovered.connect(_on_card_hovered)
+		widget.unhovered.connect(_on_card_unhovered)
+		reward_deck_list.add_child(widget)
 	if not any_available:
 		if reward_mode == "upgrade":
 			result_label.text = "没有可强化的卡牌。"
