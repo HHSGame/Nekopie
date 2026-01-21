@@ -26,3 +26,4 @@
 - Reward selection uses a modal overlay to avoid stacking in the main UI.
 - Reward list containers require a minimum height to stay visible.
 - Card hover detail panel lives in `RunScreen` and uses `CardWidget` hover signals.
+- Run persistence uses `RunState.save_run/load_run` and logs events to `user://savegame.json`.

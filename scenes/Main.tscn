@@ -50,6 +50,10 @@ autowrap_mode = 3
 layout_mode = 2
 text = "开始征途"
 
+[node name="ContinueButton" type="Button" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
+text = "继续冒险"
+
 [node name="DeckButton" type="Button" parent="CenterContainer/VBoxContainer"]
 layout_mode = 2
 text = "卡组构筑"

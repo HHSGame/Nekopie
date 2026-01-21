@@ -24,3 +24,4 @@
 - Added card hover detail panel and colored intent text.
 - Fixed reward list rendering indentation bug in `RunScreen`.
 - Fixed card list rendering indentation errors in `RunScreen`.
+- Added save/load support for run state with event logging.

@@ -98,16 +98,19 @@ func _start_encounter() -> void:
 	_set_next_intent()
 	pending_event = {}
 	next_step = "encounter"
+	RunState.log_event("遭遇魔物：%s" % enemy_data.get("name", "未知魔物"))
 	if RunState.next_encounter_first_strike:
 		var strike_damage := GameData.FIRST_STRIKE_DAMAGE + RunState.next_encounter_first_strike_bonus
 		enemy_hp = max(enemy_hp - strike_damage, 0)
 		RunState.next_encounter_first_strike = false
 		RunState.next_encounter_first_strike_bonus = 0
 		result_label.text = "你先手出击，对魔物造成%d点伤害。" % strike_damage
+		RunState.log_event("先手出击造成%d点伤害。" % strike_damage)
 	else:
 		result_label.text = "遭遇了新的魔物，准备战斗。"
 	_draw_cards(HAND_SIZE)
 	_update_ui()
+	RunState.save_run()
 
 func _update_ui() -> void:
 	var progress_current: int = int(min(RunState.encounters_completed + 1, RunState.max_encounters))
@@ -175,6 +178,7 @@ func _on_hand_card_clicked(card_id: String, index: int) -> void:
 	discard_pile.append(card_id)
 	_check_enemy_defeat()
 	_update_ui()
+	RunState.save_run()
 
 func _apply_card_effect(card_data: Dictionary) -> void:
 	var damage := int(card_data.get("damage", 0))
@@ -199,6 +203,7 @@ func _apply_card_effect(card_data: Dictionary) -> void:
 		RunState.next_encounter_first_strike = true
 		RunState.next_encounter_first_strike_bonus += int(card_data.get("initiative_bonus", 0))
 		result_label.text = "你踏勘山势，下场战斗将先手出击。"
+		RunState.log_event("踏勘山势，获得先手优势。")
 
 func _remove_card_from_hand(card_id: String, index: int) -> void:
 	if index >= 0 and index < hand.size() and hand[index] == card_id:
@@ -221,6 +226,7 @@ func _on_end_turn_pressed() -> void:
 	_draw_cards(HAND_SIZE)
 	result_label.text = "魔物行动结束，你继续攀登。"
 	_update_ui()
+	RunState.save_run()
 
 func _discard_hand() -> void:
 	for card_id in hand:
@@ -234,6 +240,7 @@ func _enemy_turn() -> void:
 		combat_over = true
 		run_complete = true
 		result_label.text = "你在山道上倒下，征途告终。"
+		RunState.log_event("你在山道上倒下。")
 		return
 	if not combat_over:
 		_set_next_intent()
@@ -244,7 +251,9 @@ func _check_enemy_defeat() -> void:
 		run_complete = RunState.complete_encounter()
 		if run_complete:
 			result_label.text = "你征服了 %s，登顶通关！" % GameData.MOUNTAIN_NAME
+			RunState.log_event("登顶通关，征服 %s。" % GameData.MOUNTAIN_NAME)
 		else:
+			RunState.log_event("击退了 %s。" % enemy_data.get("name", "魔物"))
 			_queue_post_battle_step()
 
 func _on_next_pressed() -> void:
@@ -353,6 +362,7 @@ func _queue_post_battle_step() -> void:
 		pending_event.get("name", "事件"),
 		pending_event.get("desc", "")
 	]
+	RunState.log_event("触发事件：%s。" % pending_event.get("name", "事件"))
 
 func _apply_event(event_data: Dictionary) -> void:
 	var effect: String = str(event_data.get("effect", ""))
@@ -363,12 +373,15 @@ func _apply_event(event_data: Dictionary) -> void:
 			RunState.player_hp = min(RunState.player_hp + value, RunState.player_max_hp)
 			var healed: int = RunState.player_hp - before
 			result_label.text = "你恢复了%d点生命。" % healed
+			RunState.log_event("事件恢复生命 %d。" % healed)
 		"damage":
 			RunState.player_hp = max(RunState.player_hp - value, 0)
 			result_label.text = "你受到%d点伤害。" % value
+			RunState.log_event("事件受到伤害 %d。" % value)
 			if RunState.player_hp <= 0:
 				run_complete = true
 				result_label.text = "你在山道上倒下，征途告终。"
+				RunState.log_event("事件中倒下。")
 		"card":
 			var card_id: String = GameData.get_random_card_id()
 			if card_id.is_empty():
@@ -377,8 +390,10 @@ func _apply_event(event_data: Dictionary) -> void:
 				RunState.deck.append(card_id)
 				var card_name: String = str(GameData.get_card_data(card_id, false).get("name", "新卡牌"))
 				result_label.text = "你获得了一张卡牌：%s。" % card_name
+				RunState.log_event("事件获得卡牌：%s。" % card_name)
 		_:
 			result_label.text = "事件无事发生。"
+			RunState.log_event("事件无事发生。")
 	if RunState.player_hp > 0 and not run_complete:
 		_enter_reward_options()
 
@@ -388,6 +403,7 @@ func _enter_reward_options() -> void:
 	last_reward_mode = ""
 	reward_cards.clear()
 	_refresh_reward_ui()
+	RunState.save_run()
 
 func _refresh_reward_ui() -> void:
 	reward_options.visible = reward_mode == "options"
@@ -473,12 +489,14 @@ func _on_reward_remove_pressed() -> void:
 
 func _on_reward_skip_pressed() -> void:
 	result_label.text = "你放弃了战利品。"
+	RunState.log_event("放弃了战利品。")
 	_start_encounter()
 
 func _on_reward_card_selected(card_id: String) -> void:
 	RunState.deck.append(card_id)
 	var card_name: String = str(GameData.get_card_data(card_id, false).get("name", "新卡牌"))
 	result_label.text = "你获得了一张卡牌：%s。" % card_name
+	RunState.log_event("获得新卡：%s。" % card_name)
 	_start_encounter()
 
 func _on_reward_deck_card_selected(card_id: String, index: int) -> void:
@@ -487,12 +505,14 @@ func _on_reward_deck_card_selected(card_id: String, index: int) -> void:
 			RunState.deck.remove_at(index)
 		var card_name: String = str(GameData.get_card_data(card_id, RunState.is_upgraded(card_id)).get("name", "卡牌"))
 		result_label.text = "已移除卡牌：%s。" % card_name
+		RunState.log_event("移除卡牌：%s。" % card_name)
 		_start_encounter()
 		return
 	if reward_mode == "upgrade":
 		RunState.upgrade_card(card_id)
 		var card_name: String = str(GameData.get_card_data(card_id, true).get("name", "卡牌"))
 		result_label.text = "已强化卡牌：%s。" % card_name
+		RunState.log_event("强化卡牌：%s。" % card_name)
 		_start_encounter()
 		return
 
