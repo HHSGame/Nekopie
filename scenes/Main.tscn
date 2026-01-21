@@ -54,6 +54,16 @@ text = "开始征途"
 layout_mode = 2
 text = "继续冒险"
 
+[node name="SaveInfoLabel" type="Label" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
+text = "暂无存档。"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="ClearSaveButton" type="Button" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
+text = "清除存档"
+
 [node name="DeckButton" type="Button" parent="CenterContainer/VBoxContainer"]
 layout_mode = 2
 text = "卡组构筑"

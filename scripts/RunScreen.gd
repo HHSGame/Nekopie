@@ -241,6 +241,8 @@ func _enemy_turn() -> void:
 		run_complete = true
 		result_label.text = "你在山道上倒下，征途告终。"
 		RunState.log_event("你在山道上倒下。")
+		RunState.run_active = false
+		RunState.save_run()
 		return
 	if not combat_over:
 		_set_next_intent()
@@ -252,6 +254,8 @@ func _check_enemy_defeat() -> void:
 		if run_complete:
 			result_label.text = "你征服了 %s，登顶通关！" % GameData.MOUNTAIN_NAME
 			RunState.log_event("登顶通关，征服 %s。" % GameData.MOUNTAIN_NAME)
+			RunState.run_active = false
+			RunState.save_run()
 		else:
 			RunState.log_event("击退了 %s。" % enemy_data.get("name", "魔物"))
 			_queue_post_battle_step()

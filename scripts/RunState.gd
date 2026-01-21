@@ -77,6 +77,32 @@ func log_event(message: String) -> void:
 func has_save() -> bool:
 	return FileAccess.file_exists(SAVE_PATH)
 
+func get_save_summary() -> Dictionary:
+	if not FileAccess.file_exists(SAVE_PATH):
+		return {}
+	var file := FileAccess.open(SAVE_PATH, FileAccess.READ)
+	if not file:
+		return {}
+	var content := file.get_as_text()
+	file.close()
+	var parsed = JSON.parse_string(content)
+	if typeof(parsed) != TYPE_DICTIONARY:
+		return {}
+	var data: Dictionary = parsed
+	var log_entries: Array = Array(data.get("run_log", []))
+	var last_message := ""
+	if not log_entries.is_empty():
+		var last_entry: Dictionary = log_entries.back()
+		last_message = str(last_entry.get("message", ""))
+	return {
+		"run_active": bool(data.get("run_active", false)),
+		"encounters_completed": int(data.get("encounters_completed", 0)),
+		"max_encounters": int(data.get("max_encounters", 0)),
+		"player_hp": int(data.get("player_hp", 0)),
+		"player_max_hp": int(data.get("player_max_hp", 0)),
+		"last_event": last_message
+	}
+
 func save_run() -> void:
 	var data := {
 		"deck": deck,

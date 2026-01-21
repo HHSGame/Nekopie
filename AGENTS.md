@@ -27,3 +27,4 @@
 - Reward list containers require a minimum height to stay visible.
 - Card hover detail panel lives in `RunScreen` and uses `CardWidget` hover signals.
 - Run persistence uses `RunState.save_run/load_run` and logs events to `user://savegame.json`.
+- Main menu shows save summary and exposes a clear-save action.
