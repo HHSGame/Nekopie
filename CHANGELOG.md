@@ -15,6 +15,7 @@
 - Reduced combat layout heights to keep enemy/status panels visible alongside the hand dock.
 - Rebuilt the RunScreen layout to follow a Slay the Spire-style combat arrangement.
 - Adjusted portrait frame proportions and tightened combat panel sizing.
+- Anchored the hand dock to the viewport bottom to keep it visible at all times.
 
 ## 2026-01-20
 - Initialized the Godot 4.2 project with main menu, deck builder, and run flow scenes.
