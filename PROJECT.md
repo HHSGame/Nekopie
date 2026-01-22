@@ -35,6 +35,7 @@ A Godot 4.3 deck-building prototype set in an isekai adventure. The main goal is
 - Tracked Godot import metadata for UI and FX assets.
 - Tightened RunScreen layout spacing to keep enemy and status panels visible.
 - Rebuilt the combat layout to match Slay the Spire's top-center enemy and bottom hand flow.
+- Squared portrait frames and resized battle panels to reduce distortion.
 
 ## Scene and Script Layout
 - `scenes/Main.tscn` + `scripts/Main.gd`: main menu and navigation.

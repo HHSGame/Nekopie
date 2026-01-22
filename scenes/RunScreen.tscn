@@ -30,6 +30,8 @@ layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 theme = ExtResource("2_xk0w6")
 script = ExtResource("1_3jvb6")
 
@@ -56,6 +58,7 @@ expand_mode = 1
 stretch_mode = 1
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 theme_override_constants/margin_left = 16
@@ -64,19 +67,24 @@ theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 16
 
 [node name="RootVBox" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
 theme_override_constants/separation = 8
 
 [node name="HeaderRow" type="HBoxContainer" parent="MarginContainer/RootVBox"]
+layout_mode = 2
 theme_override_constants/separation = 12
 
 [node name="BackButton" type="Button" parent="MarginContainer/RootVBox/HeaderRow"]
+layout_mode = 2
 text = "返回"
 icon = ExtResource("18_0e8pe")
 
 [node name="TitlePanel" type="Control" parent="MarginContainer/RootVBox/HeaderRow"]
 custom_minimum_size = Vector2(360, 56)
+layout_mode = 2
 
 [node name="TitleBanner" type="TextureRect" parent="MarginContainer/RootVBox/HeaderRow/TitlePanel"]
+layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
@@ -84,6 +92,7 @@ texture = ExtResource("14_mr2or")
 stretch_mode = 5
 
 [node name="TitleLabel" type="Label" parent="MarginContainer/RootVBox/HeaderRow/TitlePanel"]
+layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 text = "攀登旅程"
@@ -91,222 +100,254 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="HeaderSpacer" type="Control" parent="MarginContainer/RootVBox/HeaderRow"]
+layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="ProgressLabel" type="Label" parent="MarginContainer/RootVBox/HeaderRow"]
+layout_mode = 2
 text = "攀登进度：0 / 0"
 horizontal_alignment = 2
 
 [node name="StoryLabel" type="Label" parent="MarginContainer/RootVBox"]
+layout_mode = 2
 text = "旅程开始。"
 autowrap_mode = 3
-max_lines = 1
 
 [node name="BattleArea" type="VBoxContainer" parent="MarginContainer/RootVBox"]
+layout_mode = 2
 size_flags_vertical = 3
-theme_override_constants/separation = 12
+theme_override_constants/separation = 8
 
 [node name="EnemyRow" type="HBoxContainer" parent="MarginContainer/RootVBox/BattleArea"]
+layout_mode = 2
 theme_override_constants/separation = 16
 
 [node name="EnemyPortraitPanel" type="PanelContainer" parent="MarginContainer/RootVBox/BattleArea/EnemyRow"]
-custom_minimum_size = Vector2(260, 180)
+custom_minimum_size = Vector2(200, 200)
+layout_mode = 2
 
 [node name="EnemyPortrait" type="TextureRect" parent="MarginContainer/RootVBox/BattleArea/EnemyRow/EnemyPortraitPanel"]
-anchor_right = 1.0
-anchor_bottom = 1.0
+layout_mode = 2
 stretch_mode = 5
 
 [node name="EnemyPortraitFrame" type="TextureRect" parent="MarginContainer/RootVBox/BattleArea/EnemyRow/EnemyPortraitPanel"]
-anchor_right = 1.0
-anchor_bottom = 1.0
+layout_mode = 2
 mouse_filter = 2
 texture = ExtResource("15_kj4e1")
 stretch_mode = 5
 
 [node name="EnemyFxCenter" type="CenterContainer" parent="MarginContainer/RootVBox/BattleArea/EnemyRow/EnemyPortraitPanel"]
-anchor_right = 1.0
-anchor_bottom = 1.0
+layout_mode = 2
 
 [node name="EnemyHitFx" type="TextureRect" parent="MarginContainer/RootVBox/BattleArea/EnemyRow/EnemyPortraitPanel/EnemyFxCenter"]
 visible = false
 custom_minimum_size = Vector2(96, 96)
+layout_mode = 2
 texture = ExtResource("16_t5o0q")
 stretch_mode = 5
 
 [node name="EnemyHitFlash" type="ColorRect" parent="MarginContainer/RootVBox/BattleArea/EnemyRow/EnemyPortraitPanel"]
 visible = false
-anchor_right = 1.0
-anchor_bottom = 1.0
+layout_mode = 2
 color = Color(1, 0.3, 0.3, 0)
 
 [node name="EnemyInfo" type="VBoxContainer" parent="MarginContainer/RootVBox/BattleArea/EnemyRow"]
+layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 4
 
 [node name="EnemyNameLabel" type="Label" parent="MarginContainer/RootVBox/BattleArea/EnemyRow/EnemyInfo"]
+layout_mode = 2
 text = "敌人：未知魔物"
 
 [node name="EnemyHpLabel" type="Label" parent="MarginContainer/RootVBox/BattleArea/EnemyRow/EnemyInfo"]
+layout_mode = 2
 text = "敌人生命：0"
 
 [node name="EnemyHpBar" type="ProgressBar" parent="MarginContainer/RootVBox/BattleArea/EnemyRow/EnemyInfo"]
 custom_minimum_size = Vector2(0, 12)
+layout_mode = 2
 max_value = 1.0
 value = 1.0
 show_percentage = false
 
 [node name="EnemyBlockLabel" type="Label" parent="MarginContainer/RootVBox/BattleArea/EnemyRow/EnemyInfo"]
+layout_mode = 2
 text = "敌人护甲：0"
 
 [node name="EnemyIntentRow" type="HBoxContainer" parent="MarginContainer/RootVBox/BattleArea/EnemyRow/EnemyInfo"]
+layout_mode = 2
 theme_override_constants/separation = 6
 
 [node name="EnemyIntentIcon" type="TextureRect" parent="MarginContainer/RootVBox/BattleArea/EnemyRow/EnemyInfo/EnemyIntentRow"]
 custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
 texture = ExtResource("3_0s1dd")
 stretch_mode = 5
 
 [node name="EnemyIntentLabel" type="Label" parent="MarginContainer/RootVBox/BattleArea/EnemyRow/EnemyInfo/EnemyIntentRow"]
+layout_mode = 2
 text = "意图：未知"
 
 [node name="EnemyIntentSwatch" type="ColorRect" parent="MarginContainer/RootVBox/BattleArea/EnemyRow/EnemyInfo"]
 custom_minimum_size = Vector2(0, 6)
-color = Color(1, 1, 1, 1)
+layout_mode = 2
 
 [node name="EnemyDescLabel" type="Label" parent="MarginContainer/RootVBox/BattleArea/EnemyRow/EnemyInfo"]
+layout_mode = 2
 text = "敌人描述"
 autowrap_mode = 3
-max_lines = 2
 
 [node name="PlayerRow" type="HBoxContainer" parent="MarginContainer/RootVBox/BattleArea"]
+layout_mode = 2
 theme_override_constants/separation = 16
 
 [node name="PlayerPortraitPanel" type="PanelContainer" parent="MarginContainer/RootVBox/BattleArea/PlayerRow"]
-custom_minimum_size = Vector2(220, 160)
+custom_minimum_size = Vector2(180, 180)
+layout_mode = 2
 
 [node name="PlayerPortrait" type="TextureRect" parent="MarginContainer/RootVBox/BattleArea/PlayerRow/PlayerPortraitPanel"]
-anchor_right = 1.0
-anchor_bottom = 1.0
+layout_mode = 2
 stretch_mode = 5
 
 [node name="PlayerPortraitFrame" type="TextureRect" parent="MarginContainer/RootVBox/BattleArea/PlayerRow/PlayerPortraitPanel"]
-anchor_right = 1.0
-anchor_bottom = 1.0
+layout_mode = 2
 mouse_filter = 2
 texture = ExtResource("15_kj4e1")
 stretch_mode = 5
 
 [node name="PlayerFxCenter" type="CenterContainer" parent="MarginContainer/RootVBox/BattleArea/PlayerRow/PlayerPortraitPanel"]
-anchor_right = 1.0
-anchor_bottom = 1.0
+layout_mode = 2
 
 [node name="PlayerHitFx" type="TextureRect" parent="MarginContainer/RootVBox/BattleArea/PlayerRow/PlayerPortraitPanel/PlayerFxCenter"]
 visible = false
 custom_minimum_size = Vector2(96, 96)
+layout_mode = 2
 texture = ExtResource("17_9xo3o")
 stretch_mode = 5
 
 [node name="PlayerHitFlash" type="ColorRect" parent="MarginContainer/RootVBox/BattleArea/PlayerRow/PlayerPortraitPanel"]
 visible = false
-anchor_right = 1.0
-anchor_bottom = 1.0
+layout_mode = 2
 color = Color(1, 0.3, 0.3, 0)
 
 [node name="PlayerInfo" type="VBoxContainer" parent="MarginContainer/RootVBox/BattleArea/PlayerRow"]
+layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 6
 
 [node name="PlayerPanel" type="HBoxContainer" parent="MarginContainer/RootVBox/BattleArea/PlayerRow/PlayerInfo"]
+layout_mode = 2
 theme_override_constants/separation = 12
 
 [node name="PlayerHpIcon" type="TextureRect" parent="MarginContainer/RootVBox/BattleArea/PlayerRow/PlayerInfo/PlayerPanel"]
 custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
 texture = ExtResource("4_4p8o1")
 stretch_mode = 5
 
 [node name="PlayerHpLabel" type="Label" parent="MarginContainer/RootVBox/BattleArea/PlayerRow/PlayerInfo/PlayerPanel"]
+layout_mode = 2
 text = "生命：0 / 0"
 
 [node name="PlayerBlockIcon" type="TextureRect" parent="MarginContainer/RootVBox/BattleArea/PlayerRow/PlayerInfo/PlayerPanel"]
 custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
 texture = ExtResource("5_3xv2u")
 stretch_mode = 5
 
 [node name="PlayerBlockLabel" type="Label" parent="MarginContainer/RootVBox/BattleArea/PlayerRow/PlayerInfo/PlayerPanel"]
+layout_mode = 2
 text = "护甲：0"
 
 [node name="EnergyIcon" type="TextureRect" parent="MarginContainer/RootVBox/BattleArea/PlayerRow/PlayerInfo/PlayerPanel"]
 custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
 texture = ExtResource("6_3i9em")
 stretch_mode = 5
 
 [node name="EnergyLabel" type="Label" parent="MarginContainer/RootVBox/BattleArea/PlayerRow/PlayerInfo/PlayerPanel"]
+layout_mode = 2
 text = "能量：0"
 
 [node name="DrawIcon" type="TextureRect" parent="MarginContainer/RootVBox/BattleArea/PlayerRow/PlayerInfo/PlayerPanel"]
 custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
 texture = ExtResource("7_xd4w2")
 stretch_mode = 5
 
 [node name="DrawLabel" type="Label" parent="MarginContainer/RootVBox/BattleArea/PlayerRow/PlayerInfo/PlayerPanel"]
+layout_mode = 2
 text = "抽牌堆：0"
 
 [node name="DiscardIcon" type="TextureRect" parent="MarginContainer/RootVBox/BattleArea/PlayerRow/PlayerInfo/PlayerPanel"]
 custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
 texture = ExtResource("8_8b7j9")
 stretch_mode = 5
 
 [node name="DiscardLabel" type="Label" parent="MarginContainer/RootVBox/BattleArea/PlayerRow/PlayerInfo/PlayerPanel"]
+layout_mode = 2
 text = "弃牌堆：0"
 
 [node name="PlayerHpBar" type="ProgressBar" parent="MarginContainer/RootVBox/BattleArea/PlayerRow/PlayerInfo"]
 custom_minimum_size = Vector2(0, 12)
+layout_mode = 2
 max_value = 1.0
 value = 1.0
 show_percentage = false
 
 [node name="HandDock" type="PanelContainer" parent="MarginContainer/RootVBox"]
-custom_minimum_size = Vector2(0, 260)
+custom_minimum_size = Vector2(0, 220)
+layout_mode = 2
 
 [node name="HandMargin" type="MarginContainer" parent="MarginContainer/RootVBox/HandDock"]
+layout_mode = 2
 theme_override_constants/margin_left = 12
 theme_override_constants/margin_top = 12
 theme_override_constants/margin_right = 12
 theme_override_constants/margin_bottom = 12
 
 [node name="HandVBox" type="VBoxContainer" parent="MarginContainer/RootVBox/HandDock/HandMargin"]
+layout_mode = 2
 theme_override_constants/separation = 6
 
 [node name="ResultLabel" type="Label" parent="MarginContainer/RootVBox/HandDock/HandMargin/HandVBox"]
+layout_mode = 2
 text = "准备迎战。"
 autowrap_mode = 3
-max_lines = 2
 
 [node name="HandLabel" type="Label" parent="MarginContainer/RootVBox/HandDock/HandMargin/HandVBox"]
+layout_mode = 2
 text = "手牌"
 
 [node name="HandScroll" type="ScrollContainer" parent="MarginContainer/RootVBox/HandDock/HandMargin/HandVBox"]
-custom_minimum_size = Vector2(0, 200)
+custom_minimum_size = Vector2(0, 160)
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="HandContainer" type="HBoxContainer" parent="MarginContainer/RootVBox/HandDock/HandMargin/HandVBox/HandScroll"]
+layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 10
 
 [node name="Actions" type="HBoxContainer" parent="MarginContainer/RootVBox/HandDock/HandMargin/HandVBox"]
+layout_mode = 2
 theme_override_constants/separation = 12
 
 [node name="ActionsSpacer" type="Control" parent="MarginContainer/RootVBox/HandDock/HandMargin/HandVBox/Actions"]
+layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="EndTurnButton" type="Button" parent="MarginContainer/RootVBox/HandDock/HandMargin/HandVBox/Actions"]
+layout_mode = 2
 text = "结束回合"
 icon = ExtResource("19_p2ivm")
 
 [node name="NextButton" type="Button" parent="MarginContainer/RootVBox/HandDock/HandMargin/HandVBox/Actions"]
 visible = false
+layout_mode = 2
 text = "继续攀登"
 icon = ExtResource("20_trx2m")
 
