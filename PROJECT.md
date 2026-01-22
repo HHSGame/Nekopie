@@ -39,6 +39,8 @@ A Godot 4.3 deck-building prototype set in an isekai adventure. The main goal is
 - Rebuilt RunScreen layout so combat and hand panels live in one main VBox.
 - Added a battle spacer to keep enemy up top and player lower in the combat area.
 - Replaced the hand scroll container with a plain control to avoid hover clipping.
+- Anchored the hand card container to fill its viewport so cards render reliably.
+- Unified enemy/player portrait panel sizes for consistent layout.
 - Collapsed hand cards to headers with hover expansion for full preview.
 - Fixed hand draw loop so combat hands populate correctly.
 - Aligned the RunScreen scene frame with the main combat layout and removed the bottom hand gap.

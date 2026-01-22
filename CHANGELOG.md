@@ -23,6 +23,8 @@
 - Rebuilt RunScreen layout to keep combat and hand panels in one main VBox.
 - Added a battle spacer to separate enemy and player rows.
 - Replaced the hand scroll container with a plain control to avoid hover clipping.
+- Anchored the hand card container to fill its viewport to keep cards visible.
+- Unified enemy/player portrait panel sizes for consistent layout.
 - Added collapsed hand headers with hover expansion animation for full card preview.
 
 ## 2026-01-20

@@ -123,7 +123,7 @@ layout_mode = 2
 theme_override_constants/separation = 16
 
 [node name="EnemyPortraitPanel" type="PanelContainer" parent="MarginContainer/RootVBox/BattleArea/EnemyRow"]
-custom_minimum_size = Vector2(180, 180)
+custom_minimum_size = Vector2(200, 200)
 layout_mode = 2
 
 [node name="EnemyPortrait" type="TextureRect" parent="MarginContainer/RootVBox/BattleArea/EnemyRow/EnemyPortraitPanel"]
@@ -207,7 +207,7 @@ layout_mode = 2
 theme_override_constants/separation = 16
 
 [node name="PlayerPortraitPanel" type="PanelContainer" parent="MarginContainer/RootVBox/BattleArea/PlayerRow"]
-custom_minimum_size = Vector2(160, 160)
+custom_minimum_size = Vector2(200, 200)
 layout_mode = 2
 
 [node name="PlayerPortrait" type="TextureRect" parent="MarginContainer/RootVBox/BattleArea/PlayerRow/PlayerPortraitPanel"]
@@ -303,9 +303,10 @@ show_percentage = false
 
 [node name="HandDock" type="PanelContainer" parent="MarginContainer/RootVBox"]
 clip_contents = false
-custom_minimum_size = Vector2(0, 220)
+custom_minimum_size = Vector2(0, 240)
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_vertical = 0
 
 [node name="HandMargin" type="MarginContainer" parent="MarginContainer/RootVBox/HandDock"]
 layout_mode = 2
@@ -335,7 +336,9 @@ size_flags_horizontal = 3
 size_flags_vertical = 0
 
 [node name="HandContainer" type="HBoxContainer" parent="MarginContainer/RootVBox/HandDock/HandMargin/HandVBox/HandScroll"]
-layout_mode = 2
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
 size_flags_horizontal = 3
 theme_override_constants/separation = 10
 alignment = 2
