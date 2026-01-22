@@ -3,6 +3,9 @@ extends Control
 const CARD_WIDGET_SCENE := preload("res://scenes/CardWidget.tscn")
 const HAND_SIZE := 5
 const ENERGY_PER_TURN := 3
+const HAND_CARD_SIZE := Vector2(220, 260)
+const HAND_COLLAPSED_HEIGHT := 72.0
+const HAND_EXPANDED_HEIGHT := 260.0
 const INTENT_ICONS := {
 	"attack": preload("res://icons/intent_attack.svg"),
 	"multi_attack": preload("res://icons/intent_multi.svg"),
@@ -81,6 +84,7 @@ var last_reward_mode := ""
 var reward_cards: Array = []
 var reward_overlay_active := false
 var reward_overlay_tween: Tween
+var hand_slot_tweens: Dictionary = {}
 
 func _ready() -> void:
 	story_label.text = "你踏上 %s 的山道，魔物在雾中伺机。" % GameData.MOUNTAIN_NAME
@@ -179,17 +183,23 @@ func _update_ui() -> void:
 		_refresh_reward_ui()
 
 func _refresh_hand() -> void:
+	hand_slot_tweens.clear()
 	for child in hand_container.get_children():
 		child.queue_free()
 	for index in hand.size():
 		var card_id: String = hand[index]
 		var card_data := GameData.get_card_data(card_id, RunState.is_upgraded(card_id))
+		var slot := Control.new()
+		slot.custom_minimum_size = Vector2(HAND_CARD_SIZE.x, HAND_COLLAPSED_HEIGHT)
+		slot.clip_contents = true
+		slot.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		hand_container.add_child(slot)
 		var widget: CardWidget = CARD_WIDGET_SCENE.instantiate()
 		widget.set_card(card_data)
 		widget.clicked.connect(_on_hand_card_clicked.bind(index))
-		widget.hovered.connect(_on_card_hovered)
-		widget.unhovered.connect(_on_card_unhovered)
-		hand_container.add_child(widget)
+		widget.hovered.connect(_on_hand_card_hovered.bind(slot))
+		widget.unhovered.connect(_on_hand_card_unhovered.bind(slot))
+		slot.add_child(widget)
 
 func _draw_cards(count: int) -> void:
 	for i in count:
@@ -199,7 +209,30 @@ func _draw_cards(count: int) -> void:
 			draw_pile = discard_pile.duplicate(true)
 			discard_pile.clear()
 			draw_pile.shuffle()
-		hand.append(draw_pile.pop_back())
+	hand.append(draw_pile.pop_back())
+
+func _on_hand_card_hovered(card_id: String, slot: Control) -> void:
+	_on_card_hovered(card_id)
+	_set_hand_slot_expanded(slot, true)
+
+func _on_hand_card_unhovered(slot: Control) -> void:
+	_on_card_unhovered()
+	_set_hand_slot_expanded(slot, false)
+
+func _set_hand_slot_expanded(slot: Control, expanded: bool) -> void:
+	if not slot:
+		return
+	var tween: Tween = hand_slot_tweens.get(slot)
+	if tween:
+		tween.kill()
+	var target_height := HAND_EXPANDED_HEIGHT if expanded else HAND_COLLAPSED_HEIGHT
+	tween = create_tween()
+	tween.tween_property(slot, "custom_minimum_size:y", target_height, 0.12).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	if expanded:
+		slot.z_index = 20
+	else:
+		tween.tween_callback(func(): slot.z_index = 0)
+	hand_slot_tweens[slot] = tween
 
 func _on_hand_card_clicked(card_id: String, index: int) -> void:
 	if combat_over:

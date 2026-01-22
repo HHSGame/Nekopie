@@ -299,7 +299,8 @@ value = 1.0
 show_percentage = false
 
 [node name="HandDock" type="PanelContainer" parent="MarginContainer/RootVBox"]
-custom_minimum_size = Vector2(0, 180)
+clip_contents = false
+custom_minimum_size = Vector2(0, 200)
 layout_mode = 2
 
 [node name="HandMargin" type="MarginContainer" parent="MarginContainer/RootVBox/HandDock"]
@@ -320,11 +321,14 @@ max_lines = 1
 text = "手牌"
 
 [node name="HandScroll" type="ScrollContainer" parent="MarginContainer/RootVBox/HandDock/HandMargin/HandVBox"]
-custom_minimum_size = Vector2(0, 120)
+clip_contents = false
+custom_minimum_size = Vector2(0, 110)
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="HandContainer" type="HBoxContainer" parent="MarginContainer/RootVBox/HandDock/HandMargin/HandVBox/HandScroll"]
+clip_contents = false
+alignment = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 10
 

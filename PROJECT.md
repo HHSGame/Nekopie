@@ -39,6 +39,7 @@ A Godot 4.3 deck-building prototype set in an isekai adventure. The main goal is
 - Anchored the hand dock to the viewport bottom to keep cards visible.
 - Reduced hand dock height and reserved space so combat UI stays in frame.
 - Returned the hand dock to the main layout stack to avoid covering portraits.
+- Collapsed hand cards to headers with hover expansion for full preview.
 
 ## Scene and Script Layout
 - `scenes/Main.tscn` + `scripts/Main.gd`: main menu and navigation.

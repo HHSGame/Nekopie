@@ -18,6 +18,7 @@
 - Anchored the hand dock to the viewport bottom to keep it visible at all times.
 - Reduced hand dock height and reserved vertical space for the combat area.
 - Returned hand dock to the main layout stack to avoid covering battle UI.
+- Added collapsed hand headers with hover expansion animation for full card preview.
 
 ## 2026-01-20
 - Initialized the Godot 4.2 project with main menu, deck builder, and run flow scenes.
