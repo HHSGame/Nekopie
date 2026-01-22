@@ -20,9 +20,9 @@
 - Reduced combat layout heights to keep enemy/status panels visible alongside the hand dock.
 - Rebuilt the RunScreen layout to follow a Slay the Spire-style combat arrangement.
 - Adjusted portrait frame proportions and tightened combat panel sizing.
-- Anchored the hand dock to the viewport bottom to keep it visible at all times.
-- Reduced hand dock height and reserved vertical space for the combat area.
-- Moved the hand dock to a root-anchored panel and reserved bottom space in the main layout.
+- Rebuilt RunScreen layout to keep combat and hand panels in one main VBox.
+- Added a battle spacer to separate enemy and player rows.
+- Replaced the hand scroll container with a plain control to avoid hover clipping.
 - Added collapsed hand headers with hover expansion animation for full card preview.
 
 ## 2026-01-20
