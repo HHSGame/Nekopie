@@ -37,8 +37,8 @@ A Godot 4.3 deck-building prototype set in an isekai adventure. The main goal is
 - Rebuilt the combat layout to match Slay the Spire's top-center enemy and bottom hand flow.
 - Squared portrait frames and resized battle panels to reduce distortion.
 - Anchored the hand dock to the viewport bottom to keep cards visible.
-- Reduced hand dock height and reserved space so combat UI stays in frame.
-- Returned the hand dock to the main layout stack to avoid covering portraits.
+- Reserved bottom space in the main layout so combat UI stays in frame.
+- Hand dock now lives at the scene root for predictable sizing in the viewport.
 - Collapsed hand cards to headers with hover expansion for full preview.
 
 ## Scene and Script Layout

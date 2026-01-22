@@ -34,3 +34,4 @@
 - Portraits, card art, and background textures live under `art/`.
 - Decorative UI assets (banners, frames, glows, FX) live under `art/ui` and `art/fx`.
 - Card data now includes `rarity` and `icon` fields for UI badges.
+- `HandDock` is anchored at the `RunScreen` root; main layout reserves bottom space and node paths use `$HandDock/...`.

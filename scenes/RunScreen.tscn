@@ -61,6 +61,7 @@ stretch_mode = 1
 layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_bottom = -236.0
 theme_override_constants/margin_left = 16
 theme_override_constants/margin_top = 16
 theme_override_constants/margin_right = 16
@@ -298,52 +299,68 @@ max_value = 1.0
 value = 1.0
 show_percentage = false
 
-[node name="HandDock" type="PanelContainer" parent="MarginContainer/RootVBox"]
+[node name="HandDock" type="PanelContainer" parent="."]
 clip_contents = false
-custom_minimum_size = Vector2(0, 200)
-layout_mode = 2
+layout_mode = 0
+anchor_left = 0.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 16.0
+offset_top = -236.0
+offset_right = -16.0
+offset_bottom = -16.0
 
-[node name="HandMargin" type="MarginContainer" parent="MarginContainer/RootVBox/HandDock"]
+[node name="HandMargin" type="MarginContainer" parent="HandDock"]
+layout_mode = 2
 theme_override_constants/margin_left = 12
 theme_override_constants/margin_top = 12
 theme_override_constants/margin_right = 12
 theme_override_constants/margin_bottom = 12
 
-[node name="HandVBox" type="VBoxContainer" parent="MarginContainer/RootVBox/HandDock/HandMargin"]
+[node name="HandVBox" type="VBoxContainer" parent="HandDock/HandMargin"]
+layout_mode = 2
 theme_override_constants/separation = 6
 
-[node name="ResultLabel" type="Label" parent="MarginContainer/RootVBox/HandDock/HandMargin/HandVBox"]
+[node name="ResultLabel" type="Label" parent="HandDock/HandMargin/HandVBox"]
+layout_mode = 2
 text = "准备迎战。"
 autowrap_mode = 3
 max_lines = 1
 
-[node name="HandLabel" type="Label" parent="MarginContainer/RootVBox/HandDock/HandMargin/HandVBox"]
+[node name="HandLabel" type="Label" parent="HandDock/HandMargin/HandVBox"]
+layout_mode = 2
 text = "手牌"
 
-[node name="HandScroll" type="ScrollContainer" parent="MarginContainer/RootVBox/HandDock/HandMargin/HandVBox"]
+[node name="HandScroll" type="ScrollContainer" parent="HandDock/HandMargin/HandVBox"]
 clip_contents = false
 custom_minimum_size = Vector2(0, 110)
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="HandContainer" type="HBoxContainer" parent="MarginContainer/RootVBox/HandDock/HandMargin/HandVBox/HandScroll"]
-clip_contents = false
-alignment = 2
+[node name="HandContainer" type="HBoxContainer" parent="HandDock/HandMargin/HandVBox/HandScroll"]
+layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 10
+alignment = 2
 
-[node name="Actions" type="HBoxContainer" parent="MarginContainer/RootVBox/HandDock/HandMargin/HandVBox"]
+[node name="Actions" type="HBoxContainer" parent="HandDock/HandMargin/HandVBox"]
+layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="ActionsSpacer" type="Control" parent="MarginContainer/RootVBox/HandDock/HandMargin/HandVBox/Actions"]
+[node name="ActionsSpacer" type="Control" parent="HandDock/HandMargin/HandVBox/Actions"]
+layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="EndTurnButton" type="Button" parent="MarginContainer/RootVBox/HandDock/HandMargin/HandVBox/Actions"]
+[node name="EndTurnButton" type="Button" parent="HandDock/HandMargin/HandVBox/Actions"]
+layout_mode = 2
 text = "结束回合"
 icon = ExtResource("19_p2ivm")
 
-[node name="NextButton" type="Button" parent="MarginContainer/RootVBox/HandDock/HandMargin/HandVBox/Actions"]
+[node name="NextButton" type="Button" parent="HandDock/HandMargin/HandVBox/Actions"]
 visible = false
+layout_mode = 2
 text = "继续攀登"
 icon = ExtResource("20_trx2m")
 

@@ -17,7 +17,7 @@
 - Adjusted portrait frame proportions and tightened combat panel sizing.
 - Anchored the hand dock to the viewport bottom to keep it visible at all times.
 - Reduced hand dock height and reserved vertical space for the combat area.
-- Returned hand dock to the main layout stack to avoid covering battle UI.
+- Moved the hand dock to a root-anchored panel and reserved bottom space in the main layout.
 - Added collapsed hand headers with hover expansion animation for full card preview.
 
 ## 2026-01-20
