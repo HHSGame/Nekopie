@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-01-22
+- Fixed the combat hand draw loop so multiple cards populate correctly.
+- Matched the RunScreen scene frame height to the main combat layout.
+- Removed the extra bottom gap so the hand dock meets the viewport edge.
+
 ## 2026-01-21
 - Added title banners and decorative scene frames across UI scenes.
 - Added button icons for menu, combat actions, and rewards.

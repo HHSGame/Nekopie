@@ -202,14 +202,14 @@ func _refresh_hand() -> void:
 		slot.add_child(widget)
 
 func _draw_cards(count: int) -> void:
-	for i in count:
+	for i in range(count):
 		if draw_pile.is_empty():
 			if discard_pile.is_empty():
 				break
 			draw_pile = discard_pile.duplicate(true)
 			discard_pile.clear()
 			draw_pile.shuffle()
-	hand.append(draw_pile.pop_back())
+		hand.append(draw_pile.pop_back())
 
 func _on_hand_card_hovered(card_id: String, slot: Control) -> void:
 	_on_card_hovered(card_id)
