@@ -183,6 +183,9 @@ func _update_ui() -> void:
 		_refresh_reward_ui()
 
 func _refresh_hand() -> void:
+	for tween in hand_slot_tweens.values():
+		if tween:
+			tween.kill()
 	hand_slot_tweens.clear()
 	for child in hand_container.get_children():
 		child.queue_free()
@@ -231,7 +234,10 @@ func _set_hand_slot_expanded(slot: Control, expanded: bool) -> void:
 	if expanded:
 		slot.z_index = 20
 	else:
-		tween.tween_callback(func(): slot.z_index = 0)
+		tween.tween_callback(func():
+			if is_instance_valid(slot):
+				slot.z_index = 0
+		)
 	hand_slot_tweens[slot] = tween
 
 func _on_hand_card_clicked(card_id: String, index: int) -> void:

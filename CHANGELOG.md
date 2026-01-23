@@ -7,6 +7,7 @@
 - Trimmed combat panel/hand dock minimum sizes and spacing so the hand area stays within the viewport.
 - Tightened header, portrait, and hand panel sizing to keep the hand dock within the RunScreen bounds.
 - Removed the RunScreen header bar and scaled the battle layout down to keep the hand dock visible.
+- Fixed hand hover tween cleanup to prevent slot callbacks from running after nodes are freed.
 
 ## 2026-01-22
 - Fixed the combat hand draw loop so multiple cards populate correctly.
