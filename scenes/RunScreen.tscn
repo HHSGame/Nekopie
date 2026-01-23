@@ -448,6 +448,88 @@ layout_mode = 2
 text = "继续攀登"
 icon = ExtResource("20_trx2m")
 
+[node name="RouteOverlay" type="Control" parent="."]
+visible = false
+anchors_preset = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="Dimmer" type="ColorRect" parent="RouteOverlay"]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color(0, 0, 0, 0.55)
+
+[node name="CenterContainer" type="CenterContainer" parent="RouteOverlay"]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="RoutePanel" type="PanelContainer" parent="RouteOverlay/CenterContainer"]
+custom_minimum_size = Vector2(640, 360)
+layout_mode = 2
+
+[node name="RouteMargin" type="MarginContainer" parent="RouteOverlay/CenterContainer/RoutePanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="RouteVBox" type="VBoxContainer" parent="RouteOverlay/CenterContainer/RoutePanel/RouteMargin"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="RouteTitleLabel" type="Label" parent="RouteOverlay/CenterContainer/RoutePanel/RouteMargin/RouteVBox"]
+layout_mode = 2
+text = "选择路线"
+
+[node name="RouteInfoLabel" type="Label" parent="RouteOverlay/CenterContainer/RoutePanel/RouteMargin/RouteVBox"]
+layout_mode = 2
+text = "补给出现。"
+autowrap_mode = 3
+
+[node name="RouteButtons" type="HBoxContainer" parent="RouteOverlay/CenterContainer/RoutePanel/RouteMargin/RouteVBox"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="RouteSupplyButton" type="Button" parent="RouteOverlay/CenterContainer/RoutePanel/RouteMargin/RouteVBox/RouteButtons"]
+layout_mode = 2
+text = "补给"
+icon = ExtResource("21_9h1wy")
+
+[node name="RouteChallengeButton" type="Button" parent="RouteOverlay/CenterContainer/RoutePanel/RouteMargin/RouteVBox/RouteButtons"]
+layout_mode = 2
+text = "继续挑战"
+icon = ExtResource("20_trx2m")
+
+[node name="DifficultyPanel" type="VBoxContainer" parent="RouteOverlay/CenterContainer/RoutePanel/RouteMargin/RouteVBox"]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="DifficultyLabel" type="Label" parent="RouteOverlay/CenterContainer/RoutePanel/RouteMargin/RouteVBox/DifficultyPanel"]
+layout_mode = 2
+text = "选择难度"
+
+[node name="DifficultyButtons" type="HBoxContainer" parent="RouteOverlay/CenterContainer/RoutePanel/RouteMargin/RouteVBox/DifficultyPanel"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="DifficultyNormalButton" type="Button" parent="RouteOverlay/CenterContainer/RoutePanel/RouteMargin/RouteVBox/DifficultyPanel/DifficultyButtons"]
+layout_mode = 2
+text = "普通"
+
+[node name="DifficultyHardButton" type="Button" parent="RouteOverlay/CenterContainer/RoutePanel/RouteMargin/RouteVBox/DifficultyPanel/DifficultyButtons"]
+layout_mode = 2
+text = "困难"
+
+[node name="DifficultyEliteButton" type="Button" parent="RouteOverlay/CenterContainer/RoutePanel/RouteMargin/RouteVBox/DifficultyPanel/DifficultyButtons"]
+layout_mode = 2
+text = "精英"
+
 [node name="RewardOverlay" type="Control" parent="."]
 visible = false
 anchors_preset = 0
@@ -504,6 +586,16 @@ icon = ExtResource("22_k4j8x")
 layout_mode = 2
 text = "移除卡牌"
 icon = ExtResource("23_7r0c1")
+
+[node name="RewardHealButton" type="Button" parent="RewardOverlay/CenterContainer/RewardPanel/RewardMargin/RewardVBox/RewardOptions"]
+layout_mode = 2
+text = "补给休整"
+icon = ExtResource("4_4p8o1")
+
+[node name="RewardDraftButton" type="Button" parent="RewardOverlay/CenterContainer/RewardPanel/RewardMargin/RewardVBox/RewardOptions"]
+layout_mode = 2
+text = "补给卡牌"
+icon = ExtResource("21_9h1wy")
 
 [node name="RewardSkipButton" type="Button" parent="RewardOverlay/CenterContainer/RewardPanel/RewardMargin/RewardVBox/RewardOptions"]
 layout_mode = 2

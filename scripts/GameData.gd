@@ -4,6 +4,8 @@ const MOUNTAIN_NAME := "隐魔之岭"
 const WORLD_TAGLINE := "异世界冒险：征服山巅，穿越魔物之影。"
 const FIRST_STRIKE_DAMAGE := 4
 const EVENT_CHANCE := 0.5
+const SUPPLY_CHANCE := 0.6
+const SUPPLY_HEAL_AMOUNT := 8
 const PLAYER_PORTRAIT := "res://art/portraits/player_female.svg"
 
 const UPGRADE_LIBRARY := {

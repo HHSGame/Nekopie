@@ -41,11 +41,21 @@ const INTENT_ICONS := {
 @onready var end_turn_button: Button = $MarginContainer/RootVBox/HandDock/HandMargin/HandVBox/Actions/EndTurnButton
 @onready var next_button: Button = $MarginContainer/RootVBox/HandDock/HandMargin/HandVBox/Actions/NextButton
 @onready var back_button: Button = $MarginContainer/RootVBox/HandDock/HandMargin/HandVBox/Actions/BackButton
+@onready var route_overlay: Control = $RouteOverlay
+@onready var route_info_label: Label = $RouteOverlay/CenterContainer/RoutePanel/RouteMargin/RouteVBox/RouteInfoLabel
+@onready var route_supply_button: Button = $RouteOverlay/CenterContainer/RoutePanel/RouteMargin/RouteVBox/RouteButtons/RouteSupplyButton
+@onready var route_challenge_button: Button = $RouteOverlay/CenterContainer/RoutePanel/RouteMargin/RouteVBox/RouteButtons/RouteChallengeButton
+@onready var difficulty_panel: VBoxContainer = $RouteOverlay/CenterContainer/RoutePanel/RouteMargin/RouteVBox/DifficultyPanel
+@onready var difficulty_normal_button: Button = $RouteOverlay/CenterContainer/RoutePanel/RouteMargin/RouteVBox/DifficultyPanel/DifficultyButtons/DifficultyNormalButton
+@onready var difficulty_hard_button: Button = $RouteOverlay/CenterContainer/RoutePanel/RouteMargin/RouteVBox/DifficultyPanel/DifficultyButtons/DifficultyHardButton
+@onready var difficulty_elite_button: Button = $RouteOverlay/CenterContainer/RoutePanel/RouteMargin/RouteVBox/DifficultyPanel/DifficultyButtons/DifficultyEliteButton
 @onready var reward_overlay: Control = $RewardOverlay
 @onready var reward_options: HBoxContainer = $RewardOverlay/CenterContainer/RewardPanel/RewardMargin/RewardVBox/RewardOptions
 @onready var reward_add_button: Button = $RewardOverlay/CenterContainer/RewardPanel/RewardMargin/RewardVBox/RewardOptions/RewardAddButton
 @onready var reward_upgrade_button: Button = $RewardOverlay/CenterContainer/RewardPanel/RewardMargin/RewardVBox/RewardOptions/RewardUpgradeButton
 @onready var reward_remove_button: Button = $RewardOverlay/CenterContainer/RewardPanel/RewardMargin/RewardVBox/RewardOptions/RewardRemoveButton
+@onready var reward_heal_button: Button = $RewardOverlay/CenterContainer/RewardPanel/RewardMargin/RewardVBox/RewardOptions/RewardHealButton
+@onready var reward_draft_button: Button = $RewardOverlay/CenterContainer/RewardPanel/RewardMargin/RewardVBox/RewardOptions/RewardDraftButton
 @onready var reward_skip_button: Button = $RewardOverlay/CenterContainer/RewardPanel/RewardMargin/RewardVBox/RewardOptions/RewardSkipButton
 @onready var reward_choice_label: Label = $RewardOverlay/CenterContainer/RewardPanel/RewardMargin/RewardVBox/RewardChoiceLabel
 @onready var reward_choice_scroll: ScrollContainer = $RewardOverlay/CenterContainer/RewardPanel/RewardMargin/RewardVBox/RewardChoiceScroll
@@ -85,6 +95,9 @@ var reward_cards: Array = []
 var reward_overlay_active := false
 var reward_overlay_tween: Tween
 var hand_slot_tweens: Dictionary = {}
+var route_overlay_active := false
+var supply_available := false
+var route_mode := "none"
 
 func _ready() -> void:
 	story_label.text = "你踏上 %s 的山道，魔物在雾中伺机。" % GameData.MOUNTAIN_NAME
@@ -94,10 +107,19 @@ func _ready() -> void:
 	reward_add_button.pressed.connect(_on_reward_add_pressed)
 	reward_upgrade_button.pressed.connect(_on_reward_upgrade_pressed)
 	reward_remove_button.pressed.connect(_on_reward_remove_pressed)
+	reward_heal_button.pressed.connect(_on_reward_heal_pressed)
+	reward_draft_button.pressed.connect(_on_reward_draft_pressed)
 	reward_skip_button.pressed.connect(_on_reward_skip_pressed)
+	route_supply_button.pressed.connect(_on_route_supply_pressed)
+	route_challenge_button.pressed.connect(_on_route_challenge_pressed)
+	difficulty_normal_button.pressed.connect(_on_difficulty_selected.bind("normal"))
+	difficulty_hard_button.pressed.connect(_on_difficulty_selected.bind("hard"))
+	difficulty_elite_button.pressed.connect(_on_difficulty_selected.bind("elite"))
 	card_detail_panel.visible = false
 	reward_overlay.modulate.a = 0.0
 	reward_overlay_active = reward_overlay.visible
+	route_overlay.visible = false
+	route_overlay_active = route_overlay.visible
 	_start_encounter()
 
 func _start_encounter() -> void:
@@ -106,6 +128,8 @@ func _start_encounter() -> void:
 	reward_mode = "none"
 	last_reward_mode = ""
 	reward_cards.clear()
+	route_mode = "none"
+	supply_available = false
 	card_detail_panel.visible = false
 	player_block = 0
 	energy = ENERGY_PER_TURN
@@ -118,6 +142,8 @@ func _start_encounter() -> void:
 	enemy_max_hp = enemy_hp
 	enemy_block = 0
 	enemy_attack_bonus = 0
+	_apply_difficulty_to_enemy(RunState.next_difficulty)
+	RunState.next_difficulty = "normal"
 	enemy_intents = enemy_data.get("intents", [])
 	if enemy_intents.is_empty():
 		enemy_intents = [
@@ -169,8 +195,10 @@ func _update_ui() -> void:
 	discard_label.text = "弃牌堆：%d" % discard_pile.size()
 	end_turn_button.disabled = combat_over
 	var show_rewards := combat_over and not run_complete and next_step == "reward_options"
+	var show_route := combat_over and not run_complete and next_step == "route"
 	_set_reward_overlay_visible(show_rewards)
-	next_button.visible = combat_over and not show_rewards
+	_set_route_overlay_visible(show_route)
+	next_button.visible = combat_over and not show_rewards and not show_route
 	if combat_over and next_button.visible:
 		if run_complete:
 			next_button.text = "返回主菜单"
@@ -181,6 +209,8 @@ func _update_ui() -> void:
 	_refresh_hand()
 	if show_rewards:
 		_refresh_reward_ui()
+	if show_route:
+		_update_route_ui()
 
 func _refresh_hand() -> void:
 	for tween in hand_slot_tweens.values():
@@ -361,7 +391,7 @@ func _on_next_pressed() -> void:
 		_apply_event(pending_event)
 		pending_event = {}
 		if not run_complete:
-			_enter_reward_options()
+			_enter_route_selection()
 		_update_ui()
 		return
 	_start_encounter()
@@ -452,7 +482,7 @@ func _queue_post_battle_step() -> void:
 	if roll <= GameData.EVENT_CHANCE:
 		pending_event = GameData.get_random_event()
 	if pending_event.is_empty():
-		_enter_reward_options()
+		_enter_route_selection()
 		return
 	next_step = "event"
 	result_label.text = "遭遇事件：%s - %s" % [
@@ -492,7 +522,48 @@ func _apply_event(event_data: Dictionary) -> void:
 			result_label.text = "事件无事发生。"
 			RunState.log_event("事件无事发生。")
 	if RunState.player_hp > 0 and not run_complete:
-		_enter_reward_options()
+		_enter_route_selection()
+
+func _enter_route_selection() -> void:
+	next_step = "route"
+	route_mode = "route"
+	supply_available = randf() <= GameData.SUPPLY_CHANCE
+	if supply_available:
+		route_info_label.text = "你发现一处补给点，选择前进路线。"
+	else:
+		route_info_label.text = "补给点未出现，只能继续挑战。"
+	route_supply_button.visible = supply_available
+	route_supply_button.disabled = not supply_available
+	_update_route_ui()
+	_set_route_overlay_visible(true)
+
+func _update_route_ui() -> void:
+	difficulty_panel.visible = route_mode == "difficulty"
+
+func _on_route_supply_pressed() -> void:
+	if not supply_available:
+		return
+	route_mode = "supply"
+	_set_route_overlay_visible(false)
+	_enter_supply_options()
+
+func _on_route_challenge_pressed() -> void:
+	route_mode = "difficulty"
+	route_info_label.text = "请选择挑战难度。"
+	_update_route_ui()
+
+func _on_difficulty_selected(difficulty: String) -> void:
+	RunState.next_difficulty = difficulty
+	RunState.save_run()
+	route_mode = "none"
+	_set_route_overlay_visible(false)
+	result_label.text = "你选择了%s挑战。" % _difficulty_display(difficulty)
+	RunState.log_event("选择挑战难度：%s。" % _difficulty_display(difficulty))
+	_enter_reward_options()
+
+func _difficulty_display(difficulty: String) -> String:
+	var settings := RunState.get_difficulty_settings(difficulty)
+	return str(settings.get("label", "普通"))
 
 func _enter_reward_options() -> void:
 	next_step = "reward_options"
@@ -502,11 +573,25 @@ func _enter_reward_options() -> void:
 	_refresh_reward_ui()
 	RunState.save_run()
 
+func _enter_supply_options() -> void:
+	next_step = "reward_options"
+	reward_mode = "supply"
+	last_reward_mode = ""
+	reward_cards.clear()
+	_refresh_reward_ui()
+	RunState.save_run()
+
 func _refresh_reward_ui() -> void:
-	reward_options.visible = reward_mode == "options"
-	var show_choices := reward_mode in ["add", "upgrade", "remove"]
+	reward_options.visible = reward_mode in ["options", "supply"]
+	reward_add_button.visible = reward_mode == "options"
+	reward_upgrade_button.visible = reward_mode == "options"
+	reward_remove_button.visible = reward_mode == "options"
+	reward_heal_button.visible = reward_mode == "supply"
+	reward_draft_button.visible = reward_mode == "supply"
+	reward_skip_button.visible = reward_mode in ["options", "supply"]
+	var show_choices := reward_mode in ["add", "upgrade", "remove", "supply_draft"]
 	reward_choice_label.visible = show_choices
-	reward_choice_scroll.visible = reward_mode == "add"
+	reward_choice_scroll.visible = reward_mode in ["add", "supply_draft"]
 	reward_deck_scroll.visible = reward_mode in ["upgrade", "remove"]
 	match reward_mode:
 		"add":
@@ -515,6 +600,8 @@ func _refresh_reward_ui() -> void:
 			reward_choice_label.text = "选择一张卡牌强化"
 		"remove":
 			reward_choice_label.text = "选择一张卡牌移除"
+		"supply_draft":
+			reward_choice_label.text = "选择一张补给卡牌"
 		_:
 			reward_choice_label.text = ""
 	if reward_mode != last_reward_mode:
@@ -522,6 +609,8 @@ func _refresh_reward_ui() -> void:
 			_populate_reward_cards()
 		elif reward_mode in ["upgrade", "remove"]:
 			_populate_reward_deck()
+		elif reward_mode == "supply_draft":
+			_populate_supply_cards()
 		last_reward_mode = reward_mode
 
 func _set_reward_overlay_visible(active: bool) -> void:
@@ -542,10 +631,48 @@ func _set_reward_overlay_visible(active: bool) -> void:
 		reward_overlay_tween.tween_property(reward_overlay, "modulate:a", 0.0, 0.12).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
 		reward_overlay_tween.tween_callback(func(): reward_overlay.visible = false)
 
+func _set_route_overlay_visible(active: bool) -> void:
+	if active == route_overlay_active:
+		return
+	route_overlay_active = active
+	route_overlay.visible = active
+
+func _apply_difficulty_to_enemy(difficulty: String) -> void:
+	var settings := RunState.get_difficulty_settings(difficulty)
+	var hp_mult := float(settings.get("hp_mult", 1.0))
+	var power_mult := float(settings.get("power_mult", 1.0))
+	if hp_mult != 1.0:
+		enemy_hp = int(round(enemy_hp * hp_mult))
+		enemy_max_hp = enemy_hp
+		enemy_data["hp"] = enemy_hp
+	if enemy_data.has("attack"):
+		enemy_data["attack"] = int(round(int(enemy_data.get("attack", 0)) * power_mult))
+	var intents: Array = enemy_data.get("intents", [])
+	for index in intents.size():
+		var intent: Dictionary = intents[index]
+		if intent.has("value"):
+			intent["value"] = int(round(int(intent.get("value", 0)) * power_mult))
+		if intent.has("heal"):
+			intent["heal"] = int(round(int(intent.get("heal", 0)) * power_mult))
+		intents[index] = intent
+	enemy_data["intents"] = intents
+
 func _populate_reward_cards() -> void:
 	_clear_container(reward_choice_container)
 	if reward_cards.is_empty():
 		reward_cards = _roll_reward_cards()
+	for card_id in reward_cards:
+		var card_data := GameData.get_card_data(card_id, false)
+		var widget: CardWidget = CARD_WIDGET_SCENE.instantiate()
+		widget.set_card(card_data)
+		widget.clicked.connect(_on_reward_card_selected)
+		widget.hovered.connect(_on_card_hovered)
+		widget.unhovered.connect(_on_card_unhovered)
+		reward_choice_container.add_child(widget)
+
+func _populate_supply_cards() -> void:
+	_clear_container(reward_choice_container)
+	reward_cards = _roll_reward_cards(2)
 	for card_id in reward_cards:
 		var card_data := GameData.get_card_data(card_id, false)
 		var widget: CardWidget = CARD_WIDGET_SCENE.instantiate()
@@ -603,16 +730,38 @@ func _on_reward_remove_pressed() -> void:
 	_refresh_reward_ui()
 
 func _on_reward_skip_pressed() -> void:
-	result_label.text = "你放弃了战利品。"
-	RunState.log_event("放弃了战利品。")
+	if reward_mode in ["supply", "supply_draft"]:
+		result_label.text = "你放弃了补给。"
+		RunState.log_event("放弃了补给。")
+	else:
+		result_label.text = "你放弃了战利品。"
+		RunState.log_event("放弃了战利品。")
 	sfx_reward.play()
 	_start_encounter()
+
+func _on_reward_heal_pressed() -> void:
+	var before: int = RunState.player_hp
+	RunState.player_hp = min(RunState.player_hp + GameData.SUPPLY_HEAL_AMOUNT, RunState.player_max_hp)
+	var healed: int = RunState.player_hp - before
+	result_label.text = "补给休整，恢复%d点生命。" % healed
+	RunState.log_event("补给休整恢复%d点生命。" % healed)
+	sfx_reward.play()
+	_start_encounter()
+
+func _on_reward_draft_pressed() -> void:
+	reward_mode = "supply_draft"
+	last_reward_mode = ""
+	_refresh_reward_ui()
 
 func _on_reward_card_selected(card_id: String) -> void:
 	RunState.deck.append(card_id)
 	var card_name: String = str(GameData.get_card_data(card_id, false).get("name", "新卡牌"))
-	result_label.text = "你获得了一张卡牌：%s。" % card_name
-	RunState.log_event("获得新卡：%s。" % card_name)
+	if reward_mode == "supply_draft":
+		result_label.text = "补给中获得一张卡牌：%s。" % card_name
+		RunState.log_event("补给获得新卡：%s。" % card_name)
+	else:
+		result_label.text = "你获得了一张卡牌：%s。" % card_name
+		RunState.log_event("获得新卡：%s。" % card_name)
 	sfx_reward.play()
 	_start_encounter()
 

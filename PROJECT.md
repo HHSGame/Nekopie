@@ -52,6 +52,7 @@ A Godot 4.3 deck-building prototype set in an isekai adventure. The main goal is
 - Stabilized hand card hover tweens to avoid errors when hand slots are refreshed.
 - Scaled hand cards to the hand dock height and animate a lifted, enlarged hover preview.
 - Centered the hand container layout so cards align in the middle of the dock.
+- Added post-combat route selection with a supply roll, difficulty picker, and supply reward flow.
 
 ## Scene and Script Layout
 - `scenes/Main.tscn` + `scripts/Main.gd`: main menu and navigation.
@@ -107,7 +108,6 @@ A Godot 4.3 deck-building prototype set in an isekai adventure. The main goal is
 Open the project in Godot 4.3 and run the main scene at `res://scenes/Main.tscn`.
 
 ## Next Implementation Plan
-1. Add route selection UI (supply roll + difficulty picker) and hook it into RunState flow.
-2. Expand GameData with new card types, effects, and tiered monsters with base score values.
-3. Implement scoring metrics collection and a persistent leaderboard view.
-4. Continue UI polish: combat layout validation, panel styling, and reward screens.
+1. Expand GameData with new card types, effects, and tiered monsters with base score values.
+2. Implement scoring metrics collection and a persistent leaderboard view.
+3. Continue UI polish: combat layout validation, panel styling, and reward screens.

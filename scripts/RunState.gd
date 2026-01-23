@@ -11,8 +11,14 @@ var next_encounter_first_strike_bonus := 0
 var current_enemy_id := ""
 var upgraded_cards: Dictionary = {}
 var run_log: Array = []
+var next_difficulty := "normal"
 
 const SAVE_PATH := "user://savegame.json"
+const DIFFICULTY_SETTINGS := {
+	"normal": {"label": "普通", "hp_mult": 1.0, "power_mult": 1.0},
+	"hard": {"label": "困难", "hp_mult": 1.2, "power_mult": 1.15},
+	"elite": {"label": "精英", "hp_mult": 1.4, "power_mult": 1.3}
+}
 
 func _ready() -> void:
 	if deck.is_empty():
@@ -29,6 +35,7 @@ func reset_run() -> void:
 	current_enemy_id = ""
 	upgraded_cards.clear()
 	run_log.clear()
+	next_difficulty = "normal"
 	save_run()
 
 func start_run() -> void:
@@ -41,6 +48,7 @@ func start_run() -> void:
 	current_enemy_id = ""
 	upgraded_cards.clear()
 	run_log.clear()
+	next_difficulty = "normal"
 	log_event("旅程开始。")
 	save_run()
 
@@ -51,7 +59,7 @@ func get_current_enemy_id() -> String:
 
 func start_encounter() -> Dictionary:
 	current_enemy_id = get_current_enemy_id()
-	return GameData.get_enemy(current_enemy_id)
+	return GameData.get_enemy(current_enemy_id).duplicate(true)
 
 func complete_encounter() -> bool:
 	if encounters_completed < max_encounters:
@@ -73,6 +81,9 @@ func log_event(message: String) -> void:
 		"message": message
 	})
 	save_run()
+
+func get_difficulty_settings(difficulty: String) -> Dictionary:
+	return DIFFICULTY_SETTINGS.get(difficulty, DIFFICULTY_SETTINGS["normal"])
 
 func has_save() -> bool:
 	return FileAccess.file_exists(SAVE_PATH)
@@ -115,7 +126,8 @@ func save_run() -> void:
 		"next_encounter_first_strike_bonus": next_encounter_first_strike_bonus,
 		"current_enemy_id": current_enemy_id,
 		"upgraded_cards": upgraded_cards,
-		"run_log": run_log
+		"run_log": run_log,
+		"next_difficulty": next_difficulty
 	}
 	var file := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
 	if file:
@@ -148,6 +160,7 @@ func load_run() -> bool:
 	for key in upgraded.keys():
 		upgraded_cards[str(key)] = bool(upgraded[key])
 	run_log = Array(data.get("run_log", []))
+	next_difficulty = str(data.get("next_difficulty", "normal"))
 	return true
 
 func clear_save() -> void:

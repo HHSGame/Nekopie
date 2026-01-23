@@ -11,6 +11,7 @@
 - Shrunk hand cards to fit the hand dock height and added a lifted hover scale animation.
 - Centered the hand container layout for cleaner card alignment.
 - Documented the route selection, scoring, content expansion, and leaderboard roadmap.
+- Added post-combat route selection with supply rolls, difficulty choices, and supply rewards.
 
 ## 2026-01-22
 - Fixed the combat hand draw loop so multiple cards populate correctly.
