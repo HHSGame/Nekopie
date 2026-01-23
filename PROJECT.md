@@ -50,6 +50,7 @@ A Godot 4.3 deck-building prototype set in an isekai adventure. The main goal is
 - Further tightened header, battle, and hand spacing so the hand panel fits inside the visible frame.
 - Removed the RunScreen header bar and scaled the battle panel layout down to fit the hand dock in view.
 - Stabilized hand card hover tweens to avoid errors when hand slots are refreshed.
+- Scaled hand cards to the hand dock height and animate a lifted, enlarged hover preview.
 
 ## Scene and Script Layout
 - `scenes/Main.tscn` + `scripts/Main.gd`: main menu and navigation.

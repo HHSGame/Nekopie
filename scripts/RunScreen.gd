@@ -5,7 +5,7 @@ const HAND_SIZE := 5
 const ENERGY_PER_TURN := 3
 const HAND_CARD_SIZE := Vector2(220, 260)
 const HAND_COLLAPSED_HEIGHT := 72.0
-const HAND_EXPANDED_HEIGHT := 260.0
+const HAND_EXPANDED_HEIGHT := 200.0
 const INTENT_ICONS := {
 	"attack": preload("res://icons/intent_attack.svg"),
 	"multi_attack": preload("res://icons/intent_multi.svg"),
@@ -192,13 +192,16 @@ func _refresh_hand() -> void:
 	for index in hand.size():
 		var card_id: String = hand[index]
 		var card_data := GameData.get_card_data(card_id, RunState.is_upgraded(card_id))
+		var collapsed_scale := HAND_COLLAPSED_HEIGHT / HAND_CARD_SIZE.y
 		var slot := Control.new()
-		slot.custom_minimum_size = Vector2(HAND_CARD_SIZE.x, HAND_COLLAPSED_HEIGHT)
+		slot.custom_minimum_size = Vector2(HAND_CARD_SIZE.x * collapsed_scale, HAND_COLLAPSED_HEIGHT)
 		slot.clip_contents = true
 		slot.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		hand_container.add_child(slot)
 		var widget: CardWidget = CARD_WIDGET_SCENE.instantiate()
 		widget.set_card(card_data)
+		widget.scale = Vector2(collapsed_scale, collapsed_scale)
+		widget.position = Vector2(0, HAND_COLLAPSED_HEIGHT - (HAND_CARD_SIZE.y * collapsed_scale))
 		widget.clicked.connect(_on_hand_card_clicked.bind(index))
 		widget.hovered.connect(_on_hand_card_hovered.bind(slot))
 		widget.unhovered.connect(_on_hand_card_unhovered.bind(slot))
@@ -228,9 +231,18 @@ func _set_hand_slot_expanded(slot: Control, expanded: bool) -> void:
 	var tween: Tween = hand_slot_tweens.get(slot)
 	if tween:
 		tween.kill()
-	var target_height := HAND_EXPANDED_HEIGHT if expanded else HAND_COLLAPSED_HEIGHT
+	var widget := slot.get_child(0) as Control
+	if not widget:
+		return
+	var collapsed_scale := HAND_COLLAPSED_HEIGHT / HAND_CARD_SIZE.y
+	var expanded_scale := HAND_EXPANDED_HEIGHT / HAND_CARD_SIZE.y
+	var target_scale := expanded_scale if expanded else collapsed_scale
+	var target_height := HAND_CARD_SIZE.y * target_scale
+	var target_position := Vector2(0, HAND_COLLAPSED_HEIGHT - target_height)
+	slot.clip_contents = not expanded
 	tween = create_tween()
-	tween.tween_property(slot, "custom_minimum_size:y", target_height, 0.12).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	tween.tween_property(widget, "scale", Vector2(target_scale, target_scale), 0.12).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	tween.parallel().tween_property(widget, "position", target_position, 0.12).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 	if expanded:
 		slot.z_index = 20
 	else:
