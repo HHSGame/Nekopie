@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3 uid="uid://bwl47lxg5wuap"]
+[gd_scene load_steps=24 format=3 uid="uid://bwl47lxg5wuap"]
 
 [ext_resource type="Script" path="res://scripts/RunScreen.gd" id="1_3jvb6"]
 [ext_resource type="Theme" path="res://themes/default_theme.tres" id="2_xk0w6"]
@@ -13,7 +13,6 @@
 [ext_resource type="AudioStream" uid="uid://b6g0oqolapn0a" path="res://audio/sfx_block.wav" id="11_9p0r4"]
 [ext_resource type="AudioStream" uid="uid://bvki1u8qiji8s" path="res://audio/sfx_reward.wav" id="12_1p0d9"]
 [ext_resource type="Texture2D" uid="uid://b4xbgr0hsb3ab" path="res://art/ui/scene_frame.svg" id="13_0qu8n"]
-[ext_resource type="Texture2D" uid="uid://bpuhc8w2sgxws" path="res://art/ui/title_banner.svg" id="14_mr2or"]
 [ext_resource type="Texture2D" uid="uid://bgih372t1mwu2" path="res://art/ui/portrait_frame.svg" id="15_kj4e1"]
 [ext_resource type="Texture2D" uid="uid://0tn27b5v7fx6" path="res://art/fx/slash.svg" id="16_t5o0q"]
 [ext_resource type="Texture2D" uid="uid://b8fterojcvbmf" path="res://art/fx/impact.svg" id="17_9xo3o"]
@@ -407,7 +406,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 size_flags_horizontal = 3
 theme_override_constants/separation = 10
-alignment = 2
+alignment = 1
 
 [node name="Actions" type="HBoxContainer" parent="MarginContainer/RootVBox/HandDock/HandMargin/HandVBox"]
 layout_mode = 2

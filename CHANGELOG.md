@@ -9,6 +9,7 @@
 - Removed the RunScreen header bar and scaled the battle layout down to keep the hand dock visible.
 - Fixed hand hover tween cleanup to prevent slot callbacks from running after nodes are freed.
 - Shrunk hand cards to fit the hand dock height and added a lifted hover scale animation.
+- Centered the hand container layout for cleaner card alignment.
 
 ## 2026-01-22
 - Fixed the combat hand draw loop so multiple cards populate correctly.
