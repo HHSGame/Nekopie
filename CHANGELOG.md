@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-01-24
+- Consolidated post-battle rewards into the supply route and removed challenge rewards.
+- Expanded supply rewards to include add/upgrade/remove, healing, and draft options.
+- Added the "恢复" card with a healing effect and new card art assets.
+- Expanded the enemy roster to 12 encounters with new portraits and base scores.
+- Added energy max growth every 3 encounters and updated the energy UI display.
+
 ## 2026-01-23
 - Rebuilt the RunScreen combat UI into a three-column battle layout with new story/progress panels.
 - Moved combat messaging into a dedicated battle log panel and reorganized enemy/player stats.

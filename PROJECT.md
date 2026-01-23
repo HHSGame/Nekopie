@@ -56,6 +56,11 @@ A Godot 4.3 deck-building prototype set in an isekai adventure. The main goal is
 - Ensured supply route selections reliably open the supply reward overlay.
 - Added run scoring, leaderboard persistence, and a post-run score overlay in the combat flow.
 - Fixed scoring calculation typing to satisfy Godot's parser.
+- Consolidated post-battle rewards into the supply route (challenge routes continue without rewards).
+- Expanded supply rewards to include add/upgrade/remove, healing, and card draft choices.
+- Added the "恢复" card with a healing effect.
+- Increased encounter count to 12 with new monster portraits and base scores.
+- Added energy max growth every 3 encounters and display energy as current/max.
 
 ## Scene and Script Layout
 - `scenes/Main.tscn` + `scripts/Main.gd`: main menu and navigation.
@@ -76,7 +81,7 @@ A Godot 4.3 deck-building prototype set in an isekai adventure. The main goal is
 - If supply appears: player chooses between `补给` and `继续挑战`.
 - If supply does not appear: only `继续挑战` is available.
 - `继续挑战` opens a difficulty choice: `普通` / `困难` / `精英` (affects enemy stats, rewards, and score multiplier).
-- `补给` route rewards: healing, card upgrade, card removal, or a small card draft (lower score multiplier).
+- `补给` route rewards: healing, card upgrade, card removal, add card, or a small card draft.
 
 ### Scoring & Leaderboard
 - Track per-combat metrics: attack_count, damage_dealt, damage_taken, final_hp, max_hp.
@@ -100,17 +105,14 @@ A Godot 4.3 deck-building prototype set in an isekai adventure. The main goal is
   - Charge/Overload (bigger next attack, then exhaust).
 
 ### Monster Expansion
-- Tiered roster with base score per tier:
-  - T1: 雾影小妖, 山坡野狼, 碎岩精.
-  - T2: 冰霜巨蜥, 雷鸣野牦, 断崖盗团.
-  - T3: 石甲魔像, 风暴翔禽, 深谷咒师.
-  - Boss: 山巅古龙 / 峰顶守护者.
+- Current roster covers 12 encounters with tiered base scores and new portraits.
+- Next wave targets: 风暴翔禽、深谷咒师、山巅古龙等进阶魔物。
 - New intents: debuff (Vulnerable/Weak), regen, split, summon, enrage.
 
 ## How to Run
 Open the project in Godot 4.3 and run the main scene at `res://scenes/Main.tscn`.
 
 ## Next Implementation Plan
-1. Expand GameData with new card types, effects, and tiered monsters with base score values.
-2. Implement scoring metrics collection and a persistent leaderboard view.
-3. Continue UI polish: combat layout validation, panel styling, and reward screens.
+1. Tune the 12-encounter pacing (enemy stats, score scaling, and supply frequency).
+2. Add more card effects (status/debuffs) and new enemy intents.
+3. Polish supply/score overlays with clearer feedback and optional animations.

@@ -13,7 +13,8 @@ const UPGRADE_LIBRARY := {
 	"defend": {"block": 3},
 	"flare": {"damage": 4},
 	"focus": {"draw": 1},
-	"explore": {"initiative_bonus": 2}
+	"explore": {"initiative_bonus": 2},
+	"recover": {"heal": 3}
 }
 
 const CARD_LIBRARY := {
@@ -66,6 +67,16 @@ const CARD_LIBRARY := {
 		"icon": "res://art/cards/icon_explore.svg",
 		"art": "res://art/cards/card_art_explore.svg",
 		"desc": "查看山势，下场战斗先手造成%d点伤害。" % FIRST_STRIKE_DAMAGE
+	},
+	"recover": {
+		"id": "recover",
+		"name": "恢复",
+		"cost": 1,
+		"heal": 6,
+		"rarity": "uncommon",
+		"icon": "res://art/cards/icon_recover.svg",
+		"art": "res://art/cards/card_art_recover.svg",
+		"desc": "恢复6点生命。"
 	}
 }
 
@@ -75,7 +86,8 @@ const STARTER_DECK := [
 	"strike",
 	"defend",
 	"defend",
-	"explore"
+	"explore",
+	"recover"
 ]
 
 const ENEMY_LIBRARY := {
@@ -106,6 +118,48 @@ const ENEMY_LIBRARY := {
 			{"type": "charge", "value": 3, "text": "嗜战蓄力"}
 		]
 	},
+	"mist_imp": {
+		"id": "mist_imp",
+		"name": "雾影小妖",
+		"hp": 18,
+		"attack": 5,
+		"score": 50,
+		"portrait": "res://art/portraits/enemy_mist_imp.svg",
+		"desc": "藏身薄雾的狡黠小妖。",
+		"intents": [
+			{"type": "attack", "value": 5, "text": "雾爪突袭"},
+			{"type": "guard", "value": 3, "text": "影雾护体"},
+			{"type": "charge", "value": 2, "text": "暗影蓄势"}
+		]
+	},
+	"slope_wolf": {
+		"id": "slope_wolf",
+		"name": "山坡野狼",
+		"hp": 20,
+		"attack": 6,
+		"score": 65,
+		"portrait": "res://art/portraits/enemy_slope_wolf.svg",
+		"desc": "在乱石间游走的饥饿猛兽。",
+		"intents": [
+			{"type": "attack", "value": 6, "text": "利爪撕咬"},
+			{"type": "multi_attack", "value": 3, "hits": 2, "text": "群咬"},
+			{"type": "guard", "value": 3, "text": "伺机防御"}
+		]
+	},
+	"rock_sprite": {
+		"id": "rock_sprite",
+		"name": "碎岩精",
+		"hp": 24,
+		"attack": 5,
+		"score": 68,
+		"portrait": "res://art/portraits/enemy_rock_sprite.svg",
+		"desc": "碎石凝形的精怪。",
+		"intents": [
+			{"type": "guard", "value": 5, "text": "岩壳防护"},
+			{"type": "attack", "value": 5, "text": "碎岩冲击"},
+			{"type": "charge", "value": 3, "text": "石屑蓄势"}
+		]
+	},
 	"wisp": {
 		"id": "wisp",
 		"name": "幽雾之灵",
@@ -120,6 +174,20 @@ const ENEMY_LIBRARY := {
 			{"type": "guard", "value": 3, "text": "雾影护体"}
 		]
 	},
+	"cliff_bandits": {
+		"id": "cliff_bandits",
+		"name": "断崖盗团",
+		"hp": 26,
+		"attack": 7,
+		"score": 80,
+		"portrait": "res://art/portraits/enemy_cliff_bandits.svg",
+		"desc": "驾轻就熟的山崖掠夺者。",
+		"intents": [
+			{"type": "multi_attack", "value": 3, "hits": 3, "text": "合击乱刃"},
+			{"type": "guard", "value": 4, "text": "结阵防守"},
+			{"type": "attack", "value": 7, "text": "飞索突袭"}
+		]
+	},
 	"ogre": {
 		"id": "ogre",
 		"name": "裂岩巨魔",
@@ -132,6 +200,48 @@ const ENEMY_LIBRARY := {
 			{"type": "charge", "value": 5, "text": "裂岩蓄势"},
 			{"type": "attack", "value": 10, "text": "岩锤重击"},
 			{"type": "guard", "value": 5, "text": "石肤防御"}
+		]
+	},
+	"ice_lizard": {
+		"id": "ice_lizard",
+		"name": "冰霜巨蜥",
+		"hp": 30,
+		"attack": 8,
+		"score": 100,
+		"portrait": "res://art/portraits/enemy_ice_lizard.svg",
+		"desc": "寒气缠身的巨蜥，鳞甲锋利。",
+		"intents": [
+			{"type": "attack", "value": 8, "text": "冰牙突咬"},
+			{"type": "guard", "value": 5, "text": "冰甲凝结"},
+			{"type": "drain", "value": 6, "heal": 3, "text": "霜息汲取"}
+		]
+	},
+	"thunder_yak": {
+		"id": "thunder_yak",
+		"name": "雷鸣野牦",
+		"hp": 32,
+		"attack": 9,
+		"score": 110,
+		"portrait": "res://art/portraits/enemy_thunder_yak.svg",
+		"desc": "披着雷霆之势的巨牦。",
+		"intents": [
+			{"type": "charge", "value": 4, "text": "雷势蓄力"},
+			{"type": "attack", "value": 10, "text": "雷角冲撞"},
+			{"type": "multi_attack", "value": 4, "hits": 2, "text": "连环践踏"}
+		]
+	},
+	"stone_golem": {
+		"id": "stone_golem",
+		"name": "石甲魔像",
+		"hp": 36,
+		"attack": 10,
+		"score": 120,
+		"portrait": "res://art/portraits/enemy_stone_golem.svg",
+		"desc": "沉稳厚重的石甲守卫。",
+		"intents": [
+			{"type": "guard", "value": 6, "text": "石甲护壁"},
+			{"type": "attack", "value": 10, "text": "沉岩猛击"},
+			{"type": "charge", "value": 5, "text": "山势蓄力"}
 		]
 	},
 	"summit_lord": {
@@ -153,9 +263,16 @@ const ENEMY_LIBRARY := {
 
 const ENCOUNTERS := [
 	"slime",
+	"mist_imp",
 	"goblin",
+	"slope_wolf",
+	"rock_sprite",
 	"wisp",
+	"cliff_bandits",
 	"ogre",
+	"ice_lizard",
+	"thunder_yak",
+	"stone_golem",
 	"summit_lord"
 ]
 
@@ -203,7 +320,7 @@ static func get_card_data(card_id: String, upgraded: bool = false) -> Dictionary
 		var upgrade: Dictionary = UPGRADE_LIBRARY.get(card_id, {})
 		for key in upgrade.keys():
 			match String(key):
-				"damage", "block", "draw":
+				"damage", "block", "draw", "heal":
 					base[key] = int(base.get(key, 0)) + int(upgrade[key])
 				"initiative_bonus":
 					base[key] = int(base.get(key, 0)) + int(upgrade[key])
@@ -219,6 +336,8 @@ static func build_description(card_data: Dictionary) -> String:
 		parts.append("获得%d点护甲。" % int(card_data.get("block", 0)))
 	if card_data.has("draw"):
 		parts.append("抽%d张牌。" % int(card_data.get("draw", 0)))
+	if card_data.has("heal"):
+		parts.append("恢复%d点生命。" % int(card_data.get("heal", 0)))
 	if bool(card_data.get("initiative", false)):
 		var bonus: int = int(card_data.get("initiative_bonus", 0))
 		var strike: int = FIRST_STRIKE_DAMAGE + bonus

@@ -2,7 +2,6 @@ extends Control
 
 const CARD_WIDGET_SCENE := preload("res://scenes/CardWidget.tscn")
 const HAND_SIZE := 5
-const ENERGY_PER_TURN := 3
 const HAND_CARD_SIZE := Vector2(220, 260)
 const HAND_COLLAPSED_HEIGHT := 72.0
 const HAND_EXPANDED_HEIGHT := 200.0
@@ -148,7 +147,7 @@ func _start_encounter() -> void:
 	combat_damage_taken = 0
 	combat_attack_count = 0
 	player_block = 0
-	energy = ENERGY_PER_TURN
+	energy = RunState.energy_max
 	draw_pile = RunState.deck.duplicate(true)
 	draw_pile.shuffle()
 	hand.clear()
@@ -207,7 +206,7 @@ func _update_ui() -> void:
 	player_hp_bar.max_value = max(RunState.player_max_hp, 1)
 	player_hp_bar.value = RunState.player_hp
 	player_block_label.text = "护甲：%d" % player_block
-	energy_label.text = "能量：%d" % energy
+	energy_label.text = "能量：%d / %d" % [energy, RunState.energy_max]
 	draw_label.text = "抽牌堆：%d" % draw_pile.size()
 	discard_label.text = "弃牌堆：%d" % discard_pile.size()
 	end_turn_button.disabled = combat_over
@@ -343,6 +342,12 @@ func _apply_card_effect(card_data: Dictionary) -> void:
 	if draw_count > 0:
 		_draw_cards(draw_count)
 		result_label.text = "你抽了%d张牌。" % draw_count
+	var heal := int(card_data.get("heal", 0))
+	if heal > 0:
+		var before: int = RunState.player_hp
+		RunState.player_hp = min(RunState.player_hp + heal, RunState.player_max_hp)
+		var healed: int = RunState.player_hp - before
+		result_label.text = "你恢复了%d点生命。" % healed
 	if bool(card_data.get("initiative", false)):
 		RunState.next_encounter_first_strike = true
 		RunState.next_encounter_first_strike_bonus += int(card_data.get("initiative_bonus", 0))
@@ -366,7 +371,7 @@ func _on_end_turn_pressed() -> void:
 		_update_ui()
 		return
 	player_block = 0
-	energy = ENERGY_PER_TURN
+	energy = RunState.energy_max
 	_draw_cards(HAND_SIZE)
 	result_label.text = "魔物行动结束，你继续攀登。"
 	_update_ui()
@@ -587,21 +592,11 @@ func _on_difficulty_selected(difficulty: String) -> void:
 	_set_route_overlay_visible(false)
 	result_label.text = "你选择了%s挑战。" % _difficulty_display(difficulty)
 	RunState.log_event("选择挑战难度：%s。" % _difficulty_display(difficulty))
-	_enter_reward_options()
+	_start_encounter()
 
 func _difficulty_display(difficulty: String) -> String:
 	var settings := RunState.get_difficulty_settings(difficulty)
 	return str(settings.get("label", "普通"))
-
-func _enter_reward_options() -> void:
-	next_step = "reward_options"
-	reward_mode = "options"
-	last_reward_mode = ""
-	reward_cards.clear()
-	_refresh_reward_ui()
-	_set_route_overlay_visible(false)
-	_set_reward_overlay_visible(true)
-	RunState.save_run()
 
 func _enter_supply_options() -> void:
 	next_step = "reward_options"
@@ -614,13 +609,13 @@ func _enter_supply_options() -> void:
 	RunState.save_run()
 
 func _refresh_reward_ui() -> void:
-	reward_options.visible = reward_mode in ["options", "supply"]
-	reward_add_button.visible = reward_mode == "options"
-	reward_upgrade_button.visible = reward_mode == "options"
-	reward_remove_button.visible = reward_mode == "options"
+	reward_options.visible = reward_mode == "supply"
+	reward_add_button.visible = reward_mode == "supply"
+	reward_upgrade_button.visible = reward_mode == "supply"
+	reward_remove_button.visible = reward_mode == "supply"
 	reward_heal_button.visible = reward_mode == "supply"
 	reward_draft_button.visible = reward_mode == "supply"
-	reward_skip_button.visible = reward_mode in ["options", "supply"]
+	reward_skip_button.visible = reward_mode == "supply"
 	var show_choices := reward_mode in ["add", "upgrade", "remove", "supply_draft"]
 	reward_choice_label.visible = show_choices
 	reward_choice_scroll.visible = reward_mode in ["add", "supply_draft"]
@@ -779,7 +774,7 @@ func _populate_reward_deck() -> void:
 			result_label.text = "没有可强化的卡牌。"
 		else:
 			result_label.text = "牌组为空，无法移除。"
-		reward_mode = "options"
+		reward_mode = "supply"
 		last_reward_mode = ""
 		_refresh_reward_ui()
 
@@ -799,12 +794,8 @@ func _on_reward_remove_pressed() -> void:
 	_refresh_reward_ui()
 
 func _on_reward_skip_pressed() -> void:
-	if reward_mode in ["supply", "supply_draft"]:
-		result_label.text = "你放弃了补给。"
-		RunState.log_event("放弃了补给。")
-	else:
-		result_label.text = "你放弃了战利品。"
-		RunState.log_event("放弃了战利品。")
+	result_label.text = "你放弃了补给。"
+	RunState.log_event("放弃了补给。")
 	sfx_reward.play()
 	_start_encounter()
 
@@ -825,12 +816,8 @@ func _on_reward_draft_pressed() -> void:
 func _on_reward_card_selected(card_id: String) -> void:
 	RunState.deck.append(card_id)
 	var card_name: String = str(GameData.get_card_data(card_id, false).get("name", "新卡牌"))
-	if reward_mode == "supply_draft":
-		result_label.text = "补给中获得一张卡牌：%s。" % card_name
-		RunState.log_event("补给获得新卡：%s。" % card_name)
-	else:
-		result_label.text = "你获得了一张卡牌：%s。" % card_name
-		RunState.log_event("获得新卡：%s。" % card_name)
+	result_label.text = "补给中获得一张卡牌：%s。" % card_name
+	RunState.log_event("补给获得新卡：%s。" % card_name)
 	sfx_reward.play()
 	_start_encounter()
 

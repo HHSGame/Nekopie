@@ -6,6 +6,7 @@ var max_encounters := 0
 var run_active := false
 var player_max_hp := 40
 var player_hp := 40
+var energy_max := 3
 var next_encounter_first_strike := false
 var next_encounter_first_strike_bonus := 0
 var current_enemy_id := ""
@@ -20,6 +21,7 @@ var leaderboard: Array = []
 
 const SAVE_PATH := "user://savegame.json"
 const LEADERBOARD_MAX := 10
+const STARTING_ENERGY := 3
 const DIFFICULTY_SETTINGS := {
 	"normal": {"label": "普通", "hp_mult": 1.0, "power_mult": 1.0, "score_mult": 1.0},
 	"hard": {"label": "困难", "hp_mult": 1.2, "power_mult": 1.15, "score_mult": 1.25},
@@ -36,6 +38,7 @@ func reset_run() -> void:
 	max_encounters = GameData.ENCOUNTERS.size()
 	run_active = false
 	player_hp = player_max_hp
+	energy_max = STARTING_ENERGY
 	next_encounter_first_strike = false
 	next_encounter_first_strike_bonus = 0
 	current_enemy_id = ""
@@ -53,6 +56,7 @@ func start_run() -> void:
 	encounters_completed = 0
 	max_encounters = GameData.ENCOUNTERS.size()
 	player_hp = player_max_hp
+	energy_max = STARTING_ENERGY
 	next_encounter_first_strike = false
 	next_encounter_first_strike_bonus = 0
 	current_enemy_id = ""
@@ -78,6 +82,8 @@ func start_encounter() -> Dictionary:
 func complete_encounter() -> bool:
 	if encounters_completed < max_encounters:
 		encounters_completed += 1
+		if encounters_completed % 3 == 0:
+			energy_max += 1
 	current_enemy_id = ""
 	save_run()
 	return encounters_completed >= max_encounters
@@ -163,6 +169,7 @@ func save_run() -> void:
 		"run_active": run_active,
 		"player_max_hp": player_max_hp,
 		"player_hp": player_hp,
+		"energy_max": energy_max,
 		"next_encounter_first_strike": next_encounter_first_strike,
 		"next_encounter_first_strike_bonus": next_encounter_first_strike_bonus,
 		"current_enemy_id": current_enemy_id,
@@ -198,6 +205,7 @@ func load_run() -> bool:
 	run_active = bool(data.get("run_active", false))
 	player_max_hp = int(data.get("player_max_hp", player_max_hp))
 	player_hp = int(data.get("player_hp", player_max_hp))
+	energy_max = int(data.get("energy_max", STARTING_ENERGY))
 	next_encounter_first_strike = bool(data.get("next_encounter_first_strike", false))
 	next_encounter_first_strike_bonus = int(data.get("next_encounter_first_strike_bonus", 0))
 	current_enemy_id = str(data.get("current_enemy_id", ""))
