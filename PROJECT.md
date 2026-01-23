@@ -53,6 +53,7 @@ A Godot 4.3 deck-building prototype set in an isekai adventure. The main goal is
 - Scaled hand cards to the hand dock height and animate a lifted, enlarged hover preview.
 - Centered the hand container layout so cards align in the middle of the dock.
 - Added post-combat route selection with a supply roll, difficulty picker, and supply reward flow.
+- Ensured supply route selections reliably open the supply reward overlay.
 
 ## Scene and Script Layout
 - `scenes/Main.tscn` + `scripts/Main.gd`: main menu and navigation.

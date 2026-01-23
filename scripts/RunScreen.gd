@@ -571,6 +571,8 @@ func _enter_reward_options() -> void:
 	last_reward_mode = ""
 	reward_cards.clear()
 	_refresh_reward_ui()
+	_set_route_overlay_visible(false)
+	_set_reward_overlay_visible(true)
 	RunState.save_run()
 
 func _enter_supply_options() -> void:
@@ -579,6 +581,8 @@ func _enter_supply_options() -> void:
 	last_reward_mode = ""
 	reward_cards.clear()
 	_refresh_reward_ui()
+	_set_route_overlay_visible(false)
+	_set_reward_overlay_visible(true)
 	RunState.save_run()
 
 func _refresh_reward_ui() -> void:

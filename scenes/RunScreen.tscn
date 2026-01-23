@@ -531,7 +531,6 @@ layout_mode = 2
 text = "精英"
 
 [node name="RewardOverlay" type="Control" parent="."]
-visible = false
 anchors_preset = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
