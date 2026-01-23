@@ -15,7 +15,7 @@ const INTENT_ICONS := {
 }
 
 @onready var story_label: Label = $MarginContainer/RootVBox/StoryPanel/StoryMargin/StoryLabel
-@onready var progress_label: Label = $MarginContainer/RootVBox/HeaderBar/ProgressPanel/ProgressMargin/ProgressLabel
+@onready var progress_label: Label = $MarginContainer/RootVBox/HandDock/HandMargin/HandVBox/Actions/ProgressPanel/ProgressMargin/ProgressLabel
 @onready var enemy_name_label: Label = $MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/EnemyColumn/EnemyNameLabel
 @onready var enemy_hp_label: Label = $MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/EnemyColumn/EnemyStatsPanel/EnemyStatsMargin/EnemyStatsVBox/EnemyHpRow/EnemyHpLabel
 @onready var enemy_hp_bar: ProgressBar = $MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/EnemyColumn/EnemyStatsPanel/EnemyStatsMargin/EnemyStatsVBox/EnemyHpBar
@@ -40,7 +40,7 @@ const INTENT_ICONS := {
 @onready var hand_container: HBoxContainer = $MarginContainer/RootVBox/HandDock/HandMargin/HandVBox/HandScroll/HandContainer
 @onready var end_turn_button: Button = $MarginContainer/RootVBox/HandDock/HandMargin/HandVBox/Actions/EndTurnButton
 @onready var next_button: Button = $MarginContainer/RootVBox/HandDock/HandMargin/HandVBox/Actions/NextButton
-@onready var back_button: Button = $MarginContainer/RootVBox/HeaderBar/BackButton
+@onready var back_button: Button = $MarginContainer/RootVBox/HandDock/HandMargin/HandVBox/Actions/BackButton
 @onready var reward_overlay: Control = $RewardOverlay
 @onready var reward_options: HBoxContainer = $RewardOverlay/CenterContainer/RewardPanel/RewardMargin/RewardVBox/RewardOptions
 @onready var reward_add_button: Button = $RewardOverlay/CenterContainer/RewardPanel/RewardMargin/RewardVBox/RewardOptions/RewardAddButton

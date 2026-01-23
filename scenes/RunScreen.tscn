@@ -49,6 +49,7 @@ anchor_bottom = 1.0
 color = Color(0, 0, 0, 0.45)
 
 [node name="SceneFrame" type="TextureRect" parent="."]
+visible = false
 layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -70,96 +71,32 @@ theme_override_constants/margin_bottom = 8
 layout_mode = 2
 theme_override_constants/separation = 6
 
-[node name="HeaderBar" type="HBoxContainer" parent="MarginContainer/RootVBox"]
-layout_mode = 2
-theme_override_constants/separation = 8
-
-[node name="BackButton" type="Button" parent="MarginContainer/RootVBox/HeaderBar"]
-layout_mode = 2
-text = "返回"
-icon = ExtResource("18_0e8pe")
-
-[node name="TitlePanel" type="Control" parent="MarginContainer/RootVBox/HeaderBar"]
-custom_minimum_size = Vector2(280, 44)
-layout_mode = 2
-
-[node name="TitleBanner" type="TextureRect" parent="MarginContainer/RootVBox/HeaderBar/TitlePanel"]
-layout_mode = 0
-anchor_right = 1.0
-anchor_bottom = 1.0
-mouse_filter = 2
-texture = ExtResource("14_mr2or")
-stretch_mode = 5
-
-[node name="TitleLabel" type="Label" parent="MarginContainer/RootVBox/HeaderBar/TitlePanel"]
-layout_mode = 0
-anchor_right = 1.0
-anchor_bottom = 1.0
-text = "攀登旅程"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="HeaderSpacer" type="Control" parent="MarginContainer/RootVBox/HeaderBar"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="ProgressPanel" type="PanelContainer" parent="MarginContainer/RootVBox/HeaderBar"]
-custom_minimum_size = Vector2(180, 36)
-layout_mode = 2
-
-[node name="ProgressMargin" type="MarginContainer" parent="MarginContainer/RootVBox/HeaderBar/ProgressPanel"]
-layout_mode = 2
-theme_override_constants/margin_left = 8
-theme_override_constants/margin_top = 4
-theme_override_constants/margin_right = 8
-theme_override_constants/margin_bottom = 4
-
-[node name="ProgressLabel" type="Label" parent="MarginContainer/RootVBox/HeaderBar/ProgressPanel/ProgressMargin"]
-layout_mode = 2
-text = "攀登进度：0 / 0"
-horizontal_alignment = 2
-
-[node name="StoryPanel" type="PanelContainer" parent="MarginContainer/RootVBox"]
-layout_mode = 2
-
-[node name="StoryMargin" type="MarginContainer" parent="MarginContainer/RootVBox/StoryPanel"]
-layout_mode = 2
-theme_override_constants/margin_left = 10
-theme_override_constants/margin_top = 4
-theme_override_constants/margin_right = 10
-theme_override_constants/margin_bottom = 4
-
-[node name="StoryLabel" type="Label" parent="MarginContainer/RootVBox/StoryPanel/StoryMargin"]
-layout_mode = 2
-text = "旅程开始。"
-autowrap_mode = 3
-
 [node name="BattlePanel" type="PanelContainer" parent="MarginContainer/RootVBox"]
 layout_mode = 2
 size_flags_vertical = 3
 
 [node name="BattleMargin" type="MarginContainer" parent="MarginContainer/RootVBox/BattlePanel"]
 layout_mode = 2
-theme_override_constants/margin_left = 8
-theme_override_constants/margin_top = 8
-theme_override_constants/margin_right = 8
-theme_override_constants/margin_bottom = 8
+theme_override_constants/margin_left = 6
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 6
+theme_override_constants/margin_bottom = 6
 
 [node name="BattleHBox" type="HBoxContainer" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin"]
 layout_mode = 2
-theme_override_constants/separation = 12
+theme_override_constants/separation = 9
 
 [node name="EnemyColumn" type="VBoxContainer" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox"]
-custom_minimum_size = Vector2(240, 0)
+custom_minimum_size = Vector2(180, 0)
 layout_mode = 2
-theme_override_constants/separation = 4
+theme_override_constants/separation = 3
 
 [node name="EnemyNameLabel" type="Label" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/EnemyColumn"]
 layout_mode = 2
 text = "敌人：未知魔物"
 
 [node name="EnemyPortraitPanel" type="PanelContainer" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/EnemyColumn"]
-custom_minimum_size = Vector2(170, 170)
+custom_minimum_size = Vector2(128, 128)
 layout_mode = 2
 
 [node name="EnemyPortrait" type="TextureRect" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/EnemyColumn/EnemyPortraitPanel"]
@@ -192,14 +129,14 @@ layout_mode = 2
 
 [node name="EnemyStatsMargin" type="MarginContainer" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/EnemyColumn/EnemyStatsPanel"]
 layout_mode = 2
-theme_override_constants/margin_left = 6
-theme_override_constants/margin_top = 4
-theme_override_constants/margin_right = 6
-theme_override_constants/margin_bottom = 4
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 3
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 3
 
 [node name="EnemyStatsVBox" type="VBoxContainer" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/EnemyColumn/EnemyStatsPanel/EnemyStatsMargin"]
 layout_mode = 2
-theme_override_constants/separation = 3
+theme_override_constants/separation = 2
 
 [node name="EnemyHpRow" type="HBoxContainer" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/EnemyColumn/EnemyStatsPanel/EnemyStatsMargin/EnemyStatsVBox"]
 layout_mode = 2
@@ -263,19 +200,34 @@ autowrap_mode = 3
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_constants/separation = 6
+theme_override_constants/separation = 4
+
+[node name="StoryPanel" type="PanelContainer" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/BattleCenterColumn"]
+layout_mode = 2
+
+[node name="StoryMargin" type="MarginContainer" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/BattleCenterColumn/StoryPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 4
+
+[node name="StoryLabel" type="Label" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/BattleCenterColumn/StoryPanel/StoryMargin"]
+layout_mode = 2
+text = "旅程开始。"
+autowrap_mode = 3
 
 [node name="BattleLogPanel" type="PanelContainer" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/BattleCenterColumn"]
-custom_minimum_size = Vector2(0, 80)
+custom_minimum_size = Vector2(0, 60)
 layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="BattleLogMargin" type="MarginContainer" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/BattleCenterColumn/BattleLogPanel"]
 layout_mode = 2
-theme_override_constants/margin_left = 6
-theme_override_constants/margin_top = 4
-theme_override_constants/margin_right = 6
-theme_override_constants/margin_bottom = 4
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 3
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 3
 
 [node name="ResultLabel" type="Label" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/BattleCenterColumn/BattleLogPanel/BattleLogMargin"]
 layout_mode = 2
@@ -287,16 +239,16 @@ layout_mode = 2
 size_flags_vertical = 3
 
 [node name="PlayerColumn" type="VBoxContainer" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox"]
-custom_minimum_size = Vector2(240, 0)
+custom_minimum_size = Vector2(180, 0)
 layout_mode = 2
-theme_override_constants/separation = 4
+theme_override_constants/separation = 3
 
 [node name="PlayerNameLabel" type="Label" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/PlayerColumn"]
 layout_mode = 2
 text = "旅人状态"
 
 [node name="PlayerPortraitPanel" type="PanelContainer" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/PlayerColumn"]
-custom_minimum_size = Vector2(170, 170)
+custom_minimum_size = Vector2(128, 128)
 layout_mode = 2
 
 [node name="PlayerPortrait" type="TextureRect" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/PlayerColumn/PlayerPortraitPanel"]
@@ -329,14 +281,14 @@ layout_mode = 2
 
 [node name="PlayerStatsMargin" type="MarginContainer" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/PlayerColumn/PlayerStatsPanel"]
 layout_mode = 2
-theme_override_constants/margin_left = 6
-theme_override_constants/margin_top = 4
-theme_override_constants/margin_right = 6
-theme_override_constants/margin_bottom = 4
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 3
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 3
 
 [node name="PlayerStatsVBox" type="VBoxContainer" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/PlayerColumn/PlayerStatsPanel/PlayerStatsMargin"]
 layout_mode = 2
-theme_override_constants/separation = 3
+theme_override_constants/separation = 2
 
 [node name="PlayerHpRow" type="HBoxContainer" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/PlayerColumn/PlayerStatsPanel/PlayerStatsMargin/PlayerStatsVBox"]
 layout_mode = 2
@@ -460,6 +412,27 @@ alignment = 2
 [node name="Actions" type="HBoxContainer" parent="MarginContainer/RootVBox/HandDock/HandMargin/HandVBox"]
 layout_mode = 2
 theme_override_constants/separation = 8
+
+[node name="BackButton" type="Button" parent="MarginContainer/RootVBox/HandDock/HandMargin/HandVBox/Actions"]
+layout_mode = 2
+text = "返回"
+icon = ExtResource("18_0e8pe")
+
+[node name="ProgressPanel" type="PanelContainer" parent="MarginContainer/RootVBox/HandDock/HandMargin/HandVBox/Actions"]
+custom_minimum_size = Vector2(180, 36)
+layout_mode = 2
+
+[node name="ProgressMargin" type="MarginContainer" parent="MarginContainer/RootVBox/HandDock/HandMargin/HandVBox/Actions/ProgressPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 4
+
+[node name="ProgressLabel" type="Label" parent="MarginContainer/RootVBox/HandDock/HandMargin/HandVBox/Actions/ProgressPanel/ProgressMargin"]
+layout_mode = 2
+text = "攀登进度：0 / 0"
+horizontal_alignment = 2
 
 [node name="ActionsSpacer" type="Control" parent="MarginContainer/RootVBox/HandDock/HandMargin/HandVBox/Actions"]
 layout_mode = 2
