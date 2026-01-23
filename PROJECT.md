@@ -44,6 +44,8 @@ A Godot 4.3 deck-building prototype set in an isekai adventure. The main goal is
 - Collapsed hand cards to headers with hover expansion for full preview.
 - Fixed hand draw loop so combat hands populate correctly.
 - Aligned the RunScreen scene frame with the main combat layout and removed the bottom hand gap.
+- Rebuilt the RunScreen battle UI into a three-column layout with dedicated battle log and stat panels.
+- Grouped story/progress and combat messaging into panel headers to reduce layout overlap.
 
 ## Scene and Script Layout
 - `scenes/Main.tscn` + `scripts/Main.gd`: main menu and navigation.
@@ -62,6 +64,6 @@ A Godot 4.3 deck-building prototype set in an isekai adventure. The main goal is
 Open the project in Godot 4.3 and run the main scene at `res://scenes/Main.tscn`.
 
 ## Next Implementation Plan
-1. Verify combat hand sizing/scroll behavior across common viewport sizes.
-2. Continue UI polish: richer panel styling, feedback animation tuning, and iconography refinement.
+1. Verify the new combat layout, hand sizing, and card hover behavior across common viewport sizes.
+2. Continue UI polish: panel styling, battle log emphasis, and portrait scale tuning.
 3. Replace placeholder art/audio with open-licensed assets when available.
