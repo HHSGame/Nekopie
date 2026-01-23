@@ -66,10 +66,48 @@ A Godot 4.3 deck-building prototype set in an isekai adventure. The main goal is
 - Art and audio still rely on placeholder assets.
 - No advanced status effects or skill keywords beyond the basic card set.
 
+## Expansion Roadmap (Routes, Score, Content)
+### Route Selection
+- After each combat, roll for a supply node; supply is not guaranteed.
+- If supply appears: player chooses between `补给` and `继续挑战`.
+- If supply does not appear: only `继续挑战` is available.
+- `继续挑战` opens a difficulty choice: `普通` / `困难` / `精英` (affects enemy stats, rewards, and score multiplier).
+- `补给` route rewards: healing, card upgrade, card removal, or a small card draft (lower score multiplier).
+
+### Scoring & Leaderboard
+- Track per-combat metrics: attack_count, damage_dealt, damage_taken, final_hp, max_hp.
+- Each monster has a base score by tier; difficulty adds a multiplier.
+- Combat score formula (tunable, monotonic with damage/HP):
+  - `combat_score = monster_base * difficulty_mult`
+  - `+ damage_dealt * 0.6`
+  - `+ min(damage_taken, max_hp * 3) * 0.3`
+  - `+ attack_count * 2`
+  - `+ final_hp * 2`
+- Route bonus: `补给` grants a small support bonus; `继续挑战` grants a full combat bonus.
+- Run total = sum of combat scores + route bonuses; store top 10 in leaderboard.
+
+### Card Types & Effects
+- Card types: Attack, Guard, Skill, Power, Curse (rarity + icon required).
+- New effect families:
+  - Multi-hit, bleed/poison, lifesteal, splash.
+  - Barrier, reflect, temporary shield, block scaling.
+  - Draw/energy engines, discard synergies, retain.
+  - Vulnerable/Weak, Strength, Regeneration, Thorns.
+  - Charge/Overload (bigger next attack, then exhaust).
+
+### Monster Expansion
+- Tiered roster with base score per tier:
+  - T1: 雾影小妖, 山坡野狼, 碎岩精.
+  - T2: 冰霜巨蜥, 雷鸣野牦, 断崖盗团.
+  - T3: 石甲魔像, 风暴翔禽, 深谷咒师.
+  - Boss: 山巅古龙 / 峰顶守护者.
+- New intents: debuff (Vulnerable/Weak), regen, split, summon, enrage.
+
 ## How to Run
 Open the project in Godot 4.3 and run the main scene at `res://scenes/Main.tscn`.
 
 ## Next Implementation Plan
-1. Verify the new combat layout, hand sizing, and card hover behavior across common viewport sizes.
-2. Continue UI polish: panel styling, battle log emphasis, and portrait scale tuning.
-3. Replace placeholder art/audio with open-licensed assets when available.
+1. Add route selection UI (supply roll + difficulty picker) and hook it into RunState flow.
+2. Expand GameData with new card types, effects, and tiered monsters with base score values.
+3. Implement scoring metrics collection and a persistent leaderboard view.
+4. Continue UI polish: combat layout validation, panel styling, and reward screens.

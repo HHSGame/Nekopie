@@ -10,6 +10,7 @@
 - Fixed hand hover tween cleanup to prevent slot callbacks from running after nodes are freed.
 - Shrunk hand cards to fit the hand dock height and added a lifted hover scale animation.
 - Centered the hand container layout for cleaner card alignment.
+- Documented the route selection, scoring, content expansion, and leaderboard roadmap.
 
 ## 2026-01-22
 - Fixed the combat hand draw loop so multiple cards populate correctly.
