@@ -5,6 +5,7 @@
 - Moved combat messaging into a dedicated battle log panel and reorganized enemy/player stats.
 - Updated RunScreen node bindings to match the redesigned scene hierarchy.
 - Trimmed combat panel/hand dock minimum sizes and spacing so the hand area stays within the viewport.
+- Tightened header, portrait, and hand panel sizing to keep the hand dock within the RunScreen bounds.
 
 ## 2026-01-22
 - Fixed the combat hand draw loop so multiple cards populate correctly.
