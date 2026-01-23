@@ -698,8 +698,8 @@ func _calculate_combat_score() -> int:
 	var settings := RunState.get_difficulty_settings(combat_difficulty)
 	var difficulty_mult := float(settings.get("score_mult", 1.0))
 	var damage_taken_cap := RunState.player_max_hp * 3
-	var damage_taken_score := min(combat_damage_taken, damage_taken_cap) * 0.3
-	var score := (base_score * difficulty_mult)
+	var damage_taken_score: float = float(min(combat_damage_taken, damage_taken_cap)) * 0.3
+	var score: float = float(base_score) * difficulty_mult
 	score += combat_damage_dealt * 0.6
 	score += damage_taken_score
 	score += combat_attack_count * 2

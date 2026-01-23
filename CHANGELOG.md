@@ -14,6 +14,7 @@
 - Added post-combat route selection with supply rolls, difficulty choices, and supply rewards.
 - Fixed supply route selection to open the supply reward overlay.
 - Added run scoring, leaderboard persistence, and a score overlay shown after run completion.
+- Fixed score calculation typing to avoid parser errors in RunScreen.
 
 ## 2026-01-22
 - Fixed the combat hand draw loop so multiple cards populate correctly.
