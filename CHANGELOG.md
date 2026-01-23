@@ -4,6 +4,7 @@
 - Rebuilt the RunScreen combat UI into a three-column battle layout with new story/progress panels.
 - Moved combat messaging into a dedicated battle log panel and reorganized enemy/player stats.
 - Updated RunScreen node bindings to match the redesigned scene hierarchy.
+- Trimmed combat panel/hand dock minimum sizes and spacing so the hand area stays within the viewport.
 
 ## 2026-01-22
 - Fixed the combat hand draw loop so multiple cards populate correctly.

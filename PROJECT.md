@@ -46,6 +46,7 @@ A Godot 4.3 deck-building prototype set in an isekai adventure. The main goal is
 - Aligned the RunScreen scene frame with the main combat layout and removed the bottom hand gap.
 - Rebuilt the RunScreen battle UI into a three-column layout with dedicated battle log and stat panels.
 - Grouped story/progress and combat messaging into panel headers to reduce layout overlap.
+- Reduced combat panel and hand dock minimum sizes to keep the hand area within the RunScreen bounds.
 
 ## Scene and Script Layout
 - `scenes/Main.tscn` + `scripts/Main.gd`: main menu and navigation.
