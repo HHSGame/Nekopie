@@ -84,6 +84,7 @@ const ENEMY_LIBRARY := {
 		"name": "雾泽史莱姆",
 		"hp": 18,
 		"attack": 4,
+		"score": 40,
 		"portrait": "res://art/portraits/enemy_slime.svg",
 		"desc": "黏液喷吐，拖慢你的步伐。",
 		"intents": [
@@ -96,6 +97,7 @@ const ENEMY_LIBRARY := {
 		"name": "山道哥布林",
 		"hp": 22,
 		"attack": 6,
+		"score": 60,
 		"portrait": "res://art/portraits/enemy_goblin.svg",
 		"desc": "埋伏在林间的劫掠者。",
 		"intents": [
@@ -109,6 +111,7 @@ const ENEMY_LIBRARY := {
 		"name": "幽雾之灵",
 		"hp": 20,
 		"attack": 7,
+		"score": 70,
 		"portrait": "res://art/portraits/enemy_wisp.svg",
 		"desc": "飘忽的幽光，擅长扰乱心神。",
 		"intents": [
@@ -122,6 +125,7 @@ const ENEMY_LIBRARY := {
 		"name": "裂岩巨魔",
 		"hp": 30,
 		"attack": 9,
+		"score": 90,
 		"portrait": "res://art/portraits/enemy_ogre.svg",
 		"desc": "手持岩锤，守护山腰。",
 		"intents": [
@@ -135,6 +139,7 @@ const ENEMY_LIBRARY := {
 		"name": "山巅魔王",
 		"hp": 38,
 		"attack": 11,
+		"score": 140,
 		"portrait": "res://art/portraits/enemy_boss.svg",
 		"desc": "盘踞山巅的魔物首领。",
 		"intents": [

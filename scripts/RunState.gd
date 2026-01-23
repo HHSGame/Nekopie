@@ -12,12 +12,18 @@ var current_enemy_id := ""
 var upgraded_cards: Dictionary = {}
 var run_log: Array = []
 var next_difficulty := "normal"
+var run_score_total := 0
+var run_score_finalized := false
+var last_run_score := 0
+var last_run_rank := 0
+var leaderboard: Array = []
 
 const SAVE_PATH := "user://savegame.json"
+const LEADERBOARD_MAX := 10
 const DIFFICULTY_SETTINGS := {
-	"normal": {"label": "普通", "hp_mult": 1.0, "power_mult": 1.0},
-	"hard": {"label": "困难", "hp_mult": 1.2, "power_mult": 1.15},
-	"elite": {"label": "精英", "hp_mult": 1.4, "power_mult": 1.3}
+	"normal": {"label": "普通", "hp_mult": 1.0, "power_mult": 1.0, "score_mult": 1.0},
+	"hard": {"label": "困难", "hp_mult": 1.2, "power_mult": 1.15, "score_mult": 1.25},
+	"elite": {"label": "精英", "hp_mult": 1.4, "power_mult": 1.3, "score_mult": 1.5}
 }
 
 func _ready() -> void:
@@ -36,6 +42,10 @@ func reset_run() -> void:
 	upgraded_cards.clear()
 	run_log.clear()
 	next_difficulty = "normal"
+	run_score_total = 0
+	run_score_finalized = false
+	last_run_score = 0
+	last_run_rank = 0
 	save_run()
 
 func start_run() -> void:
@@ -49,6 +59,10 @@ func start_run() -> void:
 	upgraded_cards.clear()
 	run_log.clear()
 	next_difficulty = "normal"
+	run_score_total = 0
+	run_score_finalized = false
+	last_run_score = 0
+	last_run_rank = 0
 	log_event("旅程开始。")
 	save_run()
 
@@ -84,6 +98,33 @@ func log_event(message: String) -> void:
 
 func get_difficulty_settings(difficulty: String) -> Dictionary:
 	return DIFFICULTY_SETTINGS.get(difficulty, DIFFICULTY_SETTINGS["normal"])
+
+func add_combat_score(score: int) -> void:
+	run_score_total += score
+	save_run()
+
+func finalize_run_score() -> void:
+	if run_score_finalized:
+		return
+	run_score_finalized = true
+	last_run_score = run_score_total
+	var entry := {
+		"score": last_run_score,
+		"time": Time.get_datetime_string_from_system()
+	}
+	leaderboard.append(entry)
+	leaderboard.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
+		return int(a.get("score", 0)) > int(b.get("score", 0))
+	)
+	if leaderboard.size() > LEADERBOARD_MAX:
+		leaderboard.resize(LEADERBOARD_MAX)
+	last_run_rank = 0
+	for index in leaderboard.size():
+		var item: Dictionary = leaderboard[index]
+		if item.get("score") == entry.get("score") and item.get("time") == entry.get("time"):
+			last_run_rank = index + 1
+			break
+	save_run()
 
 func has_save() -> bool:
 	return FileAccess.file_exists(SAVE_PATH)
@@ -127,7 +168,12 @@ func save_run() -> void:
 		"current_enemy_id": current_enemy_id,
 		"upgraded_cards": upgraded_cards,
 		"run_log": run_log,
-		"next_difficulty": next_difficulty
+		"next_difficulty": next_difficulty,
+		"run_score_total": run_score_total,
+		"run_score_finalized": run_score_finalized,
+		"last_run_score": last_run_score,
+		"last_run_rank": last_run_rank,
+		"leaderboard": leaderboard
 	}
 	var file := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
 	if file:
@@ -161,6 +207,11 @@ func load_run() -> bool:
 		upgraded_cards[str(key)] = bool(upgraded[key])
 	run_log = Array(data.get("run_log", []))
 	next_difficulty = str(data.get("next_difficulty", "normal"))
+	run_score_total = int(data.get("run_score_total", 0))
+	run_score_finalized = bool(data.get("run_score_finalized", false))
+	last_run_score = int(data.get("last_run_score", 0))
+	last_run_rank = int(data.get("last_run_rank", 0))
+	leaderboard = Array(data.get("leaderboard", []))
 	return true
 
 func clear_save() -> void:

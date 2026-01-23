@@ -13,6 +13,7 @@
 - Documented the route selection, scoring, content expansion, and leaderboard roadmap.
 - Added post-combat route selection with supply rolls, difficulty choices, and supply rewards.
 - Fixed supply route selection to open the supply reward overlay.
+- Added run scoring, leaderboard persistence, and a score overlay shown after run completion.
 
 ## 2026-01-22
 - Fixed the combat hand draw loop so multiple cards populate correctly.

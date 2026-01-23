@@ -63,6 +63,11 @@ const INTENT_ICONS := {
 @onready var reward_deck_scroll: ScrollContainer = $RewardOverlay/CenterContainer/RewardPanel/RewardMargin/RewardVBox/RewardDeckScroll
 @onready var reward_deck_list: VBoxContainer = $RewardOverlay/CenterContainer/RewardPanel/RewardMargin/RewardVBox/RewardDeckScroll/RewardDeckList
 @onready var reward_panel: PanelContainer = $RewardOverlay/CenterContainer/RewardPanel
+@onready var score_overlay: Control = $ScoreOverlay
+@onready var score_summary_label: Label = $ScoreOverlay/CenterContainer/ScorePanel/ScoreMargin/ScoreVBox/ScoreSummaryLabel
+@onready var score_rank_label: Label = $ScoreOverlay/CenterContainer/ScorePanel/ScoreMargin/ScoreVBox/ScoreRankLabel
+@onready var score_list: VBoxContainer = $ScoreOverlay/CenterContainer/ScorePanel/ScoreMargin/ScoreVBox/ScoreList
+@onready var score_continue_button: Button = $ScoreOverlay/CenterContainer/ScorePanel/ScoreMargin/ScoreVBox/ScoreContinueButton
 @onready var card_detail_panel: PanelContainer = $CardDetailPanel
 @onready var card_detail_name: Label = $CardDetailPanel/CardDetailMargin/CardDetailVBox/CardDetailName
 @onready var card_detail_cost: Label = $CardDetailPanel/CardDetailMargin/CardDetailVBox/CardDetailCost
@@ -98,6 +103,11 @@ var hand_slot_tweens: Dictionary = {}
 var route_overlay_active := false
 var supply_available := false
 var route_mode := "none"
+var score_overlay_active := false
+var combat_damage_dealt := 0
+var combat_damage_taken := 0
+var combat_attack_count := 0
+var combat_difficulty := "normal"
 
 func _ready() -> void:
 	story_label.text = "你踏上 %s 的山道，魔物在雾中伺机。" % GameData.MOUNTAIN_NAME
@@ -115,11 +125,14 @@ func _ready() -> void:
 	difficulty_normal_button.pressed.connect(_on_difficulty_selected.bind("normal"))
 	difficulty_hard_button.pressed.connect(_on_difficulty_selected.bind("hard"))
 	difficulty_elite_button.pressed.connect(_on_difficulty_selected.bind("elite"))
+	score_continue_button.pressed.connect(_on_score_continue_pressed)
 	card_detail_panel.visible = false
 	reward_overlay.modulate.a = 0.0
 	reward_overlay_active = reward_overlay.visible
 	route_overlay.visible = false
 	route_overlay_active = route_overlay.visible
+	score_overlay.visible = false
+	score_overlay_active = score_overlay.visible
 	_start_encounter()
 
 func _start_encounter() -> void:
@@ -131,6 +144,9 @@ func _start_encounter() -> void:
 	route_mode = "none"
 	supply_available = false
 	card_detail_panel.visible = false
+	combat_damage_dealt = 0
+	combat_damage_taken = 0
+	combat_attack_count = 0
 	player_block = 0
 	energy = ENERGY_PER_TURN
 	draw_pile = RunState.deck.duplicate(true)
@@ -138,6 +154,7 @@ func _start_encounter() -> void:
 	hand.clear()
 	discard_pile.clear()
 	enemy_data = RunState.start_encounter()
+	combat_difficulty = RunState.next_difficulty
 	enemy_hp = enemy_data.get("hp", 0)
 	enemy_max_hp = enemy_hp
 	enemy_block = 0
@@ -196,8 +213,10 @@ func _update_ui() -> void:
 	end_turn_button.disabled = combat_over
 	var show_rewards := combat_over and not run_complete and next_step == "reward_options"
 	var show_route := combat_over and not run_complete and next_step == "route"
+	var show_score := combat_over and run_complete
 	_set_reward_overlay_visible(show_rewards)
 	_set_route_overlay_visible(show_route)
+	_set_score_overlay_visible(show_score)
 	next_button.visible = combat_over and not show_rewards and not show_route
 	if combat_over and next_button.visible:
 		if run_complete:
@@ -211,6 +230,8 @@ func _update_ui() -> void:
 		_refresh_reward_ui()
 	if show_route:
 		_update_route_ui()
+	if show_score:
+		_refresh_score_ui()
 
 func _refresh_hand() -> void:
 	for tween in hand_slot_tweens.values():
@@ -301,11 +322,13 @@ func _on_hand_card_clicked(card_id: String, index: int) -> void:
 func _apply_card_effect(card_data: Dictionary) -> void:
 	var damage := int(card_data.get("damage", 0))
 	if damage > 0:
+		combat_attack_count += 1
 		var blocked: int = min(enemy_block, damage)
 		enemy_block -= blocked
 		var actual_damage: int = damage - blocked
 		if actual_damage > 0:
 			enemy_hp = max(enemy_hp - actual_damage, 0)
+			combat_damage_dealt += actual_damage
 			result_label.text = "你对魔物造成%d点伤害。" % actual_damage
 			sfx_attack.play()
 			_play_enemy_hit_effect()
@@ -362,6 +385,7 @@ func _enemy_turn() -> void:
 		run_complete = true
 		result_label.text = "你在山道上倒下，征途告终。"
 		RunState.log_event("你在山道上倒下。")
+		RunState.finalize_run_score()
 		RunState.run_active = false
 		RunState.save_run()
 		return
@@ -371,10 +395,13 @@ func _enemy_turn() -> void:
 func _check_enemy_defeat() -> void:
 	if enemy_hp <= 0:
 		combat_over = true
+		var combat_score := _calculate_combat_score()
+		RunState.add_combat_score(combat_score)
 		run_complete = RunState.complete_encounter()
 		if run_complete:
 			result_label.text = "你征服了 %s，登顶通关！" % GameData.MOUNTAIN_NAME
 			RunState.log_event("登顶通关，征服 %s。" % GameData.MOUNTAIN_NAME)
+			RunState.finalize_run_score()
 			RunState.run_active = false
 			RunState.save_run()
 		else:
@@ -468,6 +495,7 @@ func _apply_enemy_damage(amount: int, text_template: String = "魔物反击，�
 	player_block = max(player_block - amount, 0)
 	if damage > 0:
 		RunState.player_hp = max(RunState.player_hp - damage, 0)
+		combat_damage_taken += damage
 		result_label.text = text_template % damage
 		sfx_attack.play()
 		_play_player_hit_effect()
@@ -640,6 +668,43 @@ func _set_route_overlay_visible(active: bool) -> void:
 		return
 	route_overlay_active = active
 	route_overlay.visible = active
+
+func _set_score_overlay_visible(active: bool) -> void:
+	if active == score_overlay_active:
+		return
+	score_overlay_active = active
+	score_overlay.visible = active
+
+func _refresh_score_ui() -> void:
+	score_summary_label.text = "本次得分：%d" % RunState.last_run_score
+	if RunState.last_run_rank > 0:
+		score_rank_label.text = "当前排名：第%d名" % RunState.last_run_rank
+	else:
+		score_rank_label.text = "当前排名：-"
+	_clear_container(score_list)
+	for index in RunState.leaderboard.size():
+		var entry: Dictionary = RunState.leaderboard[index]
+		var score_value := int(entry.get("score", 0))
+		var time_text := str(entry.get("time", ""))
+		var label := Label.new()
+		label.text = "%d. %d 分 %s" % [index + 1, score_value, time_text]
+		score_list.add_child(label)
+
+func _on_score_continue_pressed() -> void:
+	get_tree().change_scene_to_file("res://scenes/Main.tscn")
+
+func _calculate_combat_score() -> int:
+	var base_score := int(enemy_data.get("score", 0))
+	var settings := RunState.get_difficulty_settings(combat_difficulty)
+	var difficulty_mult := float(settings.get("score_mult", 1.0))
+	var damage_taken_cap := RunState.player_max_hp * 3
+	var damage_taken_score := min(combat_damage_taken, damage_taken_cap) * 0.3
+	var score := (base_score * difficulty_mult)
+	score += combat_damage_dealt * 0.6
+	score += damage_taken_score
+	score += combat_attack_count * 2
+	score += RunState.player_hp * 2
+	return int(round(score))
 
 func _apply_difficulty_to_enemy(difficulty: String) -> void:
 	var settings := RunState.get_difficulty_settings(difficulty)

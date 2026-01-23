@@ -627,6 +627,64 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 8
 
+[node name="ScoreOverlay" type="Control" parent="."]
+visible = false
+anchors_preset = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="Dimmer" type="ColorRect" parent="ScoreOverlay"]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color(0, 0, 0, 0.55)
+
+[node name="CenterContainer" type="CenterContainer" parent="ScoreOverlay"]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="ScorePanel" type="PanelContainer" parent="ScoreOverlay/CenterContainer"]
+custom_minimum_size = Vector2(640, 420)
+layout_mode = 2
+
+[node name="ScoreMargin" type="MarginContainer" parent="ScoreOverlay/CenterContainer/ScorePanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="ScoreVBox" type="VBoxContainer" parent="ScoreOverlay/CenterContainer/ScorePanel/ScoreMargin"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="ScoreTitleLabel" type="Label" parent="ScoreOverlay/CenterContainer/ScorePanel/ScoreMargin/ScoreVBox"]
+layout_mode = 2
+text = "战斗结算"
+
+[node name="ScoreSummaryLabel" type="Label" parent="ScoreOverlay/CenterContainer/ScorePanel/ScoreMargin/ScoreVBox"]
+layout_mode = 2
+text = "本次得分：0"
+
+[node name="ScoreRankLabel" type="Label" parent="ScoreOverlay/CenterContainer/ScorePanel/ScoreMargin/ScoreVBox"]
+layout_mode = 2
+text = "当前排名：-"
+
+[node name="ScoreListTitle" type="Label" parent="ScoreOverlay/CenterContainer/ScorePanel/ScoreMargin/ScoreVBox"]
+layout_mode = 2
+text = "排行榜"
+
+[node name="ScoreList" type="VBoxContainer" parent="ScoreOverlay/CenterContainer/ScorePanel/ScoreMargin/ScoreVBox"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="ScoreContinueButton" type="Button" parent="ScoreOverlay/CenterContainer/ScorePanel/ScoreMargin/ScoreVBox"]
+layout_mode = 2
+text = "返回主菜单"
+
 [node name="CardDetailPanel" type="PanelContainer" parent="."]
 visible = false
 layout_mode = 0

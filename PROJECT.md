@@ -54,6 +54,7 @@ A Godot 4.3 deck-building prototype set in an isekai adventure. The main goal is
 - Centered the hand container layout so cards align in the middle of the dock.
 - Added post-combat route selection with a supply roll, difficulty picker, and supply reward flow.
 - Ensured supply route selections reliably open the supply reward overlay.
+- Added run scoring, leaderboard persistence, and a post-run score overlay in the combat flow.
 
 ## Scene and Script Layout
 - `scenes/Main.tscn` + `scripts/Main.gd`: main menu and navigation.
