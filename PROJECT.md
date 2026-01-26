@@ -121,6 +121,45 @@ A Godot 4.3 deck-building prototype set in an isekai adventure. The main goal is
 - Next wave targets: 风暴翔禽、深谷咒师、山巅古龙等进阶魔物。
 - New intents: debuff (Vulnerable/Weak), regen, split, summon, enrage.
 
+## Planned Card Set (vNext)
+### New Keywords/Statuses
+- `穿刺`: 无视护甲，造成绝对伤害。
+- `蓄力xN`: 下一次攻击伤害 * N，触发后清空。
+- `停滞`: 跳过敌人本回合（稀有，通常消耗）。
+- `反击`: 本回合受到伤害时反击固定伤害。
+- `无效化`: 本回合下一张针对自己的敌方卡牌失效。
+- `战利吸收`: 本回合受到伤害时从抽牌堆抽取卡牌补给。
+- `流血`: 敌人回合结束时受到固定伤害，可叠加。
+- `装备`: 装配后在该场战斗持续生效。
+
+### Starter Deck (15 Cards)
+- 斩击 x5
+- 格挡 x4
+- 穿刺 x2
+- 蓄力 x1
+- 专注 x1
+- 恢复 x1
+- 踏勘 x1
+
+### Proposed Card Types & Examples
+- Attack
+  - 穿刺（1费）：穿刺6伤害。升级：+2伤害。
+  - 破甲突击（2费）：穿刺10伤害。升级：+3伤害。
+- Skill
+  - 蓄力（1费）：获得蓄力x2。强化1：蓄力x3；强化2：蓄力x4。
+  - 迅读（0费）：抽2张。强化1：抽3张；强化2：抽4张。
+  - 停滞结界（0费，稀有）：跳过敌人本回合，消耗。
+- Status (临时，当前回合)
+  - 反击姿态（1费）：本回合受伤时反击3点伤害。
+  - 护幕（1费）：本回合下一张针对自己的敌方卡牌失效。
+  - 补给回响（1费）：本回合受伤时抽2张牌作为补给。
+  - 血痕标记（1费）：给敌人施加流血2层。
+- Equipment (战斗持续)
+  - 研锋之刃（2费）：本场战斗你的攻击伤害+1。
+  - 缓冲披风（2费）：本场战斗受到伤害-1（最低为0）。
+  - 连击腕轮（2费）：每回合当你连续打出2张攻击牌，抽1张。
+  - 守势腰带（2费）：每回合当你连续打出2张防御牌，获得2点护甲。
+
 ## How to Run
 Open the project in Godot 4.3 and run the main scene at `res://scenes/Main.tscn`.
 
