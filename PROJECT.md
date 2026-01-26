@@ -72,6 +72,10 @@ A Godot 4.3 deck-building prototype set in an isekai adventure. The main goal is
 - Card upgrades now apply per individual card copy instead of all copies.
 - Hand flow now draws 5 on turn 1, draws 3 thereafter, and keeps up to 5 cards.
 - Added an end-turn discard selection overlay when hand size exceeds 5.
+- Expanded the player card pool with pierce, charge, lifesteal, DOT statuses, and skip-turn tools.
+- Added per-battle equipment and power effects (combo draws, damage reduction, bleed boosts).
+- Added retain/ethereal/exhaust handling for card persistence and removal.
+- Starter deck now uses 15 cards to support the larger card pool.
 
 ## Scene and Script Layout
 - `scenes/Main.tscn` + `scripts/Main.gd`: main menu and navigation.
@@ -121,24 +125,19 @@ A Godot 4.3 deck-building prototype set in an isekai adventure. The main goal is
 - Next wave targets: 风暴翔禽、深谷咒师、山巅古龙等进阶魔物。
 - New intents: debuff (Vulnerable/Weak), regen, split, summon, enrage.
 
-## Planned Card Set (vNext)
-### New Keywords/Statuses
+## Expanded Card Set (Implemented)
+### Keywords/Statuses
 - `穿刺`: 无视护甲，造成绝对伤害。
 - `蓄力xN`: 下一次攻击伤害 * N，触发后清空。
-- `停滞`: 跳过敌人本回合（稀有，通常消耗）。
+- `停滞`: 跳过敌人本回合（消耗）。
 - `反击`: 本回合受到伤害时按比例反击。
-- `无效化`: 本回合下一张针对自己的敌方卡牌失效。
-- `战利吸收`: 本回合受到伤害时从抽牌堆抽取卡牌补给。
-- `流血`: 敌人回合结束时受到固定伤害，可叠加。
-- `装备`: 装配后在该场战斗持续生效。
+- `护幕`: 本回合下一张针对自己的敌方卡牌失效。
+- `战利吸收`: 本回合受伤时抽牌补给。
+- `流血/中毒/灼烧`: 敌人回合结算时持续掉血（中毒会衰减）。
+- `装备/心法`: 装备或心法在本场战斗持续生效。
 - `吸血`: 造成伤害后恢复等量/比例生命。
-- `失衡`: 敌人本回合护甲获得量降低。
-- `保留`: 回合结束后保留在手牌。
-- `消耗`: 打出后移出本场战斗（消耗牌堆）。
-- `虚无`: 回合结束未打出则消耗。
-- `连击`: 本回合累计攻击次数触发额外效果。
-- `中毒`: 敌人回合开始受到层数伤害，随后层数-1。
-- `灼烧`: 敌人回合结束受到层数伤害，层数不衰减。
+- `保留/消耗/虚无`: 保留留手、消耗移除、虚无未打出会消耗。
+- `多段强化`: 部分卡牌支持两次强化（如蓄力、迅读、反击姿态）。
 
 ### Starter Deck (15 Cards)
 - 斩击 x5
@@ -149,53 +148,18 @@ A Godot 4.3 deck-building prototype set in an isekai adventure. The main goal is
 - 恢复 x1
 - 踏勘 x1
 
-### Proposed Card Types & Examples
-- Attack
-  - 穿刺（1费）：穿刺6伤害。升级：+2伤害。
-  - 破甲突击（2费）：穿刺10伤害。升级：+3伤害。
-  - 血噬斩（2费）：造成8伤害，吸血50%。升级：伤害+3。
-  - 护甲猛击（1费）：造成等同当前护甲的伤害。升级：+3额外伤害。
-  - 破军（2费）：造成等同已损失生命值的伤害（上限20）。升级：上限+6。
-  - 逆境斩（1费）：自身生命低于50%时伤害翻倍。升级：基础伤害+2。
-  - 戒备突刺（1费）：护甲≥8时穿刺伤害。升级：触发阈值-2。
-  - 连斩（1费）：造成4伤害，本回合每打出一张攻击牌伤害+2。
-  - 斩杀（2费）：若敌人生命≤30%，直接造成双倍伤害。
-  - 毒刃（1费）：造成4伤害，施加中毒3层。
-  - 烈焰斩（2费）：造成7伤害，施加灼烧2层。
-- Skill
-  - 蓄力（1费）：获得蓄力x2。强化1：蓄力x3；强化2：蓄力x4。
-  - 迅读（0费）：抽2张。强化1：抽3张；强化2：抽4张。
-  - 停滞结界（0费，稀有）：跳过敌人本回合，消耗。
-  - 失衡打击（1费）：本回合敌人护甲获得量-3。升级：-5。
-  - 精准校准（1费）：本回合下一张攻击牌必定穿刺。升级：额外+2伤害。
-  - 影步（0费，保留）：本回合下一张攻击牌费用-1。
-  - 蓄谋（1费）：查看并调整抽牌堆顶3张顺序，抽1张。
-  - 归阵（1费）：将弃牌堆顶2张加入手牌。
-- Status (临时，当前回合)
-  - 反击姿态（1费）：本回合受伤时反击所受伤害的70%。强化1：140%；强化2：210%。
-  - 护幕（1费）：本回合下一张针对自己的敌方卡牌失效。
-  - 补给回响（1费）：本回合受伤时抽2张牌作为补给。
-  - 血痕标记（1费）：给敌人施加流血2层；本回合每次攻击额外+1层。
-  - 嗜战（1费）：本回合每打出一张攻击牌，获得+1伤害（可叠加）。
-- Power (战斗持续)
-  - 迅捷心法（2费）：每回合首次打出攻击牌时抽1张。
-  - 坚毅之魂（2费）：每回合首次受到伤害时获得2点护甲。
-  - 血炼（2费）：造成伤害时额外施加1层流血。
-- Equipment (战斗持续)
-  - 研锋之刃（2费）：本场战斗你的攻击伤害+1。
-  - 缓冲披风（2费）：本场战斗受到伤害-1（最低为0）。
-  - 连击腕轮（2费）：每回合当你连续打出2张攻击牌，抽1张。
-  - 守势腰带（2费）：每回合当你连续打出2张防御牌，获得2点护甲。
-  - 血纹护符（2费）：本场战斗每次造成伤害获得1点护甲。
-  - 猎杀徽记（2费）：本场战斗敌人每层流血额外+1伤害。
-- Curse (负面牌)
-  - 疲惫（0费，虚无）：本回合无法获得护甲。
-  - 迟滞（0费，虚无）：本回合打出的第一张牌费用+1。
+### Card Pool (New Additions)
+- Attack: 穿刺、破甲突击、血噬斩、护甲猛击、破军、毒刃、烈焰斩、连斩、斩杀、戒备突刺
+- Skill: 蓄力、迅读、停滞结界、精准校准、失衡打击、影步
+- Status: 反击姿态、护幕、补给回响、血痕标记、嗜战
+- Equipment: 研锋之刃、缓冲披风、连击腕轮、守势腰带、血纹护符、猎杀徽记
+- Power: 迅捷心法、坚毅之魂、血炼
+- Curse: 疲惫、迟滞
 
 ## How to Run
 Open the project in Godot 4.3 and run the main scene at `res://scenes/Main.tscn`.
 
 ## Next Implementation Plan
-1. Tune pacing for the new hand retention/block persistence (enemy stats, score scaling, supply frequency).
-2. Add richer enemy action feedback (extra SFX, intent animations) and polish discard overlay UX.
-3. Expand player card effects and enemy deck variety alongside new status keywords.
+1. Balance the expanded card pool and starter deck (costs, upgrade values, reward odds).
+2. Add UI indicators for bleed/poison/burn and active equipment/power buffs.
+3. Create distinct placeholder art/icons for the new card sets.

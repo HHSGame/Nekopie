@@ -23,7 +23,7 @@ const SAVE_PATH := "user://savegame.json"
 const LEADERBOARD_MAX := 10
 const STARTING_ENERGY := 3
 const CARD_ENTRY_ID := "id"
-const CARD_ENTRY_UPGRADED := "upgraded"
+const CARD_ENTRY_UPGRADE := "upgrade"
 const DIFFICULTY_SETTINGS := {
 	"normal": {"label": "普通", "hp_mult": 1.0, "power_mult": 1.0, "score_mult": 1.0},
 	"hard": {"label": "困难", "hp_mult": 1.2, "power_mult": 1.15, "score_mult": 1.25},
@@ -90,18 +90,24 @@ func complete_encounter() -> bool:
 	save_run()
 	return encounters_completed >= max_encounters
 
-func make_card(card_id: String, upgraded: bool = false) -> Dictionary:
-	return {CARD_ENTRY_ID: card_id, CARD_ENTRY_UPGRADED: upgraded}
+func make_card(card_id: String, upgrade_level: int = 0) -> Dictionary:
+	return {CARD_ENTRY_ID: card_id, CARD_ENTRY_UPGRADE: upgrade_level}
 
 func get_card_id(card_entry: Variant) -> String:
 	if typeof(card_entry) == TYPE_DICTIONARY:
 		return str(card_entry.get(CARD_ENTRY_ID, ""))
 	return str(card_entry)
 
-func is_card_upgraded(card_entry: Variant) -> bool:
+func get_card_upgrade_level(card_entry: Variant) -> int:
 	if typeof(card_entry) == TYPE_DICTIONARY:
-		return bool(card_entry.get(CARD_ENTRY_UPGRADED, false))
-	return bool(upgraded_cards.get(str(card_entry), false))
+		if card_entry.has(CARD_ENTRY_UPGRADE):
+			return int(card_entry.get(CARD_ENTRY_UPGRADE, 0))
+		if card_entry.has("upgraded"):
+			return 1 if bool(card_entry.get("upgraded", false)) else 0
+	return 1 if bool(upgraded_cards.get(str(card_entry), false)) else 0
+
+func is_card_upgraded(card_entry: Variant) -> bool:
+	return get_card_upgrade_level(card_entry) > 0
 
 func is_upgraded(card_entry: Variant) -> bool:
 	return is_card_upgraded(card_entry)
@@ -110,19 +116,29 @@ func upgrade_card_at(index: int) -> void:
 	if index < 0 or index >= deck.size():
 		return
 	if typeof(deck[index]) == TYPE_DICTIONARY:
-		deck[index][CARD_ENTRY_UPGRADED] = true
+		var card_id := get_card_id(deck[index])
+		var current := get_card_upgrade_level(deck[index])
+		var max_level := GameData.get_max_upgrade_level(card_id)
+		if current >= max_level:
+			return
+		deck[index][CARD_ENTRY_UPGRADE] = current + 1
 	else:
-		deck[index] = make_card(str(deck[index]), true)
+		var card_id := str(deck[index])
+		var max_level := GameData.get_max_upgrade_level(card_id)
+		if max_level <= 0:
+			return
+		deck[index] = make_card(card_id, 1)
 	save_run()
 
 func upgrade_card(card_id: String) -> void:
 	for index in deck.size():
-		if get_card_id(deck[index]) == card_id and not is_card_upgraded(deck[index]):
+		var entry = deck[index]
+		if get_card_id(entry) == card_id and get_card_upgrade_level(entry) < GameData.get_max_upgrade_level(card_id):
 			upgrade_card_at(index)
 			return
 
 func add_card(card_id: String) -> void:
-	deck.append(make_card(card_id, false))
+	deck.append(make_card(card_id, 0))
 	save_run()
 
 func log_event(message: String) -> void:
@@ -245,15 +261,19 @@ func load_run() -> bool:
 	deck = []
 	for entry in deck_data:
 		if typeof(entry) == TYPE_DICTIONARY:
-			var card_entry: Dictionary = {
-				CARD_ENTRY_ID: str(entry.get(CARD_ENTRY_ID, "")),
-				CARD_ENTRY_UPGRADED: bool(entry.get(CARD_ENTRY_UPGRADED, false))
-			}
-			deck.append(card_entry)
+			var card_id := str(entry.get(CARD_ENTRY_ID, ""))
+			var level := 0
+			if entry.has(CARD_ENTRY_UPGRADE):
+				level = int(entry.get(CARD_ENTRY_UPGRADE, 0))
+			elif entry.has("upgraded"):
+				level = 1 if bool(entry.get("upgraded", false)) else 0
+			elif legacy_upgraded.get(card_id, false):
+				level = 1
+			deck.append(make_card(card_id, level))
 		else:
 			var card_id := str(entry)
-			var upgraded := bool(legacy_upgraded.get(card_id, false))
-			deck.append(make_card(card_id, upgraded))
+			var level := 1 if bool(legacy_upgraded.get(card_id, false)) else 0
+			deck.append(make_card(card_id, level))
 	run_log = Array(data.get("run_log", []))
 	next_difficulty = str(data.get("next_difficulty", "normal"))
 	run_score_total = int(data.get("run_score_total", 0))
@@ -270,16 +290,18 @@ func clear_save() -> void:
 func _build_starting_deck() -> Array:
 	var result: Array = []
 	for card_id in GameData.STARTER_DECK:
-		result.append(make_card(str(card_id), false))
+		result.append(make_card(str(card_id), 0))
 	return result
 
 func _normalize_deck() -> void:
 	var normalized: Array = []
 	for entry in deck:
 		if typeof(entry) == TYPE_DICTIONARY and entry.has(CARD_ENTRY_ID):
-			normalized.append(entry)
+			var card_id := str(entry.get(CARD_ENTRY_ID, ""))
+			var level := get_card_upgrade_level(entry)
+			normalized.append(make_card(card_id, level))
 		else:
 			var card_id := str(entry)
-			var upgraded := bool(upgraded_cards.get(card_id, false))
-			normalized.append(make_card(card_id, upgraded))
+			var level := 1 if bool(upgraded_cards.get(card_id, false)) else 0
+			normalized.append(make_card(card_id, level))
 	deck = normalized

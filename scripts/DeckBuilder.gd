@@ -27,7 +27,7 @@ func _refresh_lists() -> void:
 	for index in RunState.deck.size():
 		var card_entry = RunState.deck[index]
 		var card_id := RunState.get_card_id(card_entry)
-		var card_data := GameData.get_card_data(card_id, RunState.is_card_upgraded(card_entry))
+		var card_data := GameData.get_card_data(card_id, RunState.get_card_upgrade_level(card_entry))
 		var widget: CardWidget = CARD_WIDGET_SCENE.instantiate()
 		widget.set_card(card_data)
 		widget.clicked.connect(_on_deck_card_clicked.bind(index))

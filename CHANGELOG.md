@@ -10,6 +10,9 @@
 - Documented the planned expanded card set and 15-card starter deck.
 - Expanded the planned card pool with new attack scaling, lifesteal, status, and equipment ideas.
 - Added additional card keywords and example card types inspired by roguelike deckbuilders.
+- Implemented multi-level card upgrades and expanded the starter deck to 15 cards.
+- Added new card mechanics (pierce, charge, lifesteal, DOTs, retain/exhaust/ethereal).
+- Added equipment/power effects that persist for each battle.
 
 ## 2026-01-24
 - Consolidated post-battle rewards into the supply route and removed challenge rewards.
