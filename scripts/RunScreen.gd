@@ -1025,7 +1025,7 @@ func _apply_enemy_card(card_data: Dictionary) -> void:
 			else:
 				_append_battle_log("魔物使用【%s】->你：连击被护甲挡住（你护甲 %d）。" % [card_name, player_block])
 		"guard":
-			var gain := max(block - enemy_block_gain_reduction, 0)
+			var gain: int = int(max(block - enemy_block_gain_reduction, 0))
 			enemy_block += gain
 			if enemy_block_gain_reduction > 0:
 				_append_battle_log("魔物使用【%s】->自己：护甲+%d（被削减 %d，护甲 %d）。" % [

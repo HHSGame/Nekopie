@@ -792,7 +792,7 @@ static func get_card_data(card_id: String, upgrade_level: Variant = 0) -> Dictio
 		level = int(upgrade_level)
 	if level > 0:
 		var upgrades: Array = UPGRADE_LIBRARY.get(card_id, [])
-		var applied := min(level, upgrades.size())
+		var applied: int = int(min(level, upgrades.size()))
 		for i in range(applied):
 			var upgrade: Dictionary = upgrades[i]
 			for key in upgrade.keys():

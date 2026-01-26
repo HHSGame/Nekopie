@@ -56,6 +56,7 @@ A Godot 4.3 deck-building prototype set in an isekai adventure. The main goal is
 - Ensured supply route selections reliably open the supply reward overlay.
 - Added run scoring, leaderboard persistence, and a post-run score overlay in the combat flow.
 - Fixed scoring calculation typing to satisfy Godot's parser.
+- Fixed GDScript type inference warnings to keep strict parsing clean.
 - Consolidated post-battle rewards into the supply route (challenge routes continue without rewards).
 - Expanded supply rewards to include upgrade/remove, healing, and card draft choices.
 - Added the "恢复" card with a healing effect.
