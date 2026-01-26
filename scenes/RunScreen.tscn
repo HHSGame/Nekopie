@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=3 uid="uid://bwl47lxg5wuap"]
+[gd_scene load_steps=25 format=3 uid="uid://bwl47lxg5wuap"]
 
 [ext_resource type="Script" path="res://scripts/RunScreen.gd" id="1_3jvb6"]
 [ext_resource type="Theme" path="res://themes/default_theme.tres" id="2_xk0w6"]
@@ -23,6 +23,7 @@
 [ext_resource type="Texture2D" uid="uid://dx8qlum30adxo" path="res://icons/ui_upgrade.svg" id="22_k4j8x"]
 [ext_resource type="Texture2D" uid="uid://ogrfyvh1dnm7" path="res://icons/ui_remove.svg" id="23_7r0c1"]
 [ext_resource type="Texture2D" uid="uid://dbvleci5exo62" path="res://icons/ui_skip.svg" id="24_05s2n"]
+[ext_resource type="Texture2D" uid="uid://dpgaeb3bwpdox" path="res://icons/ui_heart.svg" id="25_1k2pn"]
 
 [node name="RunScreen" type="Control"]
 layout_mode = 3
@@ -565,16 +566,11 @@ theme_override_constants/separation = 8
 
 [node name="RewardTitleLabel" type="Label" parent="RewardOverlay/CenterContainer/RewardPanel/RewardMargin/RewardVBox"]
 layout_mode = 2
-text = "战利品"
+text = "补给"
 
 [node name="RewardOptions" type="HBoxContainer" parent="RewardOverlay/CenterContainer/RewardPanel/RewardMargin/RewardVBox"]
 layout_mode = 2
 theme_override_constants/separation = 8
-
-[node name="RewardAddButton" type="Button" parent="RewardOverlay/CenterContainer/RewardPanel/RewardMargin/RewardVBox/RewardOptions"]
-layout_mode = 2
-text = "获得新卡"
-icon = ExtResource("21_9h1wy")
 
 [node name="RewardUpgradeButton" type="Button" parent="RewardOverlay/CenterContainer/RewardPanel/RewardMargin/RewardVBox/RewardOptions"]
 layout_mode = 2
@@ -589,7 +585,7 @@ icon = ExtResource("23_7r0c1")
 [node name="RewardHealButton" type="Button" parent="RewardOverlay/CenterContainer/RewardPanel/RewardMargin/RewardVBox/RewardOptions"]
 layout_mode = 2
 text = "补给休整"
-icon = ExtResource("4_4p8o1")
+icon = ExtResource("25_1k2pn")
 
 [node name="RewardDraftButton" type="Button" parent="RewardOverlay/CenterContainer/RewardPanel/RewardMargin/RewardVBox/RewardOptions"]
 layout_mode = 2

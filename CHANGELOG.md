@@ -2,10 +2,12 @@
 
 ## 2026-01-24
 - Consolidated post-battle rewards into the supply route and removed challenge rewards.
-- Expanded supply rewards to include add/upgrade/remove, healing, and draft options.
+- Expanded supply rewards to include upgrade/remove, healing, and draft options.
+- Removed the duplicate supply add-card button and kept a single draft option.
 - Added the "恢复" card with a healing effect and new card art assets.
 - Expanded the enemy roster to 12 encounters with new portraits and base scores.
 - Added energy max growth every 3 encounters and updated the energy UI display.
+- Added a heart-shaped supply rest icon to match the UI button style.
 
 ## 2026-01-23
 - Rebuilt the RunScreen combat UI into a three-column battle layout with new story/progress panels.

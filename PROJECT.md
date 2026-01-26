@@ -57,8 +57,9 @@ A Godot 4.3 deck-building prototype set in an isekai adventure. The main goal is
 - Added run scoring, leaderboard persistence, and a post-run score overlay in the combat flow.
 - Fixed scoring calculation typing to satisfy Godot's parser.
 - Consolidated post-battle rewards into the supply route (challenge routes continue without rewards).
-- Expanded supply rewards to include add/upgrade/remove, healing, and card draft choices.
+- Expanded supply rewards to include upgrade/remove, healing, and card draft choices.
 - Added the "恢复" card with a healing effect.
+- Added a heart icon for the supply rest button to match the UI style.
 - Increased encounter count to 12 with new monster portraits and base scores.
 - Added energy max growth every 3 encounters and display energy as current/max.
 
@@ -81,7 +82,7 @@ A Godot 4.3 deck-building prototype set in an isekai adventure. The main goal is
 - If supply appears: player chooses between `补给` and `继续挑战`.
 - If supply does not appear: only `继续挑战` is available.
 - `继续挑战` opens a difficulty choice: `普通` / `困难` / `精英` (affects enemy stats, rewards, and score multiplier).
-- `补给` route rewards: healing, card upgrade, card removal, add card, or a small card draft.
+- `补给` route rewards: healing, card upgrade, card removal, or a small card draft.
 
 ### Scoring & Leaderboard
 - Track per-combat metrics: attack_count, damage_dealt, damage_taken, final_hp, max_hp.

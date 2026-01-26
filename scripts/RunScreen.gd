@@ -50,7 +50,6 @@ const INTENT_ICONS := {
 @onready var difficulty_elite_button: Button = $RouteOverlay/CenterContainer/RoutePanel/RouteMargin/RouteVBox/DifficultyPanel/DifficultyButtons/DifficultyEliteButton
 @onready var reward_overlay: Control = $RewardOverlay
 @onready var reward_options: HBoxContainer = $RewardOverlay/CenterContainer/RewardPanel/RewardMargin/RewardVBox/RewardOptions
-@onready var reward_add_button: Button = $RewardOverlay/CenterContainer/RewardPanel/RewardMargin/RewardVBox/RewardOptions/RewardAddButton
 @onready var reward_upgrade_button: Button = $RewardOverlay/CenterContainer/RewardPanel/RewardMargin/RewardVBox/RewardOptions/RewardUpgradeButton
 @onready var reward_remove_button: Button = $RewardOverlay/CenterContainer/RewardPanel/RewardMargin/RewardVBox/RewardOptions/RewardRemoveButton
 @onready var reward_heal_button: Button = $RewardOverlay/CenterContainer/RewardPanel/RewardMargin/RewardVBox/RewardOptions/RewardHealButton
@@ -113,7 +112,6 @@ func _ready() -> void:
 	back_button.pressed.connect(_on_back_pressed)
 	end_turn_button.pressed.connect(_on_end_turn_pressed)
 	next_button.pressed.connect(_on_next_pressed)
-	reward_add_button.pressed.connect(_on_reward_add_pressed)
 	reward_upgrade_button.pressed.connect(_on_reward_upgrade_pressed)
 	reward_remove_button.pressed.connect(_on_reward_remove_pressed)
 	reward_heal_button.pressed.connect(_on_reward_heal_pressed)
@@ -610,19 +608,16 @@ func _enter_supply_options() -> void:
 
 func _refresh_reward_ui() -> void:
 	reward_options.visible = reward_mode == "supply"
-	reward_add_button.visible = reward_mode == "supply"
 	reward_upgrade_button.visible = reward_mode == "supply"
 	reward_remove_button.visible = reward_mode == "supply"
 	reward_heal_button.visible = reward_mode == "supply"
 	reward_draft_button.visible = reward_mode == "supply"
 	reward_skip_button.visible = reward_mode == "supply"
-	var show_choices := reward_mode in ["add", "upgrade", "remove", "supply_draft"]
+	var show_choices := reward_mode in ["upgrade", "remove", "supply_draft"]
 	reward_choice_label.visible = show_choices
-	reward_choice_scroll.visible = reward_mode in ["add", "supply_draft"]
+	reward_choice_scroll.visible = reward_mode == "supply_draft"
 	reward_deck_scroll.visible = reward_mode in ["upgrade", "remove"]
 	match reward_mode:
-		"add":
-			reward_choice_label.text = "选择一张卡牌加入牌组"
 		"upgrade":
 			reward_choice_label.text = "选择一张卡牌强化"
 		"remove":
@@ -632,9 +627,7 @@ func _refresh_reward_ui() -> void:
 		_:
 			reward_choice_label.text = ""
 	if reward_mode != last_reward_mode:
-		if reward_mode == "add":
-			_populate_reward_cards()
-		elif reward_mode in ["upgrade", "remove"]:
+		if reward_mode in ["upgrade", "remove"]:
 			_populate_reward_deck()
 		elif reward_mode == "supply_draft":
 			_populate_supply_cards()
@@ -721,19 +714,6 @@ func _apply_difficulty_to_enemy(difficulty: String) -> void:
 		intents[index] = intent
 	enemy_data["intents"] = intents
 
-func _populate_reward_cards() -> void:
-	_clear_container(reward_choice_container)
-	if reward_cards.is_empty():
-		reward_cards = _roll_reward_cards()
-	for card_id in reward_cards:
-		var card_data := GameData.get_card_data(card_id, false)
-		var widget: CardWidget = CARD_WIDGET_SCENE.instantiate()
-		widget.set_card(card_data)
-		widget.clicked.connect(_on_reward_card_selected)
-		widget.hovered.connect(_on_card_hovered)
-		widget.unhovered.connect(_on_card_unhovered)
-		reward_choice_container.add_child(widget)
-
 func _populate_supply_cards() -> void:
 	_clear_container(reward_choice_container)
 	reward_cards = _roll_reward_cards(2)
@@ -777,11 +757,6 @@ func _populate_reward_deck() -> void:
 		reward_mode = "supply"
 		last_reward_mode = ""
 		_refresh_reward_ui()
-
-func _on_reward_add_pressed() -> void:
-	reward_mode = "add"
-	last_reward_mode = ""
-	_refresh_reward_ui()
 
 func _on_reward_upgrade_pressed() -> void:
 	reward_mode = "upgrade"
