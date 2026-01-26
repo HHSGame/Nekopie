@@ -3,6 +3,8 @@ extends Control
 const CARD_WIDGET_SCENE := preload("res://scenes/CardWidget.tscn")
 const HAND_SIZE := 5
 const ENEMY_HAND_SIZE := 3
+const WEAK_DAMAGE_MULT := 0.75
+const VULNERABLE_DAMAGE_MULT := 1.5
 const HAND_CARD_SIZE := Vector2(220, 260)
 const HAND_COLLAPSED_HEIGHT := 72.0
 const HAND_EXPANDED_HEIGHT := 200.0
@@ -12,7 +14,9 @@ const INTENT_ICONS := {
 	"guard": preload("res://icons/intent_guard.svg"),
 	"charge": preload("res://icons/intent_charge.svg"),
 	"drain": preload("res://icons/intent_drain.svg"),
-	"heal": preload("res://icons/intent_heal.svg")
+	"heal": preload("res://icons/intent_heal.svg"),
+	"debuff": preload("res://icons/intent_debuff.svg"),
+	"attack_debuff": preload("res://icons/intent_debuff.svg")
 }
 
 @onready var story_label: Label = $MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/BattleCenterColumn/StoryPanel/StoryMargin/StoryLabel
@@ -93,6 +97,8 @@ var enemy_discard_pile: Array = []
 var enemy_energy := 0
 var enemy_intent_card: Dictionary = {}
 var enemy_power_mult := 1.0
+var player_weak_turns := 0
+var player_vulnerable_turns := 0
 var combat_over := false
 var run_complete := false
 var pending_event: Dictionary = {}
@@ -161,6 +167,8 @@ func _start_encounter() -> void:
 	enemy_max_hp = enemy_hp
 	enemy_block = 0
 	enemy_attack_bonus = 0
+	player_weak_turns = 0
+	player_vulnerable_turns = 0
 	_apply_difficulty_to_enemy(RunState.next_difficulty)
 	RunState.next_difficulty = "normal"
 	enemy_draw_pile = Array(enemy_data.get("deck", [])).duplicate(true)
@@ -334,9 +342,12 @@ func _apply_card_effect(card_data: Dictionary) -> void:
 	var damage := int(card_data.get("damage", 0))
 	if damage > 0:
 		combat_attack_count += 1
-		var blocked: int = min(enemy_block, damage)
+		var modified_damage := damage
+		if player_weak_turns > 0:
+			modified_damage = int(round(damage * WEAK_DAMAGE_MULT))
+		var blocked: int = min(enemy_block, modified_damage)
 		enemy_block -= blocked
-		var actual_damage: int = damage - blocked
+		var actual_damage: int = modified_damage - blocked
 		if actual_damage > 0:
 			enemy_hp = max(enemy_hp - actual_damage, 0)
 			combat_damage_dealt += actual_damage
@@ -378,6 +389,7 @@ func _on_end_turn_pressed() -> void:
 	if combat_over:
 		return
 	_discard_hand()
+	_tick_player_end_turn()
 	_enemy_turn()
 	if combat_over:
 		_update_ui()
@@ -395,6 +407,7 @@ func _discard_hand() -> void:
 	hand.clear()
 
 func _enemy_turn() -> void:
+	var had_vulnerable := player_vulnerable_turns > 0
 	enemy_block = 0
 	enemy_energy = RunState.energy_max
 	_play_enemy_hand()
@@ -408,6 +421,8 @@ func _enemy_turn() -> void:
 		RunState.save_run()
 		return
 	if not combat_over:
+		if had_vulnerable and player_vulnerable_turns > 0:
+			player_vulnerable_turns = max(player_vulnerable_turns - 1, 0)
 		enemy_discard_pile.append_array(enemy_hand)
 		enemy_hand.clear()
 		_draw_enemy_cards(ENEMY_HAND_SIZE)
@@ -491,6 +506,9 @@ func _enemy_card_display(card_data: Dictionary) -> String:
 		"heal":
 			var heal := int(round(int(card_data.get("heal", 0)) * enemy_power_mult))
 			return "%s +%d" % [name, heal]
+		"debuff", "attack_debuff":
+			var summary := _enemy_debuff_summary(card_data)
+			return "%s %s" % [name, summary]
 	return name
 
 func _play_enemy_hand() -> void:
@@ -514,16 +532,18 @@ func _apply_enemy_card(card_data: Dictionary) -> void:
 	var block := int(round(int(card_data.get("block", 0)) * enemy_power_mult))
 	var heal := int(round(int(card_data.get("heal", 0)) * enemy_power_mult))
 	var charge := int(round(int(card_data.get("charge", 0)) * enemy_power_mult))
+	var apply_weak := int(card_data.get("apply_weak", 0))
+	var apply_vulnerable := int(card_data.get("apply_vulnerable", 0))
 	match intent_type:
 		"attack":
 			var total_damage: int = damage + enemy_attack_bonus
 			enemy_attack_bonus = 0
-			_apply_enemy_damage(total_damage, "魔物施展%s，造成%d点伤害。" % [card_data.get("name", "攻击"), total_damage])
+			_apply_enemy_damage(total_damage, "魔物施展%s，造成%%d点伤害。" % str(card_data.get("name", "攻击")))
 		"multi_attack":
 			var hits: int = int(card_data.get("hits", 1))
 			var total_multi: int = (damage * hits) + enemy_attack_bonus
 			enemy_attack_bonus = 0
-			_apply_enemy_damage(total_multi, "魔物施展%s，造成%d点伤害。" % [card_data.get("name", "连击"), total_multi])
+			_apply_enemy_damage(total_multi, "魔物施展%s，造成%%d点伤害。" % str(card_data.get("name", "连击")))
 		"guard":
 			enemy_block += block
 			result_label.text = "魔物施展%s，获得%d点护甲。" % [card_data.get("name", "防御"), block]
@@ -533,7 +553,7 @@ func _apply_enemy_card(card_data: Dictionary) -> void:
 		"drain":
 			var drain_damage: int = damage + enemy_attack_bonus
 			enemy_attack_bonus = 0
-			var dealt: int = _apply_enemy_damage(drain_damage, "魔物施展%s，造成%d点伤害。" % [card_data.get("name", "汲取"), drain_damage])
+			var dealt: int = _apply_enemy_damage(drain_damage, "魔物施展%s，造成%%d点伤害。" % str(card_data.get("name", "汲取")))
 			if dealt > 0 and heal > 0:
 				enemy_hp = min(enemy_hp + heal, enemy_max_hp)
 				result_label.text += " 魔物恢复%d点生命。" % heal
@@ -541,6 +561,16 @@ func _apply_enemy_card(card_data: Dictionary) -> void:
 			if heal > 0:
 				enemy_hp = min(enemy_hp + heal, enemy_max_hp)
 				result_label.text = "魔物施展%s，恢复%d点生命。" % [card_data.get("name", "恢复"), heal]
+		"debuff":
+			_apply_enemy_debuffs(apply_weak, apply_vulnerable)
+			result_label.text = "魔物施展%s，你陷入%s。" % [card_data.get("name", "诅咒"), _enemy_debuff_summary(card_data)]
+		"attack_debuff":
+			var debuff_damage: int = damage + enemy_attack_bonus
+			enemy_attack_bonus = 0
+			_apply_enemy_damage(debuff_damage, "魔物施展%s，造成%%d点伤害。" % str(card_data.get("name", "诅咒")))
+			_apply_enemy_debuffs(apply_weak, apply_vulnerable)
+			if apply_weak > 0 or apply_vulnerable > 0:
+				result_label.text += " 你陷入%s。" % _enemy_debuff_summary(card_data)
 		_:
 			result_label.text = "魔物踌躇不前。"
 
@@ -548,9 +578,12 @@ func _apply_enemy_damage(amount: int, text_template: String = "魔物反击，�
 	if amount <= 0:
 		result_label.text = "魔物踌躇不前。"
 		return 0
-	var blocked: int = int(min(amount, player_block))
-	var damage: int = amount - blocked
-	player_block = max(player_block - amount, 0)
+	var adjusted_amount := amount
+	if player_vulnerable_turns > 0:
+		adjusted_amount = int(round(amount * VULNERABLE_DAMAGE_MULT))
+	var blocked: int = int(min(adjusted_amount, player_block))
+	var damage: int = adjusted_amount - blocked
+	player_block = max(player_block - adjusted_amount, 0)
 	if damage > 0:
 		RunState.player_hp = max(RunState.player_hp - damage, 0)
 		combat_damage_taken += damage
@@ -560,6 +593,28 @@ func _apply_enemy_damage(amount: int, text_template: String = "魔物反击，�
 	else:
 		result_label.text = "你挡下了魔物的攻击。"
 	return damage
+
+func _apply_enemy_debuffs(weak_turns: int, vulnerable_turns: int) -> void:
+	if weak_turns > 0:
+		player_weak_turns += weak_turns
+	if vulnerable_turns > 0:
+		player_vulnerable_turns += vulnerable_turns
+
+func _enemy_debuff_summary(card_data: Dictionary) -> String:
+	var parts: Array = []
+	var weak_turns := int(card_data.get("apply_weak", 0))
+	var vulnerable_turns := int(card_data.get("apply_vulnerable", 0))
+	if weak_turns > 0:
+		parts.append("弱化%d" % weak_turns)
+	if vulnerable_turns > 0:
+		parts.append("易伤%d" % vulnerable_turns)
+	if parts.is_empty():
+		return "异常"
+	return "，".join(parts)
+
+func _tick_player_end_turn() -> void:
+	if player_weak_turns > 0:
+		player_weak_turns -= 1
 
 func _queue_post_battle_step() -> void:
 	pending_event = {}
@@ -926,6 +981,8 @@ func _enemy_card_color(card_data: Dictionary) -> Color:
 			return Color(0.75, 0.5, 0.95)
 		"heal":
 			return Color(0.55, 0.85, 0.6)
+		"debuff", "attack_debuff":
+			return Color(0.85, 0.55, 0.95)
 	return Color(1, 1, 1)
 
 func _enemy_card_icon(card_data: Dictionary) -> Texture2D:

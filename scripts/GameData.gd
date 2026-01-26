@@ -17,42 +17,55 @@ const ENEMY_CARD_LIBRARY := {
 	"mist_guard": {"id": "mist_guard", "name": "影雾护体", "type": "guard", "cost": 1, "block": 3},
 	"mist_charge": {"id": "mist_charge", "name": "暗影蓄势", "type": "charge", "cost": 1, "charge": 2},
 	"mist_burst": {"id": "mist_burst", "name": "雾影连击", "type": "multi_attack", "cost": 2, "damage": 2, "hits": 3},
+	"mist_hex": {"id": "mist_hex", "name": "薄雾诅咒", "type": "debuff", "cost": 1, "apply_weak": 1},
 	"goblin_stab": {"id": "goblin_stab", "name": "短刀突刺", "type": "attack", "cost": 1, "damage": 6},
 	"goblin_flurry": {"id": "goblin_flurry", "name": "疾刺连击", "type": "multi_attack", "cost": 2, "damage": 3, "hits": 2},
 	"goblin_guard": {"id": "goblin_guard", "name": "掠夺防御", "type": "guard", "cost": 1, "block": 4},
 	"goblin_charge": {"id": "goblin_charge", "name": "嗜战蓄力", "type": "charge", "cost": 1, "charge": 3},
+	"goblin_cripple": {"id": "goblin_cripple", "name": "钩刃压制", "type": "attack_debuff", "cost": 2, "damage": 4, "apply_vulnerable": 1},
 	"wolf_bite": {"id": "wolf_bite", "name": "利爪撕咬", "type": "attack", "cost": 1, "damage": 6},
 	"wolf_pack": {"id": "wolf_pack", "name": "群咬", "type": "multi_attack", "cost": 2, "damage": 3, "hits": 2},
 	"wolf_guard": {"id": "wolf_guard", "name": "伺机防御", "type": "guard", "cost": 1, "block": 3},
 	"wolf_charge": {"id": "wolf_charge", "name": "兽性蓄势", "type": "charge", "cost": 1, "charge": 2},
+	"wolf_hunt": {"id": "wolf_hunt", "name": "猎杀逼迫", "type": "attack_debuff", "cost": 2, "damage": 5, "apply_vulnerable": 1},
 	"sprite_hit": {"id": "sprite_hit", "name": "碎岩冲击", "type": "attack", "cost": 1, "damage": 5},
 	"sprite_guard": {"id": "sprite_guard", "name": "岩壳防护", "type": "guard", "cost": 1, "block": 5},
 	"sprite_charge": {"id": "sprite_charge", "name": "石屑蓄势", "type": "charge", "cost": 1, "charge": 3},
+	"sprite_blast": {"id": "sprite_blast", "name": "岩尘震荡", "type": "attack_debuff", "cost": 2, "damage": 6, "apply_weak": 1},
 	"wisp_bolt": {"id": "wisp_bolt", "name": "幽光震荡", "type": "attack", "cost": 1, "damage": 5},
 	"wisp_guard": {"id": "wisp_guard", "name": "雾影护体", "type": "guard", "cost": 1, "block": 3},
 	"wisp_drain": {"id": "wisp_drain", "name": "幽雾汲取", "type": "drain", "cost": 2, "damage": 4, "heal": 3},
+	"wisp_curse": {"id": "wisp_curse", "name": "幽影诅咒", "type": "debuff", "cost": 1, "apply_vulnerable": 1},
 	"bandit_attack": {"id": "bandit_attack", "name": "飞索突袭", "type": "attack", "cost": 1, "damage": 7},
 	"bandit_guard": {"id": "bandit_guard", "name": "结阵防守", "type": "guard", "cost": 1, "block": 4},
 	"bandit_combo": {"id": "bandit_combo", "name": "合击乱刃", "type": "multi_attack", "cost": 2, "damage": 3, "hits": 3},
+	"bandit_net": {"id": "bandit_net", "name": "锁链缠制", "type": "debuff", "cost": 1, "apply_weak": 1},
 	"ogre_slam": {"id": "ogre_slam", "name": "岩锤重击", "type": "attack", "cost": 2, "damage": 10},
 	"ogre_guard": {"id": "ogre_guard", "name": "石肤防御", "type": "guard", "cost": 1, "block": 5},
 	"ogre_charge": {"id": "ogre_charge", "name": "裂岩蓄势", "type": "charge", "cost": 1, "charge": 5},
+	"ogre_roar": {"id": "ogre_roar", "name": "暴怒咆哮", "type": "debuff", "cost": 1, "apply_weak": 2},
+	"ogre_crush": {"id": "ogre_crush", "name": "重压碎击", "type": "attack_debuff", "cost": 2, "damage": 8, "apply_vulnerable": 1},
 	"ice_bite": {"id": "ice_bite", "name": "冰牙突咬", "type": "attack", "cost": 1, "damage": 8},
 	"ice_guard": {"id": "ice_guard", "name": "冰甲凝结", "type": "guard", "cost": 1, "block": 5},
 	"ice_drain": {"id": "ice_drain", "name": "霜息汲取", "type": "drain", "cost": 2, "damage": 6, "heal": 3},
+	"ice_chill": {"id": "ice_chill", "name": "寒鳞冻伤", "type": "attack_debuff", "cost": 2, "damage": 5, "apply_weak": 1},
 	"yak_charge": {"id": "yak_charge", "name": "雷势蓄力", "type": "charge", "cost": 1, "charge": 4},
 	"yak_ram": {"id": "yak_ram", "name": "雷角冲撞", "type": "attack", "cost": 2, "damage": 10},
 	"yak_stomp": {"id": "yak_stomp", "name": "连环践踏", "type": "multi_attack", "cost": 2, "damage": 4, "hits": 2},
+	"yak_shock": {"id": "yak_shock", "name": "震地雷鸣", "type": "attack_debuff", "cost": 2, "damage": 6, "apply_vulnerable": 1},
 	"golem_attack": {"id": "golem_attack", "name": "沉岩猛击", "type": "attack", "cost": 2, "damage": 10},
 	"golem_guard": {"id": "golem_guard", "name": "石甲护壁", "type": "guard", "cost": 1, "block": 6},
 	"golem_charge": {"id": "golem_charge", "name": "山势蓄力", "type": "charge", "cost": 1, "charge": 5},
 	"golem_repair": {"id": "golem_repair", "name": "石核修复", "type": "heal", "cost": 2, "heal": 6},
+	"golem_weight": {"id": "golem_weight", "name": "山岳重压", "type": "debuff", "cost": 1, "apply_weak": 2},
 	"boss_slash": {"id": "boss_slash", "name": "魔焰斩", "type": "attack", "cost": 1, "damage": 9},
 	"boss_multi": {"id": "boss_multi", "name": "魔影连击", "type": "multi_attack", "cost": 3, "damage": 4, "hits": 3},
 	"boss_charge": {"id": "boss_charge", "name": "魔力蓄势", "type": "charge", "cost": 1, "charge": 6},
 	"boss_drain": {"id": "boss_drain", "name": "吞噬", "type": "drain", "cost": 2, "damage": 6, "heal": 4},
 	"boss_guard": {"id": "boss_guard", "name": "魔纹护壁", "type": "guard", "cost": 1, "block": 6},
-	"boss_heal": {"id": "boss_heal", "name": "暗息恢复", "type": "heal", "cost": 2, "heal": 8}
+	"boss_heal": {"id": "boss_heal", "name": "暗息恢复", "type": "heal", "cost": 2, "heal": 8},
+	"boss_fear": {"id": "boss_fear", "name": "魔威恐惧", "type": "debuff", "cost": 1, "apply_vulnerable": 2},
+	"boss_curse": {"id": "boss_curse", "name": "腐魂咒印", "type": "attack_debuff", "cost": 2, "damage": 6, "apply_weak": 2}
 }
 
 const UPGRADE_LIBRARY := {
@@ -169,6 +182,7 @@ const ENEMY_LIBRARY := {
 			"goblin_flurry",
 			"goblin_guard",
 			"goblin_charge",
+			"goblin_cripple",
 			"goblin_guard"
 		]
 	},
@@ -183,6 +197,7 @@ const ENEMY_LIBRARY := {
 		"deck": [
 			"mist_swipe",
 			"mist_guard",
+			"mist_hex",
 			"mist_swipe",
 			"mist_charge",
 			"mist_burst",
@@ -203,6 +218,7 @@ const ENEMY_LIBRARY := {
 			"wolf_pack",
 			"wolf_guard",
 			"wolf_charge",
+			"wolf_hunt",
 			"wolf_guard"
 		]
 	},
@@ -219,8 +235,9 @@ const ENEMY_LIBRARY := {
 			"sprite_guard",
 			"sprite_charge",
 			"sprite_guard",
-			"sprite_hit",
-			"sprite_guard"
+			"sprite_blast",
+			"sprite_guard",
+			"sprite_hit"
 		]
 	},
 	"wisp": {
@@ -235,6 +252,7 @@ const ENEMY_LIBRARY := {
 			"wisp_bolt",
 			"wisp_guard",
 			"wisp_drain",
+			"wisp_curse",
 			"wisp_bolt",
 			"wisp_guard",
 			"wisp_drain"
@@ -252,6 +270,7 @@ const ENEMY_LIBRARY := {
 			"bandit_attack",
 			"bandit_combo",
 			"bandit_guard",
+			"bandit_net",
 			"bandit_attack",
 			"bandit_combo",
 			"bandit_guard"
@@ -269,8 +288,9 @@ const ENEMY_LIBRARY := {
 			"ogre_charge",
 			"ogre_slam",
 			"ogre_guard",
+			"ogre_roar",
 			"ogre_slam",
-			"ogre_charge",
+			"ogre_crush",
 			"ogre_guard"
 		]
 	},
@@ -286,6 +306,7 @@ const ENEMY_LIBRARY := {
 			"ice_bite",
 			"ice_guard",
 			"ice_drain",
+			"ice_chill",
 			"ice_bite",
 			"ice_guard",
 			"ice_drain"
@@ -303,8 +324,9 @@ const ENEMY_LIBRARY := {
 			"yak_charge",
 			"yak_ram",
 			"yak_stomp",
-			"yak_charge",
+			"yak_shock",
 			"yak_ram",
+			"yak_charge",
 			"yak_stomp"
 		]
 	},
@@ -321,6 +343,7 @@ const ENEMY_LIBRARY := {
 			"golem_charge",
 			"golem_attack",
 			"golem_repair",
+			"golem_weight",
 			"golem_guard",
 			"golem_attack"
 		]
@@ -340,7 +363,9 @@ const ENEMY_LIBRARY := {
 			"boss_drain",
 			"boss_guard",
 			"boss_heal",
+			"boss_fear",
 			"boss_slash",
+			"boss_curse",
 			"boss_multi"
 		]
 	}

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://0ewwjya9x5ht5"
-path="res://.godot/imported/intent_heal.svg-30a790973460b8ec2a66233d82e46e80.ctex"
+uid="uid://blamrlg20dmkx"
+path="res://.godot/imported/intent_debuff.svg-2f940da60b95e1dbfeaa69fd5ef48500.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://icons/intent_heal.svg"
-dest_files=["res://.godot/imported/intent_heal.svg-30a790973460b8ec2a66233d82e46e80.ctex"]
+source_file="res://icons/intent_debuff.svg"
+dest_files=["res://.godot/imported/intent_debuff.svg-2f940da60b95e1dbfeaa69fd5ef48500.ctex"]
 
 [params]
 
