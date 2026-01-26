@@ -218,7 +218,7 @@ text = "旅程开始。"
 autowrap_mode = 3
 
 [node name="BattleLogPanel" type="PanelContainer" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/BattleCenterColumn"]
-custom_minimum_size = Vector2(0, 60)
+custom_minimum_size = Vector2(0, 220)
 layout_mode = 2
 size_flags_horizontal = 3
 
@@ -229,10 +229,12 @@ theme_override_constants/margin_top = 3
 theme_override_constants/margin_right = 4
 theme_override_constants/margin_bottom = 3
 
-[node name="ResultLabel" type="Label" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/BattleCenterColumn/BattleLogPanel/BattleLogMargin"]
+[node name="ResultLabel" type="RichTextLabel" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/BattleCenterColumn/BattleLogPanel/BattleLogMargin"]
 layout_mode = 2
 text = "准备迎战。"
 autowrap_mode = 3
+scroll_active = true
+scroll_following = true
 
 [node name="BattleCenterSpacer" type="Control" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/BattleCenterColumn"]
 layout_mode = 2

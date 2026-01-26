@@ -42,7 +42,7 @@ const INTENT_ICONS := {
 @onready var draw_label: Label = $MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/PlayerColumn/PlayerStatsPanel/PlayerStatsMargin/PlayerStatsVBox/PlayerDeckRow/DrawLabel
 @onready var discard_label: Label = $MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/PlayerColumn/PlayerStatsPanel/PlayerStatsMargin/PlayerStatsVBox/PlayerDeckRow/DiscardLabel
 @onready var player_hp_bar: ProgressBar = $MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/PlayerColumn/PlayerStatsPanel/PlayerStatsMargin/PlayerStatsVBox/PlayerHpBar
-@onready var result_label: Label = $MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/BattleCenterColumn/BattleLogPanel/BattleLogMargin/ResultLabel
+@onready var result_label: RichTextLabel = $MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/BattleCenterColumn/BattleLogPanel/BattleLogMargin/ResultLabel
 @onready var hand_container: HBoxContainer = $MarginContainer/RootVBox/HandDock/HandMargin/HandVBox/HandScroll/HandContainer
 @onready var end_turn_button: Button = $MarginContainer/RootVBox/HandDock/HandMargin/HandVBox/Actions/EndTurnButton
 @onready var next_button: Button = $MarginContainer/RootVBox/HandDock/HandMargin/HandVBox/Actions/NextButton
@@ -149,6 +149,7 @@ func _ready() -> void:
 func _reset_battle_log() -> void:
 	battle_log.clear()
 	result_label.text = ""
+	_scroll_battle_log_to_bottom()
 
 func _append_battle_log(message: String) -> void:
 	if message.is_empty():
@@ -157,6 +158,13 @@ func _append_battle_log(message: String) -> void:
 	if battle_log.size() > MAX_BATTLE_LOG_LINES:
 		battle_log = battle_log.slice(battle_log.size() - MAX_BATTLE_LOG_LINES, MAX_BATTLE_LOG_LINES)
 	result_label.text = "\n".join(battle_log)
+	_scroll_battle_log_to_bottom()
+
+func _scroll_battle_log_to_bottom() -> void:
+	if not result_label:
+		return
+	var line_count := result_label.get_line_count()
+	result_label.call_deferred("scroll_to_line", max(line_count - 1, 0))
 
 func _player_status_text() -> String:
 	var parts: Array = []
