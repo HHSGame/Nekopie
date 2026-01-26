@@ -9,6 +9,7 @@
 - Paced enemy turns with per-card delays, portrait pulses, and SFX cues.
 - Documented the planned expanded card set and 15-card starter deck.
 - Expanded the planned card pool with new attack scaling, lifesteal, status, and equipment ideas.
+- Added additional card keywords and example card types inspired by roguelike deckbuilders.
 
 ## 2026-01-24
 - Consolidated post-battle rewards into the supply route and removed challenge rewards.
