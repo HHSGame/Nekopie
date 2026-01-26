@@ -65,6 +65,7 @@ A Godot 4.3 deck-building prototype set in an isekai adventure. The main goal is
 - Enemies now draw from fixed decks with shared energy and enemy-only skill cards.
 - Enemy decks now include debuff cards (弱化/易伤) and tuned cost curves for pacing.
 - Battle log now records per-turn card usage, targets, and resulting HP/block values.
+- Fixed RunScreen combat completion logic to keep the battle log stable.
 
 ## Scene and Script Layout
 - `scenes/Main.tscn` + `scripts/Main.gd`: main menu and navigation.

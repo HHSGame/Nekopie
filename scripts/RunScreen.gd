@@ -513,11 +513,11 @@ func _check_enemy_defeat() -> void:
 		_append_battle_log("敌人倒下，战斗结束。")
 		var combat_score := _calculate_combat_score()
 		RunState.add_combat_score(combat_score)
-			run_complete = RunState.complete_encounter()
-			if run_complete:
-				_append_battle_log("你征服了 %s，登顶通关！" % GameData.MOUNTAIN_NAME)
-				RunState.log_event("登顶通关，征服 %s。" % GameData.MOUNTAIN_NAME)
-				RunState.finalize_run_score()
+		run_complete = RunState.complete_encounter()
+		if run_complete:
+			_append_battle_log("你征服了 %s，登顶通关！" % GameData.MOUNTAIN_NAME)
+			RunState.log_event("登顶通关，征服 %s。" % GameData.MOUNTAIN_NAME)
+			RunState.finalize_run_score()
 			RunState.run_active = false
 			RunState.save_run()
 		else:

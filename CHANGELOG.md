@@ -12,6 +12,7 @@
 - Tuned enemy deck mixes for difficulty pacing and added weak/vulnerable debuff cards.
 - Added a debuff intent icon for enemy status effects.
 - Logged per-turn combat actions in the battle log, including card usage and outcome details.
+- Fixed a RunScreen parse error caused by mis-indented combat completion logic.
 
 ## 2026-01-23
 - Rebuilt the RunScreen combat UI into a three-column battle layout with new story/progress panels.

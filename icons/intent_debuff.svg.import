@@ -2,8 +2,8 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://jlpvpk6bsu00j"
-path="res://.godot/imported/intent_debuff.svg-2f940da60b95e1dbfeaa69fd5ef48500.ctex"
+uid="uid://buv5jhcsohah0"
+path="res://.godot/imported/intent_debuff.svg-b4c6bfceb0aad74cf61a8b1b4a150a1f.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://icons/intent_debuff.svg"
-dest_files=["res://.godot/imported/intent_debuff.svg-2f940da60b95e1dbfeaa69fd5ef48500.ctex"]
+dest_files=["res://.godot/imported/intent_debuff.svg-b4c6bfceb0aad74cf61a8b1b4a150a1f.ctex"]
 
 [params]
 
