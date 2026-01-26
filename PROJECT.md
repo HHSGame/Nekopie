@@ -66,6 +66,12 @@ A Godot 4.3 deck-building prototype set in an isekai adventure. The main goal is
 - Battle log now records per-turn card usage, targets, and resulting HP/block values.
 - Fixed RunScreen combat completion logic to keep the battle log stable.
 - Battle log display is capped to a 12-line panel with scrolling for overflow.
+- Enemy turns now pace each card play with delays, portrait pulses, and audio cues.
+- Player/enemy block persists across turns until consumed or combat ends.
+- "踏勘" now stacks its next-encounter bonus per use.
+- Card upgrades now apply per individual card copy instead of all copies.
+- Hand flow now draws 5 on turn 1, draws 3 thereafter, and keeps up to 5 cards.
+- Added an end-turn discard selection overlay when hand size exceeds 5.
 
 ## Scene and Script Layout
 - `scenes/Main.tscn` + `scripts/Main.gd`: main menu and navigation.
@@ -119,6 +125,6 @@ A Godot 4.3 deck-building prototype set in an isekai adventure. The main goal is
 Open the project in Godot 4.3 and run the main scene at `res://scenes/Main.tscn`.
 
 ## Next Implementation Plan
-1. Tune the 12-encounter pacing (enemy stats, score scaling, and supply frequency).
-2. Add more enemy deck cards (status/debuffs) and new player card effects.
-3. Polish supply/score overlays with clearer feedback and optional animations.
+1. Tune pacing for the new hand retention/block persistence (enemy stats, score scaling, supply frequency).
+2. Add richer enemy action feedback (extra SFX, intent animations) and polish discard overlay UX.
+3. Expand player card effects and enemy deck variety alongside new status keywords.

@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-01-26
+- Added an end-turn discard overlay to trim hand size down to 5 when needed.
+- Updated hand flow to draw 5 cards on turn 1 and 3 cards on later turns, keeping up to 5.
+- Made block persist across turns for both sides until consumed or combat ends.
+- Stacked "踏勘" bonuses across multiple uses for the next encounter.
+- Switched card upgrades to apply per individual card copy instead of all copies.
+- Paced enemy turns with per-card delays, portrait pulses, and SFX cues.
+
 ## 2026-01-24
 - Consolidated post-battle rewards into the supply route and removed challenge rewards.
 - Expanded supply rewards to include upgrade/remove, healing, and draft options.

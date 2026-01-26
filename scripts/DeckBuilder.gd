@@ -24,11 +24,13 @@ func _refresh_lists() -> void:
 		widget.clicked.connect(_on_library_card_clicked)
 		library_list.add_child(widget)
 
-	for card_id in RunState.deck:
-		var card_data := GameData.get_card_data(card_id, RunState.is_upgraded(card_id))
+	for index in RunState.deck.size():
+		var card_entry = RunState.deck[index]
+		var card_id := RunState.get_card_id(card_entry)
+		var card_data := GameData.get_card_data(card_id, RunState.is_card_upgraded(card_entry))
 		var widget: CardWidget = CARD_WIDGET_SCENE.instantiate()
 		widget.set_card(card_data)
-		widget.clicked.connect(_on_deck_card_clicked)
+		widget.clicked.connect(_on_deck_card_clicked.bind(index))
 		deck_list.add_child(widget)
 
 	deck_count_label.text = "牌组数量：%d" % RunState.deck.size()
@@ -40,14 +42,14 @@ func _clear_container(container: VBoxContainer) -> void:
 func _on_library_card_clicked(card_id: String) -> void:
 	if card_id.is_empty():
 		return
-	RunState.deck.append(card_id)
+	RunState.add_card(card_id)
 	_refresh_lists()
 
-func _on_deck_card_clicked(card_id: String) -> void:
-	var index := RunState.deck.find(card_id)
-	if index >= 0:
+func _on_deck_card_clicked(card_id: String, index: int) -> void:
+	if index >= 0 and index < RunState.deck.size():
 		RunState.deck.remove_at(index)
-		_refresh_lists()
+		RunState.save_run()
+	_refresh_lists()
 
 func _on_back_pressed() -> void:
 	get_tree().change_scene_to_file("res://scenes/Main.tscn")

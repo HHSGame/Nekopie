@@ -232,8 +232,6 @@ theme_override_constants/margin_bottom = 3
 [node name="ResultLabel" type="RichTextLabel" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/BattleCenterColumn/BattleLogPanel/BattleLogMargin"]
 layout_mode = 2
 text = "准备迎战。"
-autowrap_mode = 3
-scroll_active = true
 scroll_following = true
 
 [node name="BattleCenterSpacer" type="Control" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/BattleCenterColumn"]
@@ -624,6 +622,71 @@ size_flags_vertical = 3
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 8
+
+[node name="DiscardOverlay" type="Control" parent="."]
+visible = false
+anchors_preset = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="Dimmer" type="ColorRect" parent="DiscardOverlay"]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color(0, 0, 0, 0.55)
+
+[node name="CenterContainer" type="CenterContainer" parent="DiscardOverlay"]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="DiscardPanel" type="PanelContainer" parent="DiscardOverlay/CenterContainer"]
+custom_minimum_size = Vector2(820, 460)
+layout_mode = 2
+
+[node name="DiscardMargin" type="MarginContainer" parent="DiscardOverlay/CenterContainer/DiscardPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="DiscardVBox" type="VBoxContainer" parent="DiscardOverlay/CenterContainer/DiscardPanel/DiscardMargin"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="DiscardTitleLabel" type="Label" parent="DiscardOverlay/CenterContainer/DiscardPanel/DiscardMargin/DiscardVBox"]
+layout_mode = 2
+text = "弃牌选择"
+
+[node name="DiscardInfoLabel" type="Label" parent="DiscardOverlay/CenterContainer/DiscardPanel/DiscardMargin/DiscardVBox"]
+layout_mode = 2
+text = "需要弃置0张。"
+
+[node name="DiscardChoiceScroll" type="ScrollContainer" parent="DiscardOverlay/CenterContainer/DiscardPanel/DiscardMargin/DiscardVBox"]
+custom_minimum_size = Vector2(0, 220)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="DiscardChoiceContainer" type="HBoxContainer" parent="DiscardOverlay/CenterContainer/DiscardPanel/DiscardMargin/DiscardVBox/DiscardChoiceScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+
+[node name="DiscardActions" type="HBoxContainer" parent="DiscardOverlay/CenterContainer/DiscardPanel/DiscardMargin/DiscardVBox"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="DiscardActionsSpacer" type="Control" parent="DiscardOverlay/CenterContainer/DiscardPanel/DiscardMargin/DiscardVBox/DiscardActions"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="DiscardConfirmButton" type="Button" parent="DiscardOverlay/CenterContainer/DiscardPanel/DiscardMargin/DiscardVBox/DiscardActions"]
+layout_mode = 2
+text = "确认弃置"
 
 [node name="ScoreOverlay" type="Control" parent="."]
 visible = false

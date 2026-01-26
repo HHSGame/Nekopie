@@ -1,7 +1,9 @@
 extends Control
 
 const CARD_WIDGET_SCENE := preload("res://scenes/CardWidget.tscn")
-const HAND_SIZE := 5
+const HAND_DRAW_FIRST := 5
+const HAND_DRAW_PER_TURN := 3
+const HAND_LIMIT := 5
 const ENEMY_HAND_SIZE := 3
 const MAX_BATTLE_LOG_LINES := 40
 const WEAK_DAMAGE_MULT := 0.75
@@ -9,6 +11,9 @@ const VULNERABLE_DAMAGE_MULT := 1.5
 const HAND_CARD_SIZE := Vector2(220, 260)
 const HAND_COLLAPSED_HEIGHT := 72.0
 const HAND_EXPANDED_HEIGHT := 200.0
+const ENEMY_WINDUP_DELAY := 0.25
+const ENEMY_ACTION_DELAY := 0.35
+const ENEMY_IDLE_DELAY := 0.2
 const INTENT_ICONS := {
 	"attack": preload("res://icons/intent_attack.svg"),
 	"multi_attack": preload("res://icons/intent_multi.svg"),
@@ -68,6 +73,12 @@ const INTENT_ICONS := {
 @onready var reward_deck_scroll: ScrollContainer = $RewardOverlay/CenterContainer/RewardPanel/RewardMargin/RewardVBox/RewardDeckScroll
 @onready var reward_deck_list: VBoxContainer = $RewardOverlay/CenterContainer/RewardPanel/RewardMargin/RewardVBox/RewardDeckScroll/RewardDeckList
 @onready var reward_panel: PanelContainer = $RewardOverlay/CenterContainer/RewardPanel
+@onready var discard_overlay: Control = $DiscardOverlay
+@onready var discard_info_label: Label = $DiscardOverlay/CenterContainer/DiscardPanel/DiscardMargin/DiscardVBox/DiscardInfoLabel
+@onready var discard_choice_scroll: ScrollContainer = $DiscardOverlay/CenterContainer/DiscardPanel/DiscardMargin/DiscardVBox/DiscardChoiceScroll
+@onready var discard_choice_container: HBoxContainer = $DiscardOverlay/CenterContainer/DiscardPanel/DiscardMargin/DiscardVBox/DiscardChoiceScroll/DiscardChoiceContainer
+@onready var discard_confirm_button: Button = $DiscardOverlay/CenterContainer/DiscardPanel/DiscardMargin/DiscardVBox/DiscardActions/DiscardConfirmButton
+@onready var discard_panel: PanelContainer = $DiscardOverlay/CenterContainer/DiscardPanel
 @onready var score_overlay: Control = $ScoreOverlay
 @onready var score_summary_label: Label = $ScoreOverlay/CenterContainer/ScorePanel/ScoreMargin/ScoreVBox/ScoreSummaryLabel
 @onready var score_rank_label: Label = $ScoreOverlay/CenterContainer/ScorePanel/ScoreMargin/ScoreVBox/ScoreRankLabel
@@ -119,6 +130,13 @@ var combat_damage_dealt := 0
 var combat_damage_taken := 0
 var combat_attack_count := 0
 var combat_difficulty := "normal"
+var enemy_acting := false
+var turn_locked := false
+var discard_overlay_active := false
+var discard_required := 0
+var discard_selection: Array = []
+var discard_overlay_tween: Tween
+var discard_card_widgets: Dictionary = {}
 
 func _ready() -> void:
 	story_label.text = "你踏上 %s 的山道，魔物在雾中伺机。" % GameData.MOUNTAIN_NAME
@@ -130,6 +148,7 @@ func _ready() -> void:
 	reward_heal_button.pressed.connect(_on_reward_heal_pressed)
 	reward_draft_button.pressed.connect(_on_reward_draft_pressed)
 	reward_skip_button.pressed.connect(_on_reward_skip_pressed)
+	discard_confirm_button.pressed.connect(_on_discard_confirm_pressed)
 	route_supply_button.pressed.connect(_on_route_supply_pressed)
 	route_challenge_button.pressed.connect(_on_route_challenge_pressed)
 	difficulty_normal_button.pressed.connect(_on_difficulty_selected.bind("normal"))
@@ -139,6 +158,9 @@ func _ready() -> void:
 	card_detail_panel.visible = false
 	reward_overlay.modulate.a = 0.0
 	reward_overlay_active = reward_overlay.visible
+	discard_overlay.visible = false
+	discard_overlay.modulate.a = 0.0
+	discard_overlay_active = discard_overlay.visible
 	route_overlay.visible = false
 	route_overlay_active = route_overlay.visible
 	score_overlay.visible = false
@@ -205,6 +227,12 @@ func _start_encounter() -> void:
 	route_mode = "none"
 	supply_available = false
 	card_detail_panel.visible = false
+	enemy_acting = false
+	turn_locked = false
+	discard_required = 0
+	discard_selection.clear()
+	discard_card_widgets.clear()
+	_set_discard_overlay_visible(false)
 	combat_damage_dealt = 0
 	combat_damage_taken = 0
 	combat_attack_count = 0
@@ -257,7 +285,7 @@ func _start_encounter() -> void:
 		RunState.log_event("先手出击造成%d点伤害。" % strike_damage)
 	else:
 		_append_battle_log("你稳住气息，准备战斗。")
-	_draw_cards(HAND_SIZE)
+	_draw_cards(HAND_DRAW_FIRST)
 	_update_ui()
 	RunState.save_run()
 
@@ -283,7 +311,7 @@ func _update_ui() -> void:
 	energy_label.text = "能量：%d / %d" % [energy, RunState.energy_max]
 	draw_label.text = "抽牌堆：%d" % draw_pile.size()
 	discard_label.text = "弃牌堆：%d" % discard_pile.size()
-	end_turn_button.disabled = combat_over
+	end_turn_button.disabled = combat_over or enemy_acting or turn_locked or discard_overlay_active
 	var show_rewards := combat_over and not run_complete and next_step == "reward_options"
 	var show_route := combat_over and not run_complete and next_step == "route"
 	var show_score := combat_over and run_complete
@@ -312,8 +340,9 @@ func _refresh_hand() -> void:
 	for child in hand_container.get_children():
 		child.queue_free()
 	for index in hand.size():
-		var card_id: String = hand[index]
-		var card_data := GameData.get_card_data(card_id, RunState.is_upgraded(card_id))
+		var card_entry = hand[index]
+		var card_id := RunState.get_card_id(card_entry)
+		var card_data := GameData.get_card_data(card_id, RunState.is_card_upgraded(card_entry))
 		var collapsed_scale := HAND_COLLAPSED_HEIGHT / HAND_CARD_SIZE.y
 		var slot := Control.new()
 		slot.custom_minimum_size = Vector2(HAND_CARD_SIZE.x * collapsed_scale, HAND_COLLAPSED_HEIGHT)
@@ -325,7 +354,7 @@ func _refresh_hand() -> void:
 		widget.scale = Vector2(collapsed_scale, collapsed_scale)
 		widget.position = Vector2(0, HAND_COLLAPSED_HEIGHT - (HAND_CARD_SIZE.y * collapsed_scale))
 		widget.clicked.connect(_on_hand_card_clicked.bind(index))
-		widget.hovered.connect(_on_hand_card_hovered.bind(slot))
+		widget.hovered.connect(_on_hand_card_hovered.bind(index, slot))
 		widget.unhovered.connect(_on_hand_card_unhovered.bind(slot))
 		slot.add_child(widget)
 
@@ -349,8 +378,11 @@ func _draw_enemy_cards(count: int) -> void:
 			enemy_draw_pile.shuffle()
 		enemy_hand.append(enemy_draw_pile.pop_back())
 
-func _on_hand_card_hovered(card_id: String, slot: Control) -> void:
-	_on_card_hovered(card_id)
+func _on_hand_card_hovered(card_id: String, index: int, slot: Control) -> void:
+	var upgraded := false
+	if index >= 0 and index < hand.size():
+		upgraded = RunState.is_card_upgraded(hand[index])
+	_on_card_hovered(card_id, upgraded)
 	_set_hand_slot_expanded(slot, true)
 
 func _on_hand_card_unhovered(slot: Control) -> void:
@@ -385,17 +417,22 @@ func _set_hand_slot_expanded(slot: Control, expanded: bool) -> void:
 	hand_slot_tweens[slot] = tween
 
 func _on_hand_card_clicked(card_id: String, index: int) -> void:
-	if combat_over:
+	if combat_over or enemy_acting or turn_locked or discard_overlay_active:
 		return
-	var card_data := GameData.get_card_data(card_id, RunState.is_upgraded(card_id))
+	if index < 0 or index >= hand.size():
+		return
+	var card_entry = hand[index]
+	var card_instance_id := RunState.get_card_id(card_entry)
+	var card_data := GameData.get_card_data(card_instance_id, RunState.is_card_upgraded(card_entry))
 	var cost := int(card_data.get("cost", 0))
 	if cost > energy:
 		_append_battle_log("能量不足，无法打出【%s】。" % card_data.get("name", "卡牌"))
 		return
 	energy -= cost
 	_apply_card_effect(card_data)
-	_remove_card_from_hand(card_id, index)
-	discard_pile.append(card_id)
+	var removed = _remove_card_from_hand(index)
+	if removed != null:
+		discard_pile.append(removed)
 	_check_enemy_defeat()
 	_update_ui()
 	RunState.save_run()
@@ -451,48 +488,54 @@ func _apply_card_effect(card_data: Dictionary) -> void:
 			RunState.player_max_hp
 		])
 	if bool(card_data.get("initiative", false)):
-		RunState.next_encounter_first_strike = true
-		RunState.next_encounter_first_strike_bonus += int(card_data.get("initiative_bonus", 0))
 		var bonus: int = int(card_data.get("initiative_bonus", 0))
+		if RunState.next_encounter_first_strike:
+			RunState.next_encounter_first_strike_bonus += GameData.FIRST_STRIKE_DAMAGE + bonus
+		else:
+			RunState.next_encounter_first_strike = true
+			RunState.next_encounter_first_strike_bonus += bonus
 		var strike: int = GameData.FIRST_STRIKE_DAMAGE + RunState.next_encounter_first_strike_bonus
 		_append_battle_log("你使用【%s】->下场战斗先手伤害提升至%d。" % [card_name, strike])
 		RunState.log_event("踏勘山势，获得先手优势。")
 
-func _remove_card_from_hand(card_id: String, index: int) -> void:
-	if index >= 0 and index < hand.size() and hand[index] == card_id:
+func _remove_card_from_hand(index: int) -> Variant:
+	if index >= 0 and index < hand.size():
+		var removed = hand[index]
 		hand.remove_at(index)
-		return
-	var fallback_index := hand.find(card_id)
-	if fallback_index >= 0:
-		hand.remove_at(fallback_index)
+		return removed
+	return null
 
 func _on_end_turn_pressed() -> void:
-	if combat_over:
+	if combat_over or enemy_acting or discard_overlay_active or turn_locked:
 		return
-	_discard_hand()
+	turn_locked = true
+	if hand.size() > HAND_LIMIT:
+		_open_discard_overlay(hand.size() - HAND_LIMIT)
+		return
+	await _resolve_end_turn()
+
+func _resolve_end_turn() -> void:
 	_tick_player_end_turn()
-	_enemy_turn()
+	await _enemy_turn()
 	if combat_over:
+		turn_locked = false
 		_update_ui()
 		return
 	_log_turn_end()
-	player_block = 0
 	energy = RunState.energy_max
-	_draw_cards(HAND_SIZE)
+	_draw_cards(HAND_DRAW_PER_TURN)
 	turn_index += 1
 	_log_turn_start()
+	turn_locked = false
 	_update_ui()
 	RunState.save_run()
 
-func _discard_hand() -> void:
-	for card_id in hand:
-		discard_pile.append(card_id)
-	hand.clear()
-
 func _enemy_turn() -> void:
-	enemy_block = 0
+	enemy_acting = true
 	enemy_energy = RunState.energy_max
-	_play_enemy_hand()
+	_update_ui()
+	await _play_enemy_hand()
+	enemy_acting = false
 	if RunState.player_hp <= 0:
 		combat_over = true
 		run_complete = true
@@ -596,10 +639,31 @@ func _play_enemy_hand() -> void:
 		if cost > enemy_energy:
 			continue
 		enemy_energy -= cost
+		enemy_intent_card = card_data
+		_update_ui()
+		await _wait(ENEMY_WINDUP_DELAY)
+		_play_enemy_action_fx(card_data)
 		_apply_enemy_card(card_data)
 		acted = true
+		_update_ui()
+		if RunState.player_hp <= 0:
+			break
+		await _wait(ENEMY_ACTION_DELAY)
 	if not acted:
 		_append_battle_log("魔物谨慎观望。")
+		await _wait(ENEMY_IDLE_DELAY)
+
+func _wait(seconds: float) -> void:
+	if seconds <= 0.0:
+		return
+	await get_tree().create_timer(seconds).timeout
+
+func _play_enemy_action_fx(card_data: Dictionary) -> void:
+	var intent_type: String = str(card_data.get("type", ""))
+	_pulse_node(enemy_portrait, 1.04)
+	match intent_type:
+		"guard", "charge":
+			sfx_block.play()
 
 func _apply_enemy_card(card_data: Dictionary) -> void:
 	if card_data.is_empty():
@@ -720,6 +784,7 @@ func _apply_enemy_card(card_data: Dictionary) -> void:
 func _apply_enemy_damage(amount: int) -> int:
 	if amount <= 0:
 		return 0
+	sfx_attack.play()
 	var adjusted_amount := amount
 	if player_vulnerable_turns > 0:
 		adjusted_amount = int(round(amount * VULNERABLE_DAMAGE_MULT))
@@ -729,7 +794,6 @@ func _apply_enemy_damage(amount: int) -> int:
 	if damage > 0:
 		RunState.player_hp = max(RunState.player_hp - damage, 0)
 		combat_damage_taken += damage
-		sfx_attack.play()
 		_play_player_hit_effect()
 	return damage
 
@@ -855,6 +919,94 @@ func _set_reward_overlay_visible(active: bool) -> void:
 		reward_overlay_tween.tween_property(reward_overlay, "modulate:a", 0.0, 0.12).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
 		reward_overlay_tween.tween_callback(func(): reward_overlay.visible = false)
 
+func _set_discard_overlay_visible(active: bool) -> void:
+	if active == discard_overlay_active:
+		return
+	discard_overlay_active = active
+	if discard_overlay_tween:
+		discard_overlay_tween.kill()
+	if active:
+		discard_overlay.visible = true
+		discard_overlay.modulate.a = 0.0
+		discard_panel.scale = Vector2(0.96, 0.96)
+		discard_overlay_tween = create_tween()
+		discard_overlay_tween.tween_property(discard_overlay, "modulate:a", 1.0, 0.18).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+		discard_overlay_tween.tween_property(discard_panel, "scale", Vector2.ONE, 0.2).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	else:
+		discard_overlay_tween = create_tween()
+		discard_overlay_tween.tween_property(discard_overlay, "modulate:a", 0.0, 0.12).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+		discard_overlay_tween.tween_callback(func(): discard_overlay.visible = false)
+
+func _open_discard_overlay(required: int) -> void:
+	discard_required = max(required, 0)
+	discard_selection.clear()
+	_populate_discard_cards()
+	_refresh_discard_ui()
+	_set_discard_overlay_visible(true)
+
+func _refresh_discard_ui() -> void:
+	discard_info_label.text = "需要弃置%d张（已选择%d）。" % [discard_required, discard_selection.size()]
+	discard_confirm_button.disabled = discard_selection.size() != discard_required
+
+func _populate_discard_cards() -> void:
+	_clear_container(discard_choice_container)
+	discard_card_widgets.clear()
+	for index in hand.size():
+		var card_entry = hand[index]
+		var card_id := RunState.get_card_id(card_entry)
+		var card_data := GameData.get_card_data(card_id, RunState.is_card_upgraded(card_entry))
+		var widget: CardWidget = CARD_WIDGET_SCENE.instantiate()
+		widget.set_card(card_data)
+		widget.scale = Vector2(0.85, 0.85)
+		widget.clicked.connect(_on_discard_card_clicked.bind(index, widget))
+		widget.hovered.connect(_on_discard_card_hovered.bind(index))
+		widget.unhovered.connect(_on_card_unhovered)
+		discard_choice_container.add_child(widget)
+		discard_card_widgets[index] = widget
+
+func _on_discard_card_clicked(card_id: String, index: int, widget: CardWidget) -> void:
+	if discard_required <= 0:
+		return
+	if discard_selection.has(index):
+		discard_selection.erase(index)
+		if widget:
+			widget.modulate = Color(1, 1, 1, 1)
+	elif discard_selection.size() < discard_required:
+		discard_selection.append(index)
+		if widget:
+			widget.modulate = Color(0.9, 0.9, 0.9, 1)
+	_refresh_discard_ui()
+
+func _on_discard_card_hovered(card_id: String, index: int) -> void:
+	var upgraded := false
+	if index >= 0 and index < hand.size():
+		upgraded = RunState.is_card_upgraded(hand[index])
+	_on_card_hovered(card_id, upgraded)
+
+func _on_discard_confirm_pressed() -> void:
+	if discard_selection.size() != discard_required:
+		return
+	_apply_discard_selection()
+	_set_discard_overlay_visible(false)
+	_refresh_hand()
+	await _resolve_end_turn()
+
+func _apply_discard_selection() -> void:
+	discard_selection.sort()
+	for i in range(discard_selection.size() - 1, -1, -1):
+		var index: int = discard_selection[i]
+		if index >= 0 and index < hand.size():
+			discard_pile.append(hand[index])
+			hand.remove_at(index)
+	discard_selection.clear()
+	discard_required = 0
+
+func _on_reward_deck_card_hovered(card_id: String, index: int) -> void:
+	var upgraded := false
+	if index >= 0 and index < RunState.deck.size():
+		upgraded = RunState.is_card_upgraded(RunState.deck[index])
+	_on_card_hovered(card_id, upgraded)
+
 func _set_route_overlay_visible(active: bool) -> void:
 	if active == route_overlay_active:
 		return
@@ -932,15 +1084,16 @@ func _populate_reward_deck() -> void:
 	_clear_container(reward_deck_list)
 	var any_available := false
 	for index in RunState.deck.size():
-		var card_id: String = RunState.deck[index]
-		if reward_mode == "upgrade" and RunState.is_upgraded(card_id):
+		var card_entry = RunState.deck[index]
+		var card_id := RunState.get_card_id(card_entry)
+		if reward_mode == "upgrade" and RunState.is_card_upgraded(card_entry):
 			continue
 		any_available = true
-		var card_data := GameData.get_card_data(card_id, RunState.is_upgraded(card_id))
+		var card_data := GameData.get_card_data(card_id, RunState.is_card_upgraded(card_entry))
 		var widget: CardWidget = CARD_WIDGET_SCENE.instantiate()
 		widget.set_card(card_data)
 		widget.clicked.connect(_on_reward_deck_card_selected.bind(index))
-		widget.hovered.connect(_on_card_hovered)
+		widget.hovered.connect(_on_reward_deck_card_hovered.bind(index))
 		widget.unhovered.connect(_on_card_unhovered)
 		reward_deck_list.add_child(widget)
 	if not any_available:
@@ -983,7 +1136,7 @@ func _on_reward_draft_pressed() -> void:
 	_refresh_reward_ui()
 
 func _on_reward_card_selected(card_id: String) -> void:
-	RunState.deck.append(card_id)
+	RunState.add_card(card_id)
 	var card_name: String = str(GameData.get_card_data(card_id, false).get("name", "新卡牌"))
 	_append_battle_log("补给中获得一张卡牌：%s。" % card_name)
 	RunState.log_event("补给获得新卡：%s。" % card_name)
@@ -991,20 +1144,25 @@ func _on_reward_card_selected(card_id: String) -> void:
 	_start_encounter()
 
 func _on_reward_deck_card_selected(card_id: String, index: int) -> void:
+	if index < 0 or index >= RunState.deck.size():
+		return
+	var card_entry = RunState.deck[index]
+	var entry_id := RunState.get_card_id(card_entry)
+	var entry_upgraded := RunState.is_card_upgraded(card_entry)
 	if reward_mode == "remove":
-		if index >= 0 and index < RunState.deck.size():
-			RunState.deck.remove_at(index)
-		var card_name: String = str(GameData.get_card_data(card_id, RunState.is_upgraded(card_id)).get("name", "卡牌"))
+		RunState.deck.remove_at(index)
+		RunState.save_run()
+		var card_name: String = str(GameData.get_card_data(entry_id, entry_upgraded).get("name", "卡牌"))
 		_append_battle_log("已移除卡牌：%s。" % card_name)
 		RunState.log_event("移除卡牌：%s。" % card_name)
 		sfx_reward.play()
 		_start_encounter()
 		return
 	if reward_mode == "upgrade":
-		RunState.upgrade_card(card_id)
-		var card_name: String = str(GameData.get_card_data(card_id, true).get("name", "卡牌"))
-		_append_battle_log("已强化卡牌：%s。" % card_name)
-		RunState.log_event("强化卡牌：%s。" % card_name)
+		RunState.upgrade_card_at(index)
+		var upgraded_name: String = str(GameData.get_card_data(entry_id, true).get("name", "卡牌"))
+		_append_battle_log("已强化卡牌：%s。" % upgraded_name)
+		RunState.log_event("强化卡牌：%s。" % upgraded_name)
 		sfx_reward.play()
 		_start_encounter()
 		return
@@ -1048,8 +1206,8 @@ func _play_hit_fx(fx: TextureRect) -> void:
 	tween.tween_property(fx, "modulate:a", 0.0, 0.18).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
 	tween.tween_callback(func(): fx.visible = false)
 
-func _on_card_hovered(card_id: String) -> void:
-	var card_data := GameData.get_card_data(card_id, RunState.is_upgraded(card_id))
+func _on_card_hovered(card_id: String, upgraded: bool = false) -> void:
+	var card_data := GameData.get_card_data(card_id, upgraded)
 	if card_data.is_empty():
 		return
 	card_detail_name.text = str(card_data.get("name", "卡牌"))
