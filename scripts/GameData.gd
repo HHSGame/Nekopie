@@ -8,6 +8,53 @@ const SUPPLY_CHANCE := 0.6
 const SUPPLY_HEAL_AMOUNT := 8
 const PLAYER_PORTRAIT := "res://art/portraits/player_female.svg"
 
+const ENEMY_CARD_LIBRARY := {
+	"slime_splash": {"id": "slime_splash", "name": "黏液喷吐", "type": "attack", "cost": 1, "damage": 4},
+	"slime_guard": {"id": "slime_guard", "name": "黏液护体", "type": "guard", "cost": 1, "block": 4},
+	"slime_charge": {"id": "slime_charge", "name": "黏液蓄势", "type": "charge", "cost": 1, "charge": 2},
+	"slime_multi": {"id": "slime_multi", "name": "黏液连击", "type": "multi_attack", "cost": 2, "damage": 2, "hits": 2},
+	"mist_swipe": {"id": "mist_swipe", "name": "雾爪突袭", "type": "attack", "cost": 1, "damage": 5},
+	"mist_guard": {"id": "mist_guard", "name": "影雾护体", "type": "guard", "cost": 1, "block": 3},
+	"mist_charge": {"id": "mist_charge", "name": "暗影蓄势", "type": "charge", "cost": 1, "charge": 2},
+	"mist_burst": {"id": "mist_burst", "name": "雾影连击", "type": "multi_attack", "cost": 2, "damage": 2, "hits": 3},
+	"goblin_stab": {"id": "goblin_stab", "name": "短刀突刺", "type": "attack", "cost": 1, "damage": 6},
+	"goblin_flurry": {"id": "goblin_flurry", "name": "疾刺连击", "type": "multi_attack", "cost": 2, "damage": 3, "hits": 2},
+	"goblin_guard": {"id": "goblin_guard", "name": "掠夺防御", "type": "guard", "cost": 1, "block": 4},
+	"goblin_charge": {"id": "goblin_charge", "name": "嗜战蓄力", "type": "charge", "cost": 1, "charge": 3},
+	"wolf_bite": {"id": "wolf_bite", "name": "利爪撕咬", "type": "attack", "cost": 1, "damage": 6},
+	"wolf_pack": {"id": "wolf_pack", "name": "群咬", "type": "multi_attack", "cost": 2, "damage": 3, "hits": 2},
+	"wolf_guard": {"id": "wolf_guard", "name": "伺机防御", "type": "guard", "cost": 1, "block": 3},
+	"wolf_charge": {"id": "wolf_charge", "name": "兽性蓄势", "type": "charge", "cost": 1, "charge": 2},
+	"sprite_hit": {"id": "sprite_hit", "name": "碎岩冲击", "type": "attack", "cost": 1, "damage": 5},
+	"sprite_guard": {"id": "sprite_guard", "name": "岩壳防护", "type": "guard", "cost": 1, "block": 5},
+	"sprite_charge": {"id": "sprite_charge", "name": "石屑蓄势", "type": "charge", "cost": 1, "charge": 3},
+	"wisp_bolt": {"id": "wisp_bolt", "name": "幽光震荡", "type": "attack", "cost": 1, "damage": 5},
+	"wisp_guard": {"id": "wisp_guard", "name": "雾影护体", "type": "guard", "cost": 1, "block": 3},
+	"wisp_drain": {"id": "wisp_drain", "name": "幽雾汲取", "type": "drain", "cost": 2, "damage": 4, "heal": 3},
+	"bandit_attack": {"id": "bandit_attack", "name": "飞索突袭", "type": "attack", "cost": 1, "damage": 7},
+	"bandit_guard": {"id": "bandit_guard", "name": "结阵防守", "type": "guard", "cost": 1, "block": 4},
+	"bandit_combo": {"id": "bandit_combo", "name": "合击乱刃", "type": "multi_attack", "cost": 2, "damage": 3, "hits": 3},
+	"ogre_slam": {"id": "ogre_slam", "name": "岩锤重击", "type": "attack", "cost": 2, "damage": 10},
+	"ogre_guard": {"id": "ogre_guard", "name": "石肤防御", "type": "guard", "cost": 1, "block": 5},
+	"ogre_charge": {"id": "ogre_charge", "name": "裂岩蓄势", "type": "charge", "cost": 1, "charge": 5},
+	"ice_bite": {"id": "ice_bite", "name": "冰牙突咬", "type": "attack", "cost": 1, "damage": 8},
+	"ice_guard": {"id": "ice_guard", "name": "冰甲凝结", "type": "guard", "cost": 1, "block": 5},
+	"ice_drain": {"id": "ice_drain", "name": "霜息汲取", "type": "drain", "cost": 2, "damage": 6, "heal": 3},
+	"yak_charge": {"id": "yak_charge", "name": "雷势蓄力", "type": "charge", "cost": 1, "charge": 4},
+	"yak_ram": {"id": "yak_ram", "name": "雷角冲撞", "type": "attack", "cost": 2, "damage": 10},
+	"yak_stomp": {"id": "yak_stomp", "name": "连环践踏", "type": "multi_attack", "cost": 2, "damage": 4, "hits": 2},
+	"golem_attack": {"id": "golem_attack", "name": "沉岩猛击", "type": "attack", "cost": 2, "damage": 10},
+	"golem_guard": {"id": "golem_guard", "name": "石甲护壁", "type": "guard", "cost": 1, "block": 6},
+	"golem_charge": {"id": "golem_charge", "name": "山势蓄力", "type": "charge", "cost": 1, "charge": 5},
+	"golem_repair": {"id": "golem_repair", "name": "石核修复", "type": "heal", "cost": 2, "heal": 6},
+	"boss_slash": {"id": "boss_slash", "name": "魔焰斩", "type": "attack", "cost": 1, "damage": 9},
+	"boss_multi": {"id": "boss_multi", "name": "魔影连击", "type": "multi_attack", "cost": 3, "damage": 4, "hits": 3},
+	"boss_charge": {"id": "boss_charge", "name": "魔力蓄势", "type": "charge", "cost": 1, "charge": 6},
+	"boss_drain": {"id": "boss_drain", "name": "吞噬", "type": "drain", "cost": 2, "damage": 6, "heal": 4},
+	"boss_guard": {"id": "boss_guard", "name": "魔纹护壁", "type": "guard", "cost": 1, "block": 6},
+	"boss_heal": {"id": "boss_heal", "name": "暗息恢复", "type": "heal", "cost": 2, "heal": 8}
+}
+
 const UPGRADE_LIBRARY := {
 	"strike": {"damage": 3},
 	"defend": {"block": 3},
@@ -99,9 +146,13 @@ const ENEMY_LIBRARY := {
 		"score": 40,
 		"portrait": "res://art/portraits/enemy_slime.svg",
 		"desc": "黏液喷吐，拖慢你的步伐。",
-		"intents": [
-			{"type": "attack", "value": 4, "text": "黏液喷吐"},
-			{"type": "guard", "value": 4, "text": "黏液护体"}
+		"deck": [
+			"slime_splash",
+			"slime_splash",
+			"slime_guard",
+			"slime_guard",
+			"slime_charge",
+			"slime_multi"
 		]
 	},
 	"goblin": {
@@ -112,10 +163,13 @@ const ENEMY_LIBRARY := {
 		"score": 60,
 		"portrait": "res://art/portraits/enemy_goblin.svg",
 		"desc": "埋伏在林间的劫掠者。",
-		"intents": [
-			{"type": "attack", "value": 6, "text": "短刀突刺"},
-			{"type": "multi_attack", "value": 3, "hits": 2, "text": "疾刺连击"},
-			{"type": "charge", "value": 3, "text": "嗜战蓄力"}
+		"deck": [
+			"goblin_stab",
+			"goblin_stab",
+			"goblin_flurry",
+			"goblin_guard",
+			"goblin_charge",
+			"goblin_guard"
 		]
 	},
 	"mist_imp": {
@@ -126,10 +180,13 @@ const ENEMY_LIBRARY := {
 		"score": 50,
 		"portrait": "res://art/portraits/enemy_mist_imp.svg",
 		"desc": "藏身薄雾的狡黠小妖。",
-		"intents": [
-			{"type": "attack", "value": 5, "text": "雾爪突袭"},
-			{"type": "guard", "value": 3, "text": "影雾护体"},
-			{"type": "charge", "value": 2, "text": "暗影蓄势"}
+		"deck": [
+			"mist_swipe",
+			"mist_guard",
+			"mist_swipe",
+			"mist_charge",
+			"mist_burst",
+			"mist_guard"
 		]
 	},
 	"slope_wolf": {
@@ -140,10 +197,13 @@ const ENEMY_LIBRARY := {
 		"score": 65,
 		"portrait": "res://art/portraits/enemy_slope_wolf.svg",
 		"desc": "在乱石间游走的饥饿猛兽。",
-		"intents": [
-			{"type": "attack", "value": 6, "text": "利爪撕咬"},
-			{"type": "multi_attack", "value": 3, "hits": 2, "text": "群咬"},
-			{"type": "guard", "value": 3, "text": "伺机防御"}
+		"deck": [
+			"wolf_bite",
+			"wolf_bite",
+			"wolf_pack",
+			"wolf_guard",
+			"wolf_charge",
+			"wolf_guard"
 		]
 	},
 	"rock_sprite": {
@@ -154,10 +214,13 @@ const ENEMY_LIBRARY := {
 		"score": 68,
 		"portrait": "res://art/portraits/enemy_rock_sprite.svg",
 		"desc": "碎石凝形的精怪。",
-		"intents": [
-			{"type": "guard", "value": 5, "text": "岩壳防护"},
-			{"type": "attack", "value": 5, "text": "碎岩冲击"},
-			{"type": "charge", "value": 3, "text": "石屑蓄势"}
+		"deck": [
+			"sprite_hit",
+			"sprite_guard",
+			"sprite_charge",
+			"sprite_guard",
+			"sprite_hit",
+			"sprite_guard"
 		]
 	},
 	"wisp": {
@@ -168,10 +231,13 @@ const ENEMY_LIBRARY := {
 		"score": 70,
 		"portrait": "res://art/portraits/enemy_wisp.svg",
 		"desc": "飘忽的幽光，擅长扰乱心神。",
-		"intents": [
-			{"type": "attack", "value": 5, "text": "幽光震荡"},
-			{"type": "drain", "value": 4, "heal": 3, "text": "幽雾汲取"},
-			{"type": "guard", "value": 3, "text": "雾影护体"}
+		"deck": [
+			"wisp_bolt",
+			"wisp_guard",
+			"wisp_drain",
+			"wisp_bolt",
+			"wisp_guard",
+			"wisp_drain"
 		]
 	},
 	"cliff_bandits": {
@@ -182,10 +248,13 @@ const ENEMY_LIBRARY := {
 		"score": 80,
 		"portrait": "res://art/portraits/enemy_cliff_bandits.svg",
 		"desc": "驾轻就熟的山崖掠夺者。",
-		"intents": [
-			{"type": "multi_attack", "value": 3, "hits": 3, "text": "合击乱刃"},
-			{"type": "guard", "value": 4, "text": "结阵防守"},
-			{"type": "attack", "value": 7, "text": "飞索突袭"}
+		"deck": [
+			"bandit_attack",
+			"bandit_combo",
+			"bandit_guard",
+			"bandit_attack",
+			"bandit_combo",
+			"bandit_guard"
 		]
 	},
 	"ogre": {
@@ -196,10 +265,13 @@ const ENEMY_LIBRARY := {
 		"score": 90,
 		"portrait": "res://art/portraits/enemy_ogre.svg",
 		"desc": "手持岩锤，守护山腰。",
-		"intents": [
-			{"type": "charge", "value": 5, "text": "裂岩蓄势"},
-			{"type": "attack", "value": 10, "text": "岩锤重击"},
-			{"type": "guard", "value": 5, "text": "石肤防御"}
+		"deck": [
+			"ogre_charge",
+			"ogre_slam",
+			"ogre_guard",
+			"ogre_slam",
+			"ogre_charge",
+			"ogre_guard"
 		]
 	},
 	"ice_lizard": {
@@ -210,10 +282,13 @@ const ENEMY_LIBRARY := {
 		"score": 100,
 		"portrait": "res://art/portraits/enemy_ice_lizard.svg",
 		"desc": "寒气缠身的巨蜥，鳞甲锋利。",
-		"intents": [
-			{"type": "attack", "value": 8, "text": "冰牙突咬"},
-			{"type": "guard", "value": 5, "text": "冰甲凝结"},
-			{"type": "drain", "value": 6, "heal": 3, "text": "霜息汲取"}
+		"deck": [
+			"ice_bite",
+			"ice_guard",
+			"ice_drain",
+			"ice_bite",
+			"ice_guard",
+			"ice_drain"
 		]
 	},
 	"thunder_yak": {
@@ -224,10 +299,13 @@ const ENEMY_LIBRARY := {
 		"score": 110,
 		"portrait": "res://art/portraits/enemy_thunder_yak.svg",
 		"desc": "披着雷霆之势的巨牦。",
-		"intents": [
-			{"type": "charge", "value": 4, "text": "雷势蓄力"},
-			{"type": "attack", "value": 10, "text": "雷角冲撞"},
-			{"type": "multi_attack", "value": 4, "hits": 2, "text": "连环践踏"}
+		"deck": [
+			"yak_charge",
+			"yak_ram",
+			"yak_stomp",
+			"yak_charge",
+			"yak_ram",
+			"yak_stomp"
 		]
 	},
 	"stone_golem": {
@@ -238,10 +316,13 @@ const ENEMY_LIBRARY := {
 		"score": 120,
 		"portrait": "res://art/portraits/enemy_stone_golem.svg",
 		"desc": "沉稳厚重的石甲守卫。",
-		"intents": [
-			{"type": "guard", "value": 6, "text": "石甲护壁"},
-			{"type": "attack", "value": 10, "text": "沉岩猛击"},
-			{"type": "charge", "value": 5, "text": "山势蓄力"}
+		"deck": [
+			"golem_guard",
+			"golem_charge",
+			"golem_attack",
+			"golem_repair",
+			"golem_guard",
+			"golem_attack"
 		]
 	},
 	"summit_lord": {
@@ -252,11 +333,15 @@ const ENEMY_LIBRARY := {
 		"score": 140,
 		"portrait": "res://art/portraits/enemy_boss.svg",
 		"desc": "盘踞山巅的魔物首领。",
-		"intents": [
-			{"type": "attack", "value": 9, "text": "魔焰斩"},
-			{"type": "multi_attack", "value": 4, "hits": 3, "text": "魔影连击"},
-			{"type": "charge", "value": 6, "text": "魔力蓄势"},
-			{"type": "drain", "value": 6, "heal": 4, "text": "吞噬"}
+		"deck": [
+			"boss_slash",
+			"boss_multi",
+			"boss_charge",
+			"boss_drain",
+			"boss_guard",
+			"boss_heal",
+			"boss_slash",
+			"boss_multi"
 		]
 	}
 }
@@ -311,6 +396,9 @@ static func all_card_ids() -> Array:
 
 static func get_enemy(enemy_id: String) -> Dictionary:
 	return ENEMY_LIBRARY.get(enemy_id, {})
+
+static func get_enemy_card_data(card_id: String) -> Dictionary:
+	return ENEMY_CARD_LIBRARY.get(card_id, {}).duplicate(true)
 
 static func get_card_data(card_id: String, upgraded: bool = false) -> Dictionary:
 	var base: Dictionary = CARD_LIBRARY.get(card_id, {}).duplicate(true)

@@ -2,6 +2,7 @@ extends Control
 
 const CARD_WIDGET_SCENE := preload("res://scenes/CardWidget.tscn")
 const HAND_SIZE := 5
+const ENEMY_HAND_SIZE := 3
 const HAND_CARD_SIZE := Vector2(220, 260)
 const HAND_COLLAPSED_HEIGHT := 72.0
 const HAND_EXPANDED_HEIGHT := 200.0
@@ -10,7 +11,8 @@ const INTENT_ICONS := {
 	"multi_attack": preload("res://icons/intent_multi.svg"),
 	"guard": preload("res://icons/intent_guard.svg"),
 	"charge": preload("res://icons/intent_charge.svg"),
-	"drain": preload("res://icons/intent_drain.svg")
+	"drain": preload("res://icons/intent_drain.svg"),
+	"heal": preload("res://icons/intent_heal.svg")
 }
 
 @onready var story_label: Label = $MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/BattleCenterColumn/StoryPanel/StoryMargin/StoryLabel
@@ -85,9 +87,12 @@ var enemy_hp := 0
 var enemy_max_hp := 0
 var enemy_block := 0
 var enemy_attack_bonus := 0
-var enemy_intents: Array = []
-var intent_index := 0
-var current_intent: Dictionary = {}
+var enemy_draw_pile: Array = []
+var enemy_hand: Array = []
+var enemy_discard_pile: Array = []
+var enemy_energy := 0
+var enemy_intent_card: Dictionary = {}
+var enemy_power_mult := 1.0
 var combat_over := false
 var run_complete := false
 var pending_event: Dictionary = {}
@@ -158,13 +163,12 @@ func _start_encounter() -> void:
 	enemy_attack_bonus = 0
 	_apply_difficulty_to_enemy(RunState.next_difficulty)
 	RunState.next_difficulty = "normal"
-	enemy_intents = enemy_data.get("intents", [])
-	if enemy_intents.is_empty():
-		enemy_intents = [
-			{"type": "attack", "value": int(enemy_data.get("attack", 0)), "text": "攻击"}
-		]
-	intent_index = 0
-	_set_next_intent()
+	enemy_draw_pile = Array(enemy_data.get("deck", [])).duplicate(true)
+	enemy_draw_pile.shuffle()
+	enemy_hand.clear()
+	enemy_discard_pile.clear()
+	_draw_enemy_cards(ENEMY_HAND_SIZE)
+	_refresh_enemy_intent()
 	pending_event = {}
 	next_step = "encounter"
 	player_portrait.texture = load(GameData.PLAYER_PORTRAIT)
@@ -193,12 +197,12 @@ func _update_ui() -> void:
 	enemy_hp_bar.max_value = max(enemy_max_hp, 1)
 	enemy_hp_bar.value = enemy_hp
 	enemy_block_label.text = "敌人护甲：%d" % enemy_block
-	enemy_intent_label.text = "意图：%s" % _intent_display(current_intent)
+	enemy_intent_label.text = "意图：%s" % _enemy_card_display(enemy_intent_card)
 	enemy_desc_label.text = enemy_data.get("desc", "")
-	var intent_color := _intent_color(current_intent)
+	var intent_color := _enemy_card_color(enemy_intent_card)
 	enemy_intent_label.add_theme_color_override("font_color", intent_color)
 	enemy_intent_swatch.color = intent_color
-	enemy_intent_icon.texture = _intent_icon(current_intent)
+	enemy_intent_icon.texture = _enemy_card_icon(enemy_intent_card)
 	enemy_intent_icon.modulate = intent_color
 	player_hp_label.text = "生命：%d / %d" % [RunState.player_hp, RunState.player_max_hp]
 	player_hp_bar.max_value = max(RunState.player_max_hp, 1)
@@ -264,6 +268,16 @@ func _draw_cards(count: int) -> void:
 			discard_pile.clear()
 			draw_pile.shuffle()
 		hand.append(draw_pile.pop_back())
+
+func _draw_enemy_cards(count: int) -> void:
+	for i in range(count):
+		if enemy_draw_pile.is_empty():
+			if enemy_discard_pile.is_empty():
+				break
+			enemy_draw_pile = enemy_discard_pile.duplicate(true)
+			enemy_discard_pile.clear()
+			enemy_draw_pile.shuffle()
+		enemy_hand.append(enemy_draw_pile.pop_back())
 
 func _on_hand_card_hovered(card_id: String, slot: Control) -> void:
 	_on_card_hovered(card_id)
@@ -382,7 +396,8 @@ func _discard_hand() -> void:
 
 func _enemy_turn() -> void:
 	enemy_block = 0
-	_execute_intent(current_intent)
+	enemy_energy = RunState.energy_max
+	_play_enemy_hand()
 	if RunState.player_hp <= 0:
 		combat_over = true
 		run_complete = true
@@ -393,7 +408,10 @@ func _enemy_turn() -> void:
 		RunState.save_run()
 		return
 	if not combat_over:
-		_set_next_intent()
+		enemy_discard_pile.append_array(enemy_hand)
+		enemy_hand.clear()
+		_draw_enemy_cards(ENEMY_HAND_SIZE)
+		_refresh_enemy_intent()
 
 func _check_enemy_defeat() -> void:
 	if enemy_hp <= 0:
@@ -429,63 +447,100 @@ func _on_next_pressed() -> void:
 func _on_back_pressed() -> void:
 	get_tree().change_scene_to_file("res://scenes/Main.tscn")
 
-func _set_next_intent() -> void:
-	if enemy_intents.is_empty():
-		current_intent = {}
-		return
-	current_intent = enemy_intents[intent_index % enemy_intents.size()]
-	intent_index += 1
+func _refresh_enemy_intent() -> void:
+	enemy_intent_card = _get_enemy_intent_card()
 
-func _intent_display(intent: Dictionary) -> String:
-	var intent_type: String = str(intent.get("type", ""))
-	var custom_text: String = str(intent.get("text", ""))
+func _get_enemy_intent_card() -> Dictionary:
+	if enemy_hand.is_empty():
+		return {}
+	for card_id in enemy_hand:
+		var card_data := GameData.get_enemy_card_data(str(card_id))
+		if int(card_data.get("cost", 0)) <= RunState.energy_max:
+			return card_data
+	return GameData.get_enemy_card_data(str(enemy_hand[0]))
+
+func _enemy_card_display(card_data: Dictionary) -> String:
+	if card_data.is_empty():
+		return "行动未知"
+	var custom_text: String = str(card_data.get("text", ""))
 	if not custom_text.is_empty():
 		return custom_text
+	var intent_type: String = str(card_data.get("type", ""))
+	var name: String = str(card_data.get("name", "行动"))
+	var bonus: int = enemy_attack_bonus
 	match intent_type:
 		"attack":
-			return "攻击 %d" % int(intent.get("value", 0))
+			var damage := int(round(int(card_data.get("damage", 0)) * enemy_power_mult))
+			damage += bonus
+			return "%s %d" % [name, damage]
 		"multi_attack":
-			return "连击 %d x %d" % [int(intent.get("value", 0)), int(intent.get("hits", 1))]
+			var damage := int(round(int(card_data.get("damage", 0)) * enemy_power_mult))
+			var hits := int(card_data.get("hits", 1))
+			var suffix := " +%d" % bonus if bonus > 0 else ""
+			return "%s %d x %d%s" % [name, damage, hits, suffix]
 		"guard":
-			return "护甲 +%d" % int(intent.get("value", 0))
+			var block := int(round(int(card_data.get("block", 0)) * enemy_power_mult))
+			return "%s +%d" % [name, block]
 		"charge":
-			return "蓄力 +%d" % int(intent.get("value", 0))
+			var charge := int(round(int(card_data.get("charge", 0)) * enemy_power_mult))
+			return "%s +%d" % [name, charge]
 		"drain":
-			return "汲取 %d" % int(intent.get("value", 0))
-	return "行动未知"
+			var damage := int(round(int(card_data.get("damage", 0)) * enemy_power_mult))
+			damage += bonus
+			return "%s %d" % [name, damage]
+		"heal":
+			var heal := int(round(int(card_data.get("heal", 0)) * enemy_power_mult))
+			return "%s +%d" % [name, heal]
+	return name
 
-func _execute_intent(intent: Dictionary) -> void:
-	if intent.is_empty():
-		result_label.text = "魔物踌躇不前。"
+func _play_enemy_hand() -> void:
+	var acted := false
+	for card_id in enemy_hand:
+		var card_data := GameData.get_enemy_card_data(str(card_id))
+		var cost := int(card_data.get("cost", 0))
+		if cost > enemy_energy:
+			continue
+		enemy_energy -= cost
+		_apply_enemy_card(card_data)
+		acted = true
+	if not acted:
+		result_label.text = "魔物谨慎观望。"
+
+func _apply_enemy_card(card_data: Dictionary) -> void:
+	if card_data.is_empty():
 		return
-	var intent_type: String = str(intent.get("type", ""))
+	var intent_type: String = str(card_data.get("type", ""))
+	var damage := int(round(int(card_data.get("damage", 0)) * enemy_power_mult))
+	var block := int(round(int(card_data.get("block", 0)) * enemy_power_mult))
+	var heal := int(round(int(card_data.get("heal", 0)) * enemy_power_mult))
+	var charge := int(round(int(card_data.get("charge", 0)) * enemy_power_mult))
 	match intent_type:
 		"attack":
-			var damage_value: int = int(intent.get("value", 0)) + enemy_attack_bonus
+			var total_damage: int = damage + enemy_attack_bonus
 			enemy_attack_bonus = 0
-			_apply_enemy_damage(damage_value)
+			_apply_enemy_damage(total_damage, "魔物施展%s，造成%d点伤害。" % [card_data.get("name", "攻击"), total_damage])
 		"multi_attack":
-			var hits: int = int(intent.get("hits", 1))
-			var per_hit: int = int(intent.get("value", 0))
-			var total_damage: int = (per_hit * hits) + enemy_attack_bonus
+			var hits: int = int(card_data.get("hits", 1))
+			var total_multi: int = (damage * hits) + enemy_attack_bonus
 			enemy_attack_bonus = 0
-			_apply_enemy_damage(total_damage, "魔物连击，造成%d点伤害。")
+			_apply_enemy_damage(total_multi, "魔物施展%s，造成%d点伤害。" % [card_data.get("name", "连击"), total_multi])
 		"guard":
-			var guard_value: int = int(intent.get("value", 0))
-			enemy_block += guard_value
-			result_label.text = "魔物筑起护甲，获得%d点护甲。" % guard_value
+			enemy_block += block
+			result_label.text = "魔物施展%s，获得%d点护甲。" % [card_data.get("name", "防御"), block]
 		"charge":
-			var charge_value: int = int(intent.get("value", 0))
-			enemy_attack_bonus += charge_value
-			result_label.text = "魔物蓄力，下一次攻击+%d。" % charge_value
+			enemy_attack_bonus += charge
+			result_label.text = "魔物施展%s，下一次攻击+%d。" % [card_data.get("name", "蓄力"), charge]
 		"drain":
-			var drain_damage: int = int(intent.get("value", 0)) + enemy_attack_bonus
-			var drain_heal: int = int(intent.get("heal", 0))
+			var drain_damage: int = damage + enemy_attack_bonus
 			enemy_attack_bonus = 0
-			var dealt: int = _apply_enemy_damage(drain_damage, "魔物汲取，造成%d点伤害。")
-			if dealt > 0 and drain_heal > 0:
-				enemy_hp = min(enemy_hp + drain_heal, enemy_max_hp)
-				result_label.text += " 魔物恢复%d点生命。" % drain_heal
+			var dealt: int = _apply_enemy_damage(drain_damage, "魔物施展%s，造成%d点伤害。" % [card_data.get("name", "汲取"), drain_damage])
+			if dealt > 0 and heal > 0:
+				enemy_hp = min(enemy_hp + heal, enemy_max_hp)
+				result_label.text += " 魔物恢复%d点生命。" % heal
+		"heal":
+			if heal > 0:
+				enemy_hp = min(enemy_hp + heal, enemy_max_hp)
+				result_label.text = "魔物施展%s，恢复%d点生命。" % [card_data.get("name", "恢复"), heal]
 		_:
 			result_label.text = "魔物踌躇不前。"
 
@@ -698,21 +753,11 @@ func _apply_difficulty_to_enemy(difficulty: String) -> void:
 	var settings := RunState.get_difficulty_settings(difficulty)
 	var hp_mult := float(settings.get("hp_mult", 1.0))
 	var power_mult := float(settings.get("power_mult", 1.0))
+	enemy_power_mult = power_mult
 	if hp_mult != 1.0:
 		enemy_hp = int(round(enemy_hp * hp_mult))
 		enemy_max_hp = enemy_hp
 		enemy_data["hp"] = enemy_hp
-	if enemy_data.has("attack"):
-		enemy_data["attack"] = int(round(int(enemy_data.get("attack", 0)) * power_mult))
-	var intents: Array = enemy_data.get("intents", [])
-	for index in intents.size():
-		var intent: Dictionary = intents[index]
-		if intent.has("value"):
-			intent["value"] = int(round(int(intent.get("value", 0)) * power_mult))
-		if intent.has("heal"):
-			intent["heal"] = int(round(int(intent.get("heal", 0)) * power_mult))
-		intents[index] = intent
-	enemy_data["intents"] = intents
 
 func _populate_supply_cards() -> void:
 	_clear_container(reward_choice_container)
@@ -866,8 +911,8 @@ func _on_card_hovered(card_id: String) -> void:
 func _on_card_unhovered() -> void:
 	card_detail_panel.visible = false
 
-func _intent_color(intent: Dictionary) -> Color:
-	var intent_type: String = str(intent.get("type", ""))
+func _enemy_card_color(card_data: Dictionary) -> Color:
+	var intent_type: String = str(card_data.get("type", ""))
 	match intent_type:
 		"attack":
 			return Color(0.9, 0.35, 0.35)
@@ -879,8 +924,10 @@ func _intent_color(intent: Dictionary) -> Color:
 			return Color(0.95, 0.85, 0.3)
 		"drain":
 			return Color(0.75, 0.5, 0.95)
+		"heal":
+			return Color(0.55, 0.85, 0.6)
 	return Color(1, 1, 1)
 
-func _intent_icon(intent: Dictionary) -> Texture2D:
-	var intent_type: String = str(intent.get("type", "attack"))
+func _enemy_card_icon(card_data: Dictionary) -> Texture2D:
+	var intent_type: String = str(card_data.get("type", "attack"))
 	return INTENT_ICONS.get(intent_type, INTENT_ICONS["attack"])

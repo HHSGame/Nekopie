@@ -8,6 +8,7 @@
 - Expanded the enemy roster to 12 encounters with new portraits and base scores.
 - Added energy max growth every 3 encounters and updated the energy UI display.
 - Added a heart-shaped supply rest icon to match the UI button style.
+- Reworked enemy turns to draw from fixed decks with shared energy and enemy-only cards.
 
 ## 2026-01-23
 - Rebuilt the RunScreen combat UI into a three-column battle layout with new story/progress panels.

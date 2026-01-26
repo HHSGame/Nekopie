@@ -62,6 +62,7 @@ A Godot 4.3 deck-building prototype set in an isekai adventure. The main goal is
 - Added a heart icon for the supply rest button to match the UI style.
 - Increased encounter count to 12 with new monster portraits and base scores.
 - Added energy max growth every 3 encounters and display energy as current/max.
+- Enemies now draw from fixed decks with shared energy and enemy-only skill cards.
 
 ## Scene and Script Layout
 - `scenes/Main.tscn` + `scripts/Main.gd`: main menu and navigation.
@@ -107,6 +108,7 @@ A Godot 4.3 deck-building prototype set in an isekai adventure. The main goal is
 
 ### Monster Expansion
 - Current roster covers 12 encounters with tiered base scores and new portraits.
+- Enemy actions are now deck-driven with bespoke cards for multi-hit, charge, drain, and heal.
 - Next wave targets: 风暴翔禽、深谷咒师、山巅古龙等进阶魔物。
 - New intents: debuff (Vulnerable/Weak), regen, split, summon, enrage.
 
@@ -115,5 +117,5 @@ Open the project in Godot 4.3 and run the main scene at `res://scenes/Main.tscn`
 
 ## Next Implementation Plan
 1. Tune the 12-encounter pacing (enemy stats, score scaling, and supply frequency).
-2. Add more card effects (status/debuffs) and new enemy intents.
+2. Add more enemy deck cards (status/debuffs) and new player card effects.
 3. Polish supply/score overlays with clearer feedback and optional animations.
