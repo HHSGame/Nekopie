@@ -102,7 +102,6 @@ var player_weak_turns := 0
 var player_vulnerable_turns := 0
 var combat_over := false
 var run_complete := false
-var pending_event: Dictionary = {}
 var next_step := "encounter"
 var reward_mode := "none"
 var last_reward_mode := ""
@@ -231,7 +230,6 @@ func _start_encounter() -> void:
 	enemy_discard_pile.clear()
 	_draw_enemy_cards(ENEMY_HAND_SIZE)
 	_refresh_enemy_intent()
-	pending_event = {}
 	next_step = "encounter"
 	player_portrait.texture = load(GameData.PLAYER_PORTRAIT)
 	var enemy_portrait_path: String = str(enemy_data.get("portrait", ""))
@@ -296,8 +294,6 @@ func _update_ui() -> void:
 	if combat_over and next_button.visible:
 		if run_complete:
 			next_button.text = "返回主菜单"
-		elif next_step == "event":
-			next_button.text = "处理事件"
 		else:
 			next_button.text = "继续攀登"
 	_refresh_hand()
@@ -538,13 +534,6 @@ func _on_next_pressed() -> void:
 	if run_complete:
 		get_tree().change_scene_to_file("res://scenes/Main.tscn")
 		return
-	if next_step == "event":
-		_apply_event(pending_event)
-		pending_event = {}
-		if not run_complete:
-			_enter_route_selection()
-		_update_ui()
-		return
 	_start_encounter()
 
 func _on_back_pressed() -> void:
@@ -767,53 +756,8 @@ func _tick_player_end_turn() -> void:
 		player_weak_turns -= 1
 
 func _queue_post_battle_step() -> void:
-	pending_event = {}
 	next_step = "encounter"
-	var roll: float = randf()
-	if roll <= GameData.EVENT_CHANCE:
-		pending_event = GameData.get_random_event()
-	if pending_event.is_empty():
-		_enter_route_selection()
-		return
-	next_step = "event"
-	_append_battle_log("遭遇事件：%s - %s" % [
-		pending_event.get("name", "事件"),
-		pending_event.get("desc", "")
-	])
-	RunState.log_event("触发事件：%s。" % pending_event.get("name", "事件"))
-
-func _apply_event(event_data: Dictionary) -> void:
-	var effect: String = str(event_data.get("effect", ""))
-	var value: int = int(event_data.get("value", 0))
-	match effect:
-		"heal":
-			var before: int = RunState.player_hp
-			RunState.player_hp = min(RunState.player_hp + value, RunState.player_max_hp)
-			var healed: int = RunState.player_hp - before
-			_append_battle_log("你恢复了%d点生命（HP %d/%d）。" % [healed, RunState.player_hp, RunState.player_max_hp])
-			RunState.log_event("事件恢复生命 %d。" % healed)
-		"damage":
-			RunState.player_hp = max(RunState.player_hp - value, 0)
-			_append_battle_log("你受到%d点伤害（HP %d/%d）。" % [value, RunState.player_hp, RunState.player_max_hp])
-			RunState.log_event("事件受到伤害 %d。" % value)
-			if RunState.player_hp <= 0:
-				run_complete = true
-				_append_battle_log("你在山道上倒下，征途告终。")
-				RunState.log_event("事件中倒下。")
-		"card":
-			var card_id: String = GameData.get_random_card_id()
-			if card_id.is_empty():
-				_append_battle_log("你未能找到合适的补给。")
-			else:
-				RunState.deck.append(card_id)
-				var card_name: String = str(GameData.get_card_data(card_id, false).get("name", "新卡牌"))
-				_append_battle_log("你获得了一张卡牌：%s。" % card_name)
-				RunState.log_event("事件获得卡牌：%s。" % card_name)
-		_:
-			_append_battle_log("事件无事发生。")
-			RunState.log_event("事件无事发生。")
-	if RunState.player_hp > 0 and not run_complete:
-		_enter_route_selection()
+	_enter_route_selection()
 
 func _enter_route_selection() -> void:
 	next_step = "route"

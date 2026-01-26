@@ -3,7 +3,6 @@ extends Node
 const MOUNTAIN_NAME := "隐魔之岭"
 const WORLD_TAGLINE := "异世界冒险：征服山巅，穿越魔物之影。"
 const FIRST_STRIKE_DAMAGE := 4
-const EVENT_CHANCE := 0.5
 const SUPPLY_CHANCE := 0.6
 const SUPPLY_HEAL_AMOUNT := 8
 const PLAYER_PORTRAIT := "res://art/portraits/player_female.svg"
@@ -386,30 +385,6 @@ const ENCOUNTERS := [
 	"summit_lord"
 ]
 
-const EVENTS := [
-	{
-		"id": "healing_spring",
-		"name": "清泉",
-		"desc": "泉水涌动，恢复体力。",
-		"effect": "heal",
-		"value": 8
-	},
-	{
-		"id": "rockfall",
-		"name": "落石",
-		"desc": "山路崩塌，你受到冲击。",
-		"effect": "damage",
-		"value": 6
-	},
-	{
-		"id": "mystic_cache",
-		"name": "遗落补给",
-		"desc": "拾到未知卡牌。",
-		"effect": "card",
-		"value": 1
-	}
-]
-
 static func get_card(card_id: String) -> Dictionary:
 	return CARD_LIBRARY.get(card_id, {})
 
@@ -464,8 +439,3 @@ static func get_random_card_id() -> String:
 	if card_ids.is_empty():
 		return ""
 	return str(card_ids.pick_random())
-
-static func get_random_event() -> Dictionary:
-	if EVENTS.is_empty():
-		return {}
-	return EVENTS.pick_random()

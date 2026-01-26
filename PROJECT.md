@@ -12,7 +12,6 @@ A Godot 4.3 deck-building prototype set in an isekai adventure. The main goal is
 - Mountain enemy roster, encounter order, and intent-based behaviors.
 - UI node bindings use explicit paths for Godot 4.3 compatibility.
 - Card widgets now safely accept data before entering the scene tree.
-- Post-battle event nodes (heal, damage, or card reward).
 - Bundled Noto Sans CJK SC font via a global theme for HTML5 Chinese rendering.
 - Applied the global theme explicitly to UI scenes for HTML5 consistency.
 - Export presets are tracked in `export_presets.cfg`.
