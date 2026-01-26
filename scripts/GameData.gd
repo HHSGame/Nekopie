@@ -180,7 +180,7 @@ const CARD_LIBRARY := {
 		"pierce": true,
 		"rarity": "common",
 		"icon": "res://art/cards/icon_strike.svg",
-		"art": "res://art/cards/card_art_placeholder.svg"
+		"art": "res://art/cards/card_art_pierce.svg"
 	},
 	"pierce_heavy": {
 		"id": "pierce_heavy",
@@ -191,7 +191,7 @@ const CARD_LIBRARY := {
 		"pierce": true,
 		"rarity": "uncommon",
 		"icon": "res://art/cards/icon_strike.svg",
-		"art": "res://art/cards/card_art_placeholder.svg"
+		"art": "res://art/cards/card_art_pierce_heavy.svg"
 	},
 	"lifesteal_slash": {
 		"id": "lifesteal_slash",
@@ -202,7 +202,7 @@ const CARD_LIBRARY := {
 		"lifesteal_ratio": 0.5,
 		"rarity": "rare",
 		"icon": "res://art/cards/icon_strike.svg",
-		"art": "res://art/cards/card_art_placeholder.svg"
+		"art": "res://art/cards/card_art_lifesteal_slash.svg"
 	},
 	"block_smash": {
 		"id": "block_smash",
@@ -213,7 +213,7 @@ const CARD_LIBRARY := {
 		"damage_from_block": true,
 		"rarity": "uncommon",
 		"icon": "res://art/cards/icon_strike.svg",
-		"art": "res://art/cards/card_art_placeholder.svg"
+		"art": "res://art/cards/card_art_block_smash.svg"
 	},
 	"missing_hp_slash": {
 		"id": "missing_hp_slash",
@@ -224,7 +224,7 @@ const CARD_LIBRARY := {
 		"missing_hp_cap": 20,
 		"rarity": "rare",
 		"icon": "res://art/cards/icon_strike.svg",
-		"art": "res://art/cards/card_art_placeholder.svg"
+		"art": "res://art/cards/card_art_missing_hp_slash.svg"
 	},
 	"poison_blade": {
 		"id": "poison_blade",
@@ -235,7 +235,7 @@ const CARD_LIBRARY := {
 		"apply_poison": 3,
 		"rarity": "uncommon",
 		"icon": "res://art/cards/icon_strike.svg",
-		"art": "res://art/cards/card_art_placeholder.svg"
+		"art": "res://art/cards/card_art_poison_blade.svg"
 	},
 	"flame_slash": {
 		"id": "flame_slash",
@@ -246,7 +246,7 @@ const CARD_LIBRARY := {
 		"apply_burn": 2,
 		"rarity": "uncommon",
 		"icon": "res://art/cards/icon_strike.svg",
-		"art": "res://art/cards/card_art_placeholder.svg"
+		"art": "res://art/cards/card_art_flame_slash.svg"
 	},
 	"combo_slash": {
 		"id": "combo_slash",
@@ -257,7 +257,7 @@ const CARD_LIBRARY := {
 		"damage_per_attack_chain": 2,
 		"rarity": "common",
 		"icon": "res://art/cards/icon_strike.svg",
-		"art": "res://art/cards/card_art_placeholder.svg"
+		"art": "res://art/cards/card_art_combo_slash.svg"
 	},
 	"execute": {
 		"id": "execute",
@@ -269,7 +269,7 @@ const CARD_LIBRARY := {
 		"execute_mult": 2.0,
 		"rarity": "rare",
 		"icon": "res://art/cards/icon_strike.svg",
-		"art": "res://art/cards/card_art_placeholder.svg"
+		"art": "res://art/cards/card_art_execute.svg"
 	},
 	"guard_pierce": {
 		"id": "guard_pierce",
@@ -280,7 +280,7 @@ const CARD_LIBRARY := {
 		"pierce_if_block": 8,
 		"rarity": "uncommon",
 		"icon": "res://art/cards/icon_strike.svg",
-		"art": "res://art/cards/card_art_placeholder.svg"
+		"art": "res://art/cards/card_art_guard_pierce.svg"
 	},
 	"charge": {
 		"id": "charge",
@@ -290,7 +290,7 @@ const CARD_LIBRARY := {
 		"charge_mult": 2.0,
 		"rarity": "uncommon",
 		"icon": "res://art/cards/icon_focus.svg",
-		"art": "res://art/cards/card_art_placeholder.svg"
+		"art": "res://art/cards/card_art_charge.svg"
 	},
 	"quickdraw": {
 		"id": "quickdraw",
@@ -300,7 +300,7 @@ const CARD_LIBRARY := {
 		"draw": 2,
 		"rarity": "uncommon",
 		"icon": "res://art/cards/icon_focus.svg",
-		"art": "res://art/cards/card_art_placeholder.svg"
+		"art": "res://art/cards/card_art_quickdraw.svg"
 	},
 	"stasis": {
 		"id": "stasis",
@@ -311,7 +311,7 @@ const CARD_LIBRARY := {
 		"exhaust": true,
 		"rarity": "rare",
 		"icon": "res://art/cards/icon_focus.svg",
-		"art": "res://art/cards/card_art_placeholder.svg"
+		"art": "res://art/cards/card_art_stasis.svg"
 	},
 	"precision": {
 		"id": "precision",
@@ -322,7 +322,7 @@ const CARD_LIBRARY := {
 		"next_attack_bonus": 2,
 		"rarity": "uncommon",
 		"icon": "res://art/cards/icon_focus.svg",
-		"art": "res://art/cards/card_art_placeholder.svg"
+		"art": "res://art/cards/card_art_precision.svg"
 	},
 	"imbalance": {
 		"id": "imbalance",
@@ -332,7 +332,7 @@ const CARD_LIBRARY := {
 		"enemy_block_gain_reduction": 3,
 		"rarity": "uncommon",
 		"icon": "res://art/cards/icon_focus.svg",
-		"art": "res://art/cards/card_art_placeholder.svg"
+		"art": "res://art/cards/card_art_imbalance.svg"
 	},
 	"shadowstep": {
 		"id": "shadowstep",
@@ -343,7 +343,7 @@ const CARD_LIBRARY := {
 		"next_card_cost_delta": -1,
 		"rarity": "uncommon",
 		"icon": "res://art/cards/icon_focus.svg",
-		"art": "res://art/cards/card_art_placeholder.svg"
+		"art": "res://art/cards/card_art_shadowstep.svg"
 	},
 	"counter_stance": {
 		"id": "counter_stance",
@@ -352,8 +352,8 @@ const CARD_LIBRARY := {
 		"cost": 1,
 		"counter_ratio": 0.7,
 		"rarity": "rare",
-		"icon": "res://art/cards/icon_explore.svg",
-		"art": "res://art/cards/card_art_placeholder.svg"
+		"icon": "res://art/cards/icon_status.svg",
+		"art": "res://art/cards/card_art_counter_stance.svg"
 	},
 	"nullify": {
 		"id": "nullify",
@@ -362,8 +362,8 @@ const CARD_LIBRARY := {
 		"cost": 1,
 		"nullify_count": 1,
 		"rarity": "uncommon",
-		"icon": "res://art/cards/icon_explore.svg",
-		"art": "res://art/cards/card_art_placeholder.svg"
+		"icon": "res://art/cards/icon_status.svg",
+		"art": "res://art/cards/card_art_nullify.svg"
 	},
 	"loot_echo": {
 		"id": "loot_echo",
@@ -372,8 +372,8 @@ const CARD_LIBRARY := {
 		"cost": 1,
 		"damage_draw": 2,
 		"rarity": "uncommon",
-		"icon": "res://art/cards/icon_explore.svg",
-		"art": "res://art/cards/card_art_placeholder.svg"
+		"icon": "res://art/cards/icon_status.svg",
+		"art": "res://art/cards/card_art_loot_echo.svg"
 	},
 	"blood_mark": {
 		"id": "blood_mark",
@@ -383,8 +383,8 @@ const CARD_LIBRARY := {
 		"apply_bleed": 2,
 		"bleed_on_attack": 1,
 		"rarity": "uncommon",
-		"icon": "res://art/cards/icon_explore.svg",
-		"art": "res://art/cards/card_art_placeholder.svg"
+		"icon": "res://art/cards/icon_status.svg",
+		"art": "res://art/cards/card_art_blood_mark.svg"
 	},
 	"battle_fury": {
 		"id": "battle_fury",
@@ -393,8 +393,8 @@ const CARD_LIBRARY := {
 		"cost": 1,
 		"attack_bonus_on_attack": 1,
 		"rarity": "uncommon",
-		"icon": "res://art/cards/icon_explore.svg",
-		"art": "res://art/cards/card_art_placeholder.svg"
+		"icon": "res://art/cards/icon_status.svg",
+		"art": "res://art/cards/card_art_battle_fury.svg"
 	},
 	"keen_blade": {
 		"id": "keen_blade",
@@ -403,8 +403,8 @@ const CARD_LIBRARY := {
 		"cost": 2,
 		"equip_attack_bonus": 1,
 		"rarity": "uncommon",
-		"icon": "res://art/cards/icon_flare.svg",
-		"art": "res://art/cards/card_art_placeholder.svg"
+		"icon": "res://art/cards/icon_equipment.svg",
+		"art": "res://art/cards/card_art_keen_blade.svg"
 	},
 	"buffer_cloak": {
 		"id": "buffer_cloak",
@@ -413,8 +413,8 @@ const CARD_LIBRARY := {
 		"cost": 2,
 		"equip_damage_reduction": 1,
 		"rarity": "uncommon",
-		"icon": "res://art/cards/icon_flare.svg",
-		"art": "res://art/cards/card_art_placeholder.svg"
+		"icon": "res://art/cards/icon_equipment.svg",
+		"art": "res://art/cards/card_art_buffer_cloak.svg"
 	},
 	"combo_bracer": {
 		"id": "combo_bracer",
@@ -423,8 +423,8 @@ const CARD_LIBRARY := {
 		"cost": 2,
 		"equip_attack_chain_draw": 1,
 		"rarity": "uncommon",
-		"icon": "res://art/cards/icon_flare.svg",
-		"art": "res://art/cards/card_art_placeholder.svg"
+		"icon": "res://art/cards/icon_equipment.svg",
+		"art": "res://art/cards/card_art_combo_bracer.svg"
 	},
 	"guard_belt": {
 		"id": "guard_belt",
@@ -433,8 +433,8 @@ const CARD_LIBRARY := {
 		"cost": 2,
 		"equip_defend_chain_block": 2,
 		"rarity": "uncommon",
-		"icon": "res://art/cards/icon_flare.svg",
-		"art": "res://art/cards/card_art_placeholder.svg"
+		"icon": "res://art/cards/icon_equipment.svg",
+		"art": "res://art/cards/card_art_guard_belt.svg"
 	},
 	"blood_charm": {
 		"id": "blood_charm",
@@ -443,8 +443,8 @@ const CARD_LIBRARY := {
 		"cost": 2,
 		"equip_block_on_damage": 1,
 		"rarity": "rare",
-		"icon": "res://art/cards/icon_flare.svg",
-		"art": "res://art/cards/card_art_placeholder.svg"
+		"icon": "res://art/cards/icon_equipment.svg",
+		"art": "res://art/cards/card_art_blood_charm.svg"
 	},
 	"hunter_mark": {
 		"id": "hunter_mark",
@@ -453,8 +453,8 @@ const CARD_LIBRARY := {
 		"cost": 2,
 		"equip_bleed_bonus_per_stack": 1,
 		"rarity": "rare",
-		"icon": "res://art/cards/icon_flare.svg",
-		"art": "res://art/cards/card_art_placeholder.svg"
+		"icon": "res://art/cards/icon_equipment.svg",
+		"art": "res://art/cards/card_art_hunter_mark.svg"
 	},
 	"swift_mind": {
 		"id": "swift_mind",
@@ -463,8 +463,8 @@ const CARD_LIBRARY := {
 		"cost": 2,
 		"power_first_attack_draw": 1,
 		"rarity": "rare",
-		"icon": "res://art/cards/icon_flare.svg",
-		"art": "res://art/cards/card_art_placeholder.svg"
+		"icon": "res://art/cards/icon_power.svg",
+		"art": "res://art/cards/card_art_swift_mind.svg"
 	},
 	"steadfast_soul": {
 		"id": "steadfast_soul",
@@ -473,8 +473,8 @@ const CARD_LIBRARY := {
 		"cost": 2,
 		"power_first_damage_block": 2,
 		"rarity": "rare",
-		"icon": "res://art/cards/icon_flare.svg",
-		"art": "res://art/cards/card_art_placeholder.svg"
+		"icon": "res://art/cards/icon_power.svg",
+		"art": "res://art/cards/card_art_steadfast_soul.svg"
 	},
 	"blood_forge": {
 		"id": "blood_forge",
@@ -483,8 +483,8 @@ const CARD_LIBRARY := {
 		"cost": 2,
 		"power_bleed_on_damage": 1,
 		"rarity": "rare",
-		"icon": "res://art/cards/icon_flare.svg",
-		"art": "res://art/cards/card_art_placeholder.svg"
+		"icon": "res://art/cards/icon_power.svg",
+		"art": "res://art/cards/card_art_blood_forge.svg"
 	},
 	"fatigue": {
 		"id": "fatigue",
@@ -495,8 +495,8 @@ const CARD_LIBRARY := {
 		"ethereal": true,
 		"exhaust": true,
 		"rarity": "common",
-		"icon": "res://art/cards/icon_recover.svg",
-		"art": "res://art/cards/card_art_placeholder.svg"
+		"icon": "res://art/cards/icon_curse.svg",
+		"art": "res://art/cards/card_art_fatigue.svg"
 	},
 	"delay": {
 		"id": "delay",
@@ -507,8 +507,8 @@ const CARD_LIBRARY := {
 		"ethereal": true,
 		"exhaust": true,
 		"rarity": "common",
-		"icon": "res://art/cards/icon_recover.svg",
-		"art": "res://art/cards/card_art_placeholder.svg"
+		"icon": "res://art/cards/icon_curse.svg",
+		"art": "res://art/cards/card_art_delay.svg"
 	}
 }
 

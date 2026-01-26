@@ -1,6 +1,8 @@
 # Changelog
 
 ## 2026-01-26
+- Added new SVG card art placeholders for the expanded card pool and wired them in card data.
+- Added status/equipment/power/curse icon SVGs and updated card definitions to use them.
 - Added an end-turn discard overlay to trim hand size down to 5 when needed.
 - Updated hand flow to draw 5 cards on turn 1 and 3 cards on later turns, keeping up to 5.
 - Made block persist across turns for both sides until consumed or combat ends.

@@ -28,6 +28,7 @@ A Godot 4.3 deck-building prototype set in an isekai adventure. The main goal is
 - Added hit flash animations and basic sound effects.
 - Added scene frame overlays, title banners, and button icons.
 - Added per-card art placeholders, rarity gems, and hover glow effects.
+- Added new placeholder card art for expanded cards plus status/equipment/power/curse icons.
 - Added portrait frames and slash/impact hit effects.
 - Adjusted scene frame scaling to fit within the viewport.
 - Docked the combat hand panel at the bottom to keep cards visible.
@@ -162,4 +163,4 @@ Open the project in Godot 4.3 and run the main scene at `res://scenes/Main.tscn`
 ## Next Implementation Plan
 1. Balance the expanded card pool and starter deck (costs, upgrade values, reward odds).
 2. Add UI indicators for bleed/poison/burn and active equipment/power buffs.
-3. Create distinct placeholder art/icons for the new card sets.
+3. Tune enemy deck pacing to account for the new status/equipment cards.
