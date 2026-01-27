@@ -81,6 +81,7 @@ A Godot 4.3 deck-building prototype set in an isekai adventure. The main goal is
 - Battle UI now shows player/enemy status effects plus active equipment and power buffs.
 - Moved status/buff readouts onto portrait overlays to avoid squeezing the hand dock.
 - Added a post-battle score shop to buy new unowned cards with a paid refresh.
+- Fixed dynamic shop card slots to set separation via theme overrides safely.
 
 ## Scene and Script Layout
 - `scenes/Main.tscn` + `scripts/Main.gd`: main menu and navigation.

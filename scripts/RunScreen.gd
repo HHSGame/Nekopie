@@ -1381,7 +1381,7 @@ func _populate_shop_cards() -> void:
 		var cost: int = int(shop_offer_costs.get(card_id, 0))
 		var card_data: Dictionary = GameData.get_card_data(card_id, 0)
 		var slot := VBoxContainer.new()
-		slot.theme_override_constants.separation = 4
+		slot.add_theme_constant_override("separation", 4)
 		shop_choice_container.add_child(slot)
 		var widget: CardWidget = CARD_WIDGET_SCENE.instantiate()
 		widget.set_card(card_data)
