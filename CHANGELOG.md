@@ -8,6 +8,7 @@
 - Fixed battle log line trimming to keep the most recent entries.
 - Hooked combat phase callbacks into dedicated status/card-effect/target-reaction handler nodes.
 - Moved DOT/debuff resolution into the status handler and card effect logic into a dedicated executor.
+- Consolidated combat state into a CombatState model to slim down RunScreen.
 
 ## 2026-01-26
 - Extracted portrait/status panels and the battle log into reusable UI sub-scenes.

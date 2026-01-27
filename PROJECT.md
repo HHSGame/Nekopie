@@ -87,6 +87,7 @@ A Godot 4.3 deck-building prototype set in an isekai adventure. The main goal is
 - Added a combat event bus + phase constants and emit phase start/end signals in RunScreen.
 - Added phase handler nodes for status resolution, card effects, and target reaction callbacks.
 - Moved status resolution (debuff decay/DOT ticks) and card effect execution into pipeline handlers.
+- Centralized combat state into a CombatState model to reduce RunScreen responsibilities.
 
 ## Scene and Script Layout
 - `scenes/Main.tscn` + `scripts/Main.gd`: main menu and navigation.
@@ -173,3 +174,4 @@ Open the project in Godot 4.3 and run the main scene at `res://scenes/Main.tscn`
 1. Balance the expanded card pool and starter deck (costs, upgrade values, reward odds).
 2. Add UI indicators for bleed/poison/burn and active equipment/power buffs.
 3. Tune enemy deck pacing to account for the new status/equipment cards.
+4. Continue SOLID refactor: move combat resolution and enemy intent logic into dedicated pipeline components.

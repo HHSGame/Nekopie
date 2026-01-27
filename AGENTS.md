@@ -11,6 +11,9 @@
 - Log each change in `CHANGELOG.md`.
 - Summarize and commit changes to Git after completion.
 
+## Design Principles
+- Follow SOLID principles as the core guideline for architecture and refactors.
+
 ## Code Structure
 - Keep the current scene/script split: Main / RunScreen / CardWidget.
 - `GameData` and `RunState` remain autoload singletons for card and run data.

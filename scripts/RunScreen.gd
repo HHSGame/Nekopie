@@ -105,77 +105,9 @@ const INTENT_ICONS := {
 @onready var card_effect_executor: Node = $CombatPipeline/CardEffectExecutor
 @onready var target_reaction_handler: Node = $CombatPipeline/TargetReactionHandler
 
-var player_actor := CombatActor.new()
 var event_bus := CombatEventBus.new()
 var current_phase := ""
-
-var enemy_data := {}
-var enemy_actor := CombatActor.new()
-var enemy_attack_bonus := 0
-var enemy_intent_card: Dictionary = {}
-var enemy_power_mult := 1.0
-var player_weak_turns := 0
-var player_vulnerable_turns := 0
-var player_next_attack_mult := 1.0
-var player_next_attack_bonus := 0
-var player_next_attack_pierce := false
-var player_counter_ratio := 0.0
-var player_nullify_count := 0
-var player_damage_draw := 0
-var player_bleed_on_attack := 0
-var player_attack_bonus_on_attack := 0
-var player_damage_bonus_turn := 0
-var player_block_disabled := false
-var player_next_card_cost_delta := 0
-var player_skip_enemy_turn := false
-var player_attack_chain := 0
-var player_defend_chain := 0
-var power_first_attack_draw := 0
-var power_first_damage_block := 0
-var power_bleed_on_damage := 0
-var power_first_attack_draw_used := false
-var power_first_damage_block_used := false
-var equip_attack_bonus := 0
-var equip_damage_reduction := 0
-var equip_attack_chain_draw := 0
-var equip_defend_chain_block := 0
-var equip_block_on_damage := 0
-var equip_bleed_bonus_per_stack := 0
-var enemy_bleed := 0
-var enemy_poison := 0
-var enemy_burn := 0
-var enemy_block_gain_reduction := 0
-var combat_over := false
-var run_complete := false
-var next_step := "encounter"
-var reward_mode := "none"
-var last_reward_mode := ""
-var reward_cards: Array = []
-var reward_overlay_active := false
-var reward_overlay_tween: Tween
-var shop_overlay_active := false
-var shop_overlay_tween: Tween
-var shop_offer_cards: Array = []
-var shop_offer_costs: Dictionary = {}
-var turn_index := 1
-var hand_slot_tweens: Dictionary = {}
-var route_overlay_active := false
-var supply_available := false
-var route_mode := "none"
-var score_overlay_active := false
-var combat_damage_dealt := 0
-var combat_damage_taken := 0
-var combat_attack_count := 0
-var combat_difficulty := "normal"
-var enemy_acting := false
-var turn_locked := false
-var discard_overlay_active := false
-var discard_required := 0
-var discard_selection: Array = []
-var discard_overlay_tween: Tween
-var discard_card_widgets: Dictionary = {}
-var discard_locked_indices: Dictionary = {}
-var end_turn_phase_pending := false
+var combat_state := CombatState.new()
 
 func _ready() -> void:
 	event_bus.name = "CombatEventBus"
@@ -209,17 +141,17 @@ func _ready() -> void:
 	card_detail_panel.visible = false
 	battle_log_panel.set_max_lines(MAX_BATTLE_LOG_LINES)
 	reward_overlay.modulate.a = 0.0
-	reward_overlay_active = reward_overlay.visible
+	combat_state.reward_overlay_active = reward_overlay.visible
 	shop_overlay.visible = false
 	shop_overlay.modulate.a = 0.0
-	shop_overlay_active = shop_overlay.visible
+	combat_state.shop_overlay_active = shop_overlay.visible
 	discard_overlay.visible = false
 	discard_overlay.modulate.a = 0.0
-	discard_overlay_active = discard_overlay.visible
+	combat_state.discard_overlay_active = discard_overlay.visible
 	route_overlay.visible = false
-	route_overlay_active = route_overlay.visible
+	combat_state.route_overlay_active = route_overlay.visible
 	score_overlay.visible = false
-	score_overlay_active = score_overlay.visible
+	combat_state.score_overlay_active = score_overlay.visible
 	_start_encounter()
 
 func _reset_battle_log() -> void:
@@ -240,33 +172,33 @@ func _player_status_text() -> String:
 
 func _player_status_summary() -> String:
 	var parts: Array = []
-	if player_weak_turns > 0:
-		parts.append("弱化%d" % player_weak_turns)
-	if player_vulnerable_turns > 0:
-		parts.append("易伤%d" % player_vulnerable_turns)
-	if player_next_attack_mult > 1.0:
-		parts.append("蓄力x%.1f" % player_next_attack_mult)
-	if player_next_attack_bonus > 0:
-		parts.append("下次攻击+%d" % player_next_attack_bonus)
-	if player_next_attack_pierce:
+	if combat_state.player_weak_turns > 0:
+		parts.append("弱化%d" % combat_state.player_weak_turns)
+	if combat_state.player_vulnerable_turns > 0:
+		parts.append("易伤%d" % combat_state.player_vulnerable_turns)
+	if combat_state.player_next_attack_mult > 1.0:
+		parts.append("蓄力x%.1f" % combat_state.player_next_attack_mult)
+	if combat_state.player_next_attack_bonus > 0:
+		parts.append("下次攻击+%d" % combat_state.player_next_attack_bonus)
+	if combat_state.player_next_attack_pierce:
 		parts.append("下次穿刺")
-	if player_counter_ratio > 0.0:
-		parts.append("反击%d%%" % int(round(player_counter_ratio * 100.0)))
-	if player_nullify_count > 0:
-		parts.append("护幕%d" % player_nullify_count)
-	if player_damage_draw > 0:
-		parts.append("受伤抽牌+%d" % player_damage_draw)
-	if player_bleed_on_attack > 0:
-		parts.append("攻击叠流血+%d" % player_bleed_on_attack)
-	if player_attack_bonus_on_attack > 0:
-		parts.append("连击伤害+%d" % player_attack_bonus_on_attack)
-	if player_damage_bonus_turn > 0:
-		parts.append("本回合伤害+%d" % player_damage_bonus_turn)
-	if player_block_disabled:
+	if combat_state.player_counter_ratio > 0.0:
+		parts.append("反击%d%%" % int(round(combat_state.player_counter_ratio * 100.0)))
+	if combat_state.player_nullify_count > 0:
+		parts.append("护幕%d" % combat_state.player_nullify_count)
+	if combat_state.player_damage_draw > 0:
+		parts.append("受伤抽牌+%d" % combat_state.player_damage_draw)
+	if combat_state.player_bleed_on_attack > 0:
+		parts.append("攻击叠流血+%d" % combat_state.player_bleed_on_attack)
+	if combat_state.player_attack_bonus_on_attack > 0:
+		parts.append("连击伤害+%d" % combat_state.player_attack_bonus_on_attack)
+	if combat_state.player_damage_bonus_turn > 0:
+		parts.append("本回合伤害+%d" % combat_state.player_damage_bonus_turn)
+	if combat_state.player_block_disabled:
 		parts.append("禁用护甲")
-	if player_next_card_cost_delta != 0:
-		parts.append("下一卡费用%+d" % player_next_card_cost_delta)
-	if player_skip_enemy_turn:
+	if combat_state.player_next_card_cost_delta != 0:
+		parts.append("下一卡费用%+d" % combat_state.player_next_card_cost_delta)
+	if combat_state.player_skip_enemy_turn:
 		parts.append("停滞")
 	if parts.is_empty():
 		return "无"
@@ -274,211 +206,211 @@ func _player_status_summary() -> String:
 
 func _player_buff_summary() -> String:
 	var parts: Array = []
-	if equip_attack_bonus > 0:
-		parts.append("攻击+%d" % equip_attack_bonus)
-	if equip_damage_reduction > 0:
-		parts.append("减伤%d" % equip_damage_reduction)
-	if equip_attack_chain_draw > 0:
-		parts.append("连击抽牌%d" % equip_attack_chain_draw)
-	if equip_defend_chain_block > 0:
-		parts.append("连防护甲+%d" % equip_defend_chain_block)
-	if equip_block_on_damage > 0:
-		parts.append("受击护甲+%d" % equip_block_on_damage)
-	if equip_bleed_bonus_per_stack > 0:
-		parts.append("流血伤害+%d" % equip_bleed_bonus_per_stack)
-	if power_first_attack_draw > 0:
-		parts.append("首攻抽牌%d" % power_first_attack_draw)
-	if power_first_damage_block > 0:
-		parts.append("首伤护甲+%d" % power_first_damage_block)
-	if power_bleed_on_damage > 0:
-		parts.append("伤害附流血+%d" % power_bleed_on_damage)
+	if combat_state.equip_attack_bonus > 0:
+		parts.append("攻击+%d" % combat_state.equip_attack_bonus)
+	if combat_state.equip_damage_reduction > 0:
+		parts.append("减伤%d" % combat_state.equip_damage_reduction)
+	if combat_state.equip_attack_chain_draw > 0:
+		parts.append("连击抽牌%d" % combat_state.equip_attack_chain_draw)
+	if combat_state.equip_defend_chain_block > 0:
+		parts.append("连防护甲+%d" % combat_state.equip_defend_chain_block)
+	if combat_state.equip_block_on_damage > 0:
+		parts.append("受击护甲+%d" % combat_state.equip_block_on_damage)
+	if combat_state.equip_bleed_bonus_per_stack > 0:
+		parts.append("流血伤害+%d" % combat_state.equip_bleed_bonus_per_stack)
+	if combat_state.power_first_attack_draw > 0:
+		parts.append("首攻抽牌%d" % combat_state.power_first_attack_draw)
+	if combat_state.power_first_damage_block > 0:
+		parts.append("首伤护甲+%d" % combat_state.power_first_damage_block)
+	if combat_state.power_bleed_on_damage > 0:
+		parts.append("伤害附流血+%d" % combat_state.power_bleed_on_damage)
 	if parts.is_empty():
 		return "无"
 	return "，".join(parts)
 
 func _enemy_status_summary() -> String:
 	var parts: Array = []
-	if enemy_bleed > 0:
-		parts.append("流血%d" % enemy_bleed)
-	if enemy_poison > 0:
-		parts.append("中毒%d" % enemy_poison)
-	if enemy_burn > 0:
-		parts.append("灼烧%d" % enemy_burn)
-	if enemy_attack_bonus > 0:
-		parts.append("蓄力+%d" % enemy_attack_bonus)
-	if enemy_block_gain_reduction > 0:
-		parts.append("护甲获得-%d" % enemy_block_gain_reduction)
+	if combat_state.enemy_bleed > 0:
+		parts.append("流血%d" % combat_state.enemy_bleed)
+	if combat_state.enemy_poison > 0:
+		parts.append("中毒%d" % combat_state.enemy_poison)
+	if combat_state.enemy_burn > 0:
+		parts.append("灼烧%d" % combat_state.enemy_burn)
+	if combat_state.enemy_attack_bonus > 0:
+		parts.append("蓄力+%d" % combat_state.enemy_attack_bonus)
+	if combat_state.enemy_block_gain_reduction > 0:
+		parts.append("护甲获得-%d" % combat_state.enemy_block_gain_reduction)
 	if parts.is_empty():
 		return "无"
 	return "，".join(parts)
 
 func _log_turn_start() -> void:
 	_append_battle_log("回合%d开始：你HP %d/%d，敌人HP %d/%d" % [
-		turn_index,
-		player_actor.hp,
-		player_actor.max_hp,
-		enemy_actor.hp,
-		enemy_actor.max_hp
+		combat_state.turn_index,
+		combat_state.player_actor.hp,
+		combat_state.player_actor.max_hp,
+		combat_state.enemy_actor.hp,
+		combat_state.enemy_actor.max_hp
 	])
 
 func _log_turn_end() -> void:
 	_append_battle_log("回合%d结算：你HP %d/%d 护甲%d（%s），敌人HP %d/%d 护甲%d" % [
-		turn_index,
-		player_actor.hp,
-		player_actor.max_hp,
-		player_actor.block,
+		combat_state.turn_index,
+		combat_state.player_actor.hp,
+		combat_state.player_actor.max_hp,
+		combat_state.player_actor.block,
 		_player_status_text(),
-		enemy_actor.hp,
-		enemy_actor.max_hp,
-		enemy_actor.block
+		combat_state.enemy_actor.hp,
+		combat_state.enemy_actor.max_hp,
+		combat_state.enemy_actor.block
 	])
 
 func _start_encounter() -> void:
 	var encounter_index: int = RunState.encounters_completed + 1
 	_begin_phase(BattlePhases.PRE_BATTLE, {"encounter": encounter_index})
-	combat_over = false
-	run_complete = false
-	reward_mode = "none"
-	last_reward_mode = ""
-	reward_cards.clear()
-	route_mode = "none"
-	supply_available = false
+	combat_state.combat_over = false
+	combat_state.run_complete = false
+	combat_state.reward_mode = "none"
+	combat_state.last_reward_mode = ""
+	combat_state.reward_cards.clear()
+	combat_state.route_mode = "none"
+	combat_state.supply_available = false
 	card_detail_panel.visible = false
-	enemy_acting = false
-	turn_locked = false
-	discard_required = 0
-	discard_selection.clear()
-	discard_card_widgets.clear()
-	discard_locked_indices.clear()
+	combat_state.enemy_acting = false
+	combat_state.turn_locked = false
+	combat_state.discard_required = 0
+	combat_state.discard_selection.clear()
+	combat_state.discard_card_widgets.clear()
+	combat_state.discard_locked_indices.clear()
 	_set_discard_overlay_visible(false)
-	combat_damage_dealt = 0
-	combat_damage_taken = 0
-	combat_attack_count = 0
-	player_actor.setup("旅人", player_actor.max_hp, RunState.energy_max, RunState.deck)
-	player_actor.hp = RunState.player_hp
+	combat_state.combat_damage_dealt = 0
+	combat_state.combat_damage_taken = 0
+	combat_state.combat_attack_count = 0
+	combat_state.player_actor.setup("旅人", combat_state.player_actor.max_hp, RunState.energy_max, RunState.deck)
+	combat_state.player_actor.hp = RunState.player_hp
 	_end_phase(BattlePhases.PRE_BATTLE, {"encounter": encounter_index})
-	enemy_data = RunState.start_encounter()
-	combat_difficulty = RunState.next_difficulty
-	var enemy_max: int = int(enemy_data.get("hp", 0))
-	var enemy_name: String = str(enemy_data.get("name", "魔物"))
-	enemy_actor.setup(enemy_name, enemy_max, RunState.energy_max, Array(enemy_data.get("deck", [])))
-	_begin_phase(BattlePhases.BATTLE_START, {"enemy": enemy_name, "difficulty": combat_difficulty})
-	enemy_attack_bonus = 0
-	player_weak_turns = 0
-	player_vulnerable_turns = 0
-	player_next_attack_mult = 1.0
-	player_next_attack_bonus = 0
-	player_next_attack_pierce = false
-	player_counter_ratio = 0.0
-	player_nullify_count = 0
-	player_damage_draw = 0
-	player_bleed_on_attack = 0
-	player_attack_bonus_on_attack = 0
-	player_damage_bonus_turn = 0
-	player_block_disabled = false
-	player_next_card_cost_delta = 0
-	player_skip_enemy_turn = false
-	player_attack_chain = 0
-	player_defend_chain = 0
-	power_first_attack_draw = 0
-	power_first_damage_block = 0
-	power_bleed_on_damage = 0
-	power_first_attack_draw_used = false
-	power_first_damage_block_used = false
-	equip_attack_bonus = 0
-	equip_damage_reduction = 0
-	equip_attack_chain_draw = 0
-	equip_defend_chain_block = 0
-	equip_block_on_damage = 0
-	equip_bleed_bonus_per_stack = 0
-	enemy_bleed = 0
-	enemy_poison = 0
-	enemy_burn = 0
-	enemy_block_gain_reduction = 0
+	combat_state.enemy_data = RunState.start_encounter()
+	combat_state.combat_difficulty = RunState.next_difficulty
+	var enemy_max: int = int(combat_state.enemy_data.get("hp", 0))
+	var enemy_name: String = str(combat_state.enemy_data.get("name", "魔物"))
+	combat_state.enemy_actor.setup(enemy_name, enemy_max, RunState.energy_max, Array(combat_state.enemy_data.get("deck", [])))
+	_begin_phase(BattlePhases.BATTLE_START, {"enemy": enemy_name, "difficulty": combat_state.combat_difficulty})
+	combat_state.enemy_attack_bonus = 0
+	combat_state.player_weak_turns = 0
+	combat_state.player_vulnerable_turns = 0
+	combat_state.player_next_attack_mult = 1.0
+	combat_state.player_next_attack_bonus = 0
+	combat_state.player_next_attack_pierce = false
+	combat_state.player_counter_ratio = 0.0
+	combat_state.player_nullify_count = 0
+	combat_state.player_damage_draw = 0
+	combat_state.player_bleed_on_attack = 0
+	combat_state.player_attack_bonus_on_attack = 0
+	combat_state.player_damage_bonus_turn = 0
+	combat_state.player_block_disabled = false
+	combat_state.player_next_card_cost_delta = 0
+	combat_state.player_skip_enemy_turn = false
+	combat_state.player_attack_chain = 0
+	combat_state.player_defend_chain = 0
+	combat_state.power_first_attack_draw = 0
+	combat_state.power_first_damage_block = 0
+	combat_state.power_bleed_on_damage = 0
+	combat_state.power_first_attack_draw_used = false
+	combat_state.power_first_damage_block_used = false
+	combat_state.equip_attack_bonus = 0
+	combat_state.equip_damage_reduction = 0
+	combat_state.equip_attack_chain_draw = 0
+	combat_state.equip_defend_chain_block = 0
+	combat_state.equip_block_on_damage = 0
+	combat_state.equip_bleed_bonus_per_stack = 0
+	combat_state.enemy_bleed = 0
+	combat_state.enemy_poison = 0
+	combat_state.enemy_burn = 0
+	combat_state.enemy_block_gain_reduction = 0
 	_apply_difficulty_to_enemy(RunState.next_difficulty)
 	RunState.next_difficulty = "normal"
-	_end_phase(BattlePhases.BATTLE_START, {"enemy": enemy_name, "difficulty": combat_difficulty})
-	_begin_phase(BattlePhases.DECK_PREP, {"enemy_deck": enemy_actor.draw_pile.size()})
+	_end_phase(BattlePhases.BATTLE_START, {"enemy": enemy_name, "difficulty": combat_state.combat_difficulty})
+	_begin_phase(BattlePhases.DECK_PREP, {"enemy_deck": combat_state.enemy_actor.draw_pile.size()})
 	_draw_enemy_cards(ENEMY_HAND_SIZE)
 	_refresh_enemy_intent()
-	_end_phase(BattlePhases.DECK_PREP, {"enemy_hand": enemy_actor.hand.size()})
-	next_step = "encounter"
+	_end_phase(BattlePhases.DECK_PREP, {"enemy_hand": combat_state.enemy_actor.hand.size()})
+	combat_state.next_step = "encounter"
 	player_portrait_panel.set_portrait_texture(load(GameData.PLAYER_PORTRAIT))
 	player_portrait_panel.set_frame_texture(PORTRAIT_FRAME)
 	player_portrait_panel.set_hit_fx_texture(PLAYER_HIT_FX)
-	var enemy_portrait_path: String = str(enemy_data.get("portrait", ""))
+	var enemy_portrait_path: String = str(combat_state.enemy_data.get("portrait", ""))
 	if not enemy_portrait_path.is_empty():
 		enemy_portrait_panel.set_portrait_texture(load(enemy_portrait_path))
 	enemy_portrait_panel.set_frame_texture(PORTRAIT_FRAME)
 	enemy_portrait_panel.set_hit_fx_texture(ENEMY_HIT_FX)
 	enemy_portrait_panel.set_buff_text("", false)
-	RunState.log_event("遭遇魔物：%s" % enemy_data.get("name", "未知魔物"))
+	RunState.log_event("遭遇魔物：%s" % combat_state.enemy_data.get("name", "未知魔物"))
 	_reset_battle_log()
-	turn_index = 1
+	combat_state.turn_index = 1
 	_append_battle_log("遭遇魔物：%s（HP %d/%d）" % [
-		enemy_data.get("name", "未知魔物"),
-		enemy_actor.hp,
-		enemy_actor.max_hp
+		combat_state.enemy_data.get("name", "未知魔物"),
+		combat_state.enemy_actor.hp,
+		combat_state.enemy_actor.max_hp
 	])
 	_log_turn_start()
 	if RunState.next_encounter_first_strike:
 		var strike_damage := GameData.FIRST_STRIKE_DAMAGE + RunState.next_encounter_first_strike_bonus
-		enemy_actor.hp = max(enemy_actor.hp - strike_damage, 0)
+		combat_state.enemy_actor.hp = max(combat_state.enemy_actor.hp - strike_damage, 0)
 		RunState.next_encounter_first_strike = false
 		RunState.next_encounter_first_strike_bonus = 0
 		_append_battle_log("先手出击：造成%d点伤害（敌人HP %d/%d）。" % [
 			strike_damage,
-			enemy_actor.hp,
-			enemy_actor.max_hp
+			combat_state.enemy_actor.hp,
+			combat_state.enemy_actor.max_hp
 		])
 		RunState.log_event("先手出击造成%d点伤害。" % strike_damage)
 	else:
 		_append_battle_log("你稳住气息，准备战斗。")
 	_begin_phase(BattlePhases.DRAW_CARDS, {"count": HAND_DRAW_FIRST})
 	_draw_cards(HAND_DRAW_FIRST)
-	_end_phase(BattlePhases.DRAW_CARDS, {"hand": player_actor.hand.size()})
-	_begin_phase(BattlePhases.STATUS_RESOLVE, {"stage": "player_start", "turn": turn_index})
-	_end_phase(BattlePhases.STATUS_RESOLVE, {"stage": "player_start", "turn": turn_index})
+	_end_phase(BattlePhases.DRAW_CARDS, {"hand": combat_state.player_actor.hand.size()})
+	_begin_phase(BattlePhases.STATUS_RESOLVE, {"stage": "player_start", "turn": combat_state.turn_index})
+	_end_phase(BattlePhases.STATUS_RESOLVE, {"stage": "player_start", "turn": combat_state.turn_index})
 	_update_ui()
 	RunState.save_run()
 
 func _update_ui() -> void:
 	var progress_current: int = int(min(RunState.encounters_completed + 1, RunState.max_encounters))
 	progress_label.text = "攀登进度：%d / %d" % [progress_current, RunState.max_encounters]
-	enemy_name_label.text = "敌人：%s" % enemy_data.get("name", "未知魔物")
-	enemy_hp_label.text = "敌人生命：%d / %d" % [enemy_actor.hp, enemy_actor.max_hp]
-	enemy_hp_bar.max_value = max(enemy_actor.max_hp, 1)
-	enemy_hp_bar.value = enemy_actor.hp
-	enemy_block_label.text = "敌人护甲：%d" % enemy_actor.block
+	enemy_name_label.text = "敌人：%s" % combat_state.enemy_data.get("name", "未知魔物")
+	enemy_hp_label.text = "敌人生命：%d / %d" % [combat_state.enemy_actor.hp, combat_state.enemy_actor.max_hp]
+	enemy_hp_bar.max_value = max(combat_state.enemy_actor.max_hp, 1)
+	enemy_hp_bar.value = combat_state.enemy_actor.hp
+	enemy_block_label.text = "敌人护甲：%d" % combat_state.enemy_actor.block
 	enemy_portrait_panel.set_status_text("状态：%s" % _enemy_status_summary())
-	enemy_intent_label.text = "意图：%s" % _enemy_card_display(enemy_intent_card)
-	enemy_desc_label.text = enemy_data.get("desc", "")
-	var intent_color := _enemy_card_color(enemy_intent_card)
+	enemy_intent_label.text = "意图：%s" % _enemy_card_display(combat_state.enemy_intent_card)
+	enemy_desc_label.text = combat_state.enemy_data.get("desc", "")
+	var intent_color := _enemy_card_color(combat_state.enemy_intent_card)
 	enemy_intent_label.add_theme_color_override("font_color", intent_color)
 	enemy_intent_swatch.color = intent_color
-	enemy_intent_icon.texture = _enemy_card_icon(enemy_intent_card)
+	enemy_intent_icon.texture = _enemy_card_icon(combat_state.enemy_intent_card)
 	enemy_intent_icon.modulate = intent_color
-	player_hp_label.text = "生命：%d / %d" % [player_actor.hp, player_actor.max_hp]
-	player_hp_bar.max_value = max(player_actor.max_hp, 1)
-	player_hp_bar.value = player_actor.hp
-	player_block_label.text = "护甲：%d" % player_actor.block
+	player_hp_label.text = "生命：%d / %d" % [combat_state.player_actor.hp, combat_state.player_actor.max_hp]
+	player_hp_bar.max_value = max(combat_state.player_actor.max_hp, 1)
+	player_hp_bar.value = combat_state.player_actor.hp
+	player_block_label.text = "护甲：%d" % combat_state.player_actor.block
 	player_portrait_panel.set_status_text("状态：%s" % _player_status_summary())
 	player_portrait_panel.set_buff_text("装备/心法：%s" % _player_buff_summary(), true)
-	energy_label.text = "能量：%d / %d" % [player_actor.energy, RunState.energy_max]
-	draw_label.text = "抽牌堆：%d" % player_actor.draw_pile.size()
-	discard_label.text = "弃牌堆：%d" % player_actor.discard_pile.size()
-	end_turn_button.disabled = combat_over or enemy_acting or turn_locked or discard_overlay_active
-	var show_rewards := combat_over and not run_complete and next_step == "reward_options"
-	var show_route := combat_over and not run_complete and next_step == "route"
-	var show_shop := combat_over and not run_complete and next_step == "shop"
-	var show_score := combat_over and run_complete
+	energy_label.text = "能量：%d / %d" % [combat_state.player_actor.energy, RunState.energy_max]
+	draw_label.text = "抽牌堆：%d" % combat_state.player_actor.draw_pile.size()
+	discard_label.text = "弃牌堆：%d" % combat_state.player_actor.discard_pile.size()
+	end_turn_button.disabled = combat_state.combat_over or combat_state.enemy_acting or combat_state.turn_locked or combat_state.discard_overlay_active
+	var show_rewards := combat_state.combat_over and not combat_state.run_complete and combat_state.next_step == "reward_options"
+	var show_route := combat_state.combat_over and not combat_state.run_complete and combat_state.next_step == "route"
+	var show_shop := combat_state.combat_over and not combat_state.run_complete and combat_state.next_step == "shop"
+	var show_score := combat_state.combat_over and combat_state.run_complete
 	_set_reward_overlay_visible(show_rewards)
 	_set_route_overlay_visible(show_route)
 	_set_shop_overlay_visible(show_shop)
 	_set_score_overlay_visible(show_score)
-	next_button.visible = combat_over and not show_rewards and not show_route and not show_shop
-	if combat_over and next_button.visible:
-		if run_complete:
+	next_button.visible = combat_state.combat_over and not show_rewards and not show_route and not show_shop
+	if combat_state.combat_over and next_button.visible:
+		if combat_state.run_complete:
 			next_button.text = "返回主菜单"
 		else:
 			next_button.text = "继续攀登"
@@ -491,17 +423,17 @@ func _update_ui() -> void:
 		_refresh_score_ui()
 
 func _sync_player_hp() -> void:
-	RunState.player_hp = player_actor.hp
+	RunState.player_hp = combat_state.player_actor.hp
 
 func _refresh_hand() -> void:
-	for tween in hand_slot_tweens.values():
+	for tween in combat_state.hand_slot_tweens.values():
 		if tween:
 			tween.kill()
-	hand_slot_tweens.clear()
+	combat_state.hand_slot_tweens.clear()
 	for child in hand_container.get_children():
 		child.queue_free()
-	for index in player_actor.hand.size():
-		var card_entry = player_actor.hand[index]
+	for index in combat_state.player_actor.hand.size():
+		var card_entry = combat_state.player_actor.hand[index]
 		var card_id := RunState.get_card_id(card_entry)
 		var card_data := GameData.get_card_data(card_id, RunState.get_card_upgrade_level(card_entry))
 		var collapsed_scale := HAND_COLLAPSED_HEIGHT / HAND_CARD_SIZE.y
@@ -521,28 +453,28 @@ func _refresh_hand() -> void:
 
 func _draw_cards(count: int) -> void:
 	for i in range(count):
-		if player_actor.draw_pile.is_empty():
-			if player_actor.discard_pile.is_empty():
+		if combat_state.player_actor.draw_pile.is_empty():
+			if combat_state.player_actor.discard_pile.is_empty():
 				break
-			player_actor.draw_pile = player_actor.discard_pile.duplicate(true)
-			player_actor.discard_pile.clear()
-			player_actor.draw_pile.shuffle()
-		player_actor.hand.append(player_actor.draw_pile.pop_back())
+			combat_state.player_actor.draw_pile = combat_state.player_actor.discard_pile.duplicate(true)
+			combat_state.player_actor.discard_pile.clear()
+			combat_state.player_actor.draw_pile.shuffle()
+		combat_state.player_actor.hand.append(combat_state.player_actor.draw_pile.pop_back())
 
 func _draw_enemy_cards(count: int) -> void:
 	for i in range(count):
-		if enemy_actor.draw_pile.is_empty():
-			if enemy_actor.discard_pile.is_empty():
+		if combat_state.enemy_actor.draw_pile.is_empty():
+			if combat_state.enemy_actor.discard_pile.is_empty():
 				break
-			enemy_actor.draw_pile = enemy_actor.discard_pile.duplicate(true)
-			enemy_actor.discard_pile.clear()
-			enemy_actor.draw_pile.shuffle()
-		enemy_actor.hand.append(enemy_actor.draw_pile.pop_back())
+			combat_state.enemy_actor.draw_pile = combat_state.enemy_actor.discard_pile.duplicate(true)
+			combat_state.enemy_actor.discard_pile.clear()
+			combat_state.enemy_actor.draw_pile.shuffle()
+		combat_state.enemy_actor.hand.append(combat_state.enemy_actor.draw_pile.pop_back())
 
 func _on_hand_card_hovered(card_id: String, index: int, slot: Control) -> void:
 	var upgrade_level := 0
-	if index >= 0 and index < player_actor.hand.size():
-		upgrade_level = RunState.get_card_upgrade_level(player_actor.hand[index])
+	if index >= 0 and index < combat_state.player_actor.hand.size():
+		upgrade_level = RunState.get_card_upgrade_level(combat_state.player_actor.hand[index])
 	_on_card_hovered(card_id, upgrade_level)
 	_set_hand_slot_expanded(slot, true)
 
@@ -553,7 +485,7 @@ func _on_hand_card_unhovered(slot: Control) -> void:
 func _set_hand_slot_expanded(slot: Control, expanded: bool) -> void:
 	if not slot:
 		return
-	var tween: Tween = hand_slot_tweens.get(slot)
+	var tween: Tween = combat_state.hand_slot_tweens.get(slot)
 	if tween:
 		tween.kill()
 	var widget := slot.get_child(0) as Control
@@ -575,14 +507,14 @@ func _set_hand_slot_expanded(slot: Control, expanded: bool) -> void:
 			if is_instance_valid(slot):
 				slot.z_index = 0
 		)
-	hand_slot_tweens[slot] = tween
+	combat_state.hand_slot_tweens[slot] = tween
 
 func _on_hand_card_clicked(card_id: String, index: int) -> void:
-	if combat_over or enemy_acting or turn_locked or discard_overlay_active:
+	if combat_state.combat_over or combat_state.enemy_acting or combat_state.turn_locked or combat_state.discard_overlay_active:
 		return
-	if index < 0 or index >= player_actor.hand.size():
+	if index < 0 or index >= combat_state.player_actor.hand.size():
 		return
-	var card_entry = player_actor.hand[index]
+	var card_entry = combat_state.player_actor.hand[index]
 	var card_instance_id := RunState.get_card_id(card_entry)
 	var card_data := GameData.get_card_data(card_instance_id, RunState.get_card_upgrade_level(card_entry))
 	var card_name: String = str(card_data.get("name", "卡牌"))
@@ -590,14 +522,14 @@ func _on_hand_card_clicked(card_id: String, index: int) -> void:
 		_append_battle_log("【%s】无法打出。" % card_name)
 		return
 	var cost := int(card_data.get("cost", 0))
-	if player_next_card_cost_delta != 0:
-		cost = max(cost + player_next_card_cost_delta, 0)
-	if cost > player_actor.energy:
+	if combat_state.player_next_card_cost_delta != 0:
+		cost = max(cost + combat_state.player_next_card_cost_delta, 0)
+	if cost > combat_state.player_actor.energy:
 		_append_battle_log("能量不足，无法打出【%s】。" % card_name)
 		return
 	_begin_phase(BattlePhases.USE_CARD, {"card": card_name, "cost": cost})
-	player_actor.energy -= cost
-	player_next_card_cost_delta = 0
+	combat_state.player_actor.energy -= cost
+	combat_state.player_next_card_cost_delta = 0
 	_begin_phase(BattlePhases.CARD_EFFECT, {"card": card_name, "card_data": card_data, "source": "player"})
 	_end_phase(BattlePhases.CARD_EFFECT, {"card": card_name})
 	var removed = _remove_card_from_hand(index)
@@ -605,7 +537,7 @@ func _on_hand_card_clicked(card_id: String, index: int) -> void:
 		if bool(card_data.get("exhaust", false)):
 			_append_battle_log("【%s】已消耗。" % card_name)
 		else:
-			player_actor.discard_pile.append(removed)
+			combat_state.player_actor.discard_pile.append(removed)
 	_begin_phase(BattlePhases.TARGET_REACTION, {"card": card_name, "source": "player"})
 	_end_phase(BattlePhases.TARGET_REACTION, {"card": card_name})
 	_begin_phase(BattlePhases.FINAL_RESOLVE, {"card": card_name})
@@ -613,13 +545,13 @@ func _on_hand_card_clicked(card_id: String, index: int) -> void:
 	RunState.save_run()
 	_end_phase(BattlePhases.FINAL_RESOLVE, {"card": card_name})
 	_end_phase(BattlePhases.USE_CARD, {"card": card_name})
-	_begin_phase(BattlePhases.NEXT_CARD, {"hand": player_actor.hand.size()})
-	_end_phase(BattlePhases.NEXT_CARD, {"hand": player_actor.hand.size()})
+	_begin_phase(BattlePhases.NEXT_CARD, {"hand": combat_state.player_actor.hand.size()})
+	_end_phase(BattlePhases.NEXT_CARD, {"hand": combat_state.player_actor.hand.size()})
 
 func _remove_card_from_hand(index: int) -> Variant:
-	if index >= 0 and index < player_actor.hand.size():
-		var removed = player_actor.hand[index]
-		player_actor.hand.remove_at(index)
+	if index >= 0 and index < combat_state.player_actor.hand.size():
+		var removed = combat_state.player_actor.hand[index]
+		combat_state.player_actor.hand.remove_at(index)
 		return removed
 	return null
 
@@ -628,140 +560,140 @@ func _apply_player_damage(amount: int, pierce: bool) -> int:
 		return 0
 	var actual := amount
 	if not pierce:
-		var blocked: int = min(enemy_actor.block, actual)
-		enemy_actor.block -= blocked
+		var blocked: int = min(combat_state.enemy_actor.block, actual)
+		combat_state.enemy_actor.block -= blocked
 		actual -= blocked
 	if actual > 0:
-		enemy_actor.hp = max(enemy_actor.hp - actual, 0)
-		combat_damage_dealt += actual
+		combat_state.enemy_actor.hp = max(combat_state.enemy_actor.hp - actual, 0)
+		combat_state.combat_damage_dealt += actual
 		sfx_attack.play()
 		_play_enemy_hit_effect()
-		if equip_block_on_damage > 0:
-			if _gain_player_block(equip_block_on_damage):
-				_append_battle_log("血纹护符触发：护甲+%d（护甲 %d）。" % [equip_block_on_damage, player_actor.block])
+		if combat_state.equip_block_on_damage > 0:
+			if _gain_player_block(combat_state.equip_block_on_damage):
+				_append_battle_log("血纹护符触发：护甲+%d（护甲 %d）。" % [combat_state.equip_block_on_damage, combat_state.player_actor.block])
 				sfx_block.play()
-		if power_bleed_on_damage > 0:
-			enemy_bleed += power_bleed_on_damage
-			_append_battle_log("血炼触发：流血+%d（%d）。" % [power_bleed_on_damage, enemy_bleed])
+		if combat_state.power_bleed_on_damage > 0:
+			combat_state.enemy_bleed += combat_state.power_bleed_on_damage
+			_append_battle_log("血炼触发：流血+%d（%d）。" % [combat_state.power_bleed_on_damage, combat_state.enemy_bleed])
 	return actual
 
 func _gain_player_block(amount: int) -> bool:
 	if amount <= 0:
 		return false
-	if player_block_disabled:
+	if combat_state.player_block_disabled:
 		return false
-	player_actor.block += amount
+	combat_state.player_actor.block += amount
 	return true
 
 func _apply_ethereal_cleanup() -> void:
-	for index in range(player_actor.hand.size() - 1, -1, -1):
-		var card_entry = player_actor.hand[index]
+	for index in range(combat_state.player_actor.hand.size() - 1, -1, -1):
+		var card_entry = combat_state.player_actor.hand[index]
 		var card_id := RunState.get_card_id(card_entry)
 		var card_data := GameData.get_card_data(card_id, RunState.get_card_upgrade_level(card_entry))
 		if bool(card_data.get("ethereal", false)):
-			player_actor.hand.remove_at(index)
+			combat_state.player_actor.hand.remove_at(index)
 			_append_battle_log("【%s】虚无消散。" % card_data.get("name", "卡牌"))
 
 func _on_end_turn_pressed() -> void:
-	if combat_over or enemy_acting or discard_overlay_active or turn_locked:
+	if combat_state.combat_over or combat_state.enemy_acting or combat_state.discard_overlay_active or combat_state.turn_locked:
 		return
-	turn_locked = true
-	if not end_turn_phase_pending:
-		end_turn_phase_pending = true
-		_begin_phase(BattlePhases.END_TURN_TRIGGER, {"turn": turn_index})
+	combat_state.turn_locked = true
+	if not combat_state.end_turn_phase_pending:
+		combat_state.end_turn_phase_pending = true
+		_begin_phase(BattlePhases.END_TURN_TRIGGER, {"turn": combat_state.turn_index})
 	_apply_ethereal_cleanup()
-	if player_actor.hand.size() > HAND_LIMIT:
-		_open_discard_overlay(player_actor.hand.size() - HAND_LIMIT)
+	if combat_state.player_actor.hand.size() > HAND_LIMIT:
+		_open_discard_overlay(combat_state.player_actor.hand.size() - HAND_LIMIT)
 		return
-	_end_phase(BattlePhases.END_TURN_TRIGGER, {"turn": turn_index, "discard_required": 0})
-	end_turn_phase_pending = false
+	_end_phase(BattlePhases.END_TURN_TRIGGER, {"turn": combat_state.turn_index, "discard_required": 0})
+	combat_state.end_turn_phase_pending = false
 	await _resolve_end_turn()
 
 func _resolve_end_turn() -> void:
-	var resolved_turn := turn_index
+	var resolved_turn := combat_state.turn_index
 	_begin_phase(BattlePhases.END_TURN_RESOLVE, {"turn": resolved_turn})
 	_begin_phase(BattlePhases.STATUS_RESOLVE, {"stage": "player_end", "turn": resolved_turn})
 	_end_phase(BattlePhases.STATUS_RESOLVE, {"stage": "player_end", "turn": resolved_turn})
 	await _enemy_turn()
-	if combat_over:
+	if combat_state.combat_over:
 		_end_phase(BattlePhases.END_TURN_RESOLVE, {"turn": resolved_turn, "combat_over": true})
-		turn_locked = false
+		combat_state.turn_locked = false
 		_update_ui()
 		return
 	_log_turn_end()
-	player_actor.energy = RunState.energy_max
+	combat_state.player_actor.energy = RunState.energy_max
 	_draw_cards(HAND_DRAW_PER_TURN)
-	turn_index += 1
+	combat_state.turn_index += 1
 	_log_turn_start()
-	turn_locked = false
+	combat_state.turn_locked = false
 	_end_phase(BattlePhases.END_TURN_RESOLVE, {"turn": resolved_turn})
 	_update_ui()
 	RunState.save_run()
 
 func _enemy_turn() -> void:
-	var enemy_turn := turn_index
+	var enemy_turn := combat_state.turn_index
 	_begin_phase(BattlePhases.ENEMY_TURN_START, {"turn": enemy_turn})
-	enemy_acting = true
-	enemy_actor.energy = RunState.energy_max
+	combat_state.enemy_acting = true
+	combat_state.enemy_actor.energy = RunState.energy_max
 	_update_ui()
-	if player_skip_enemy_turn:
-		player_skip_enemy_turn = false
+	if combat_state.player_skip_enemy_turn:
+		combat_state.player_skip_enemy_turn = false
 		_append_battle_log("停滞结界生效：魔物本回合无法行动。")
 		await _wait(ENEMY_IDLE_DELAY)
 	else:
 		await _play_enemy_hand()
-	enemy_acting = false
-	if player_actor.hp <= 0:
-		combat_over = true
-		run_complete = true
+	combat_state.enemy_acting = false
+	if combat_state.player_actor.hp <= 0:
+		combat_state.combat_over = true
+		combat_state.run_complete = true
 		_append_battle_log("你在山道上倒下，征途告终。")
 		RunState.log_event("你在山道上倒下。")
 		RunState.finalize_run_score()
 		RunState.reset_after_run()
 		_end_phase(BattlePhases.ENEMY_TURN_START, {"turn": enemy_turn, "combat_over": true})
 		return
-	if not combat_over:
+	if not combat_state.combat_over:
 		_begin_phase(BattlePhases.STATUS_RESOLVE, {"stage": "enemy_end", "turn": enemy_turn})
 		_end_phase(BattlePhases.STATUS_RESOLVE, {"stage": "enemy_end", "turn": enemy_turn})
-		if enemy_actor.hp <= 0:
+		if combat_state.enemy_actor.hp <= 0:
 			_check_enemy_defeat()
-			_end_phase(BattlePhases.ENEMY_TURN_START, {"turn": enemy_turn, "combat_over": combat_over})
+			_end_phase(BattlePhases.ENEMY_TURN_START, {"turn": enemy_turn, "combat_over": combat_state.combat_over})
 			return
-	if not combat_over:
-		enemy_actor.discard_pile.append_array(enemy_actor.hand)
-		enemy_actor.hand.clear()
+	if not combat_state.combat_over:
+		combat_state.enemy_actor.discard_pile.append_array(combat_state.enemy_actor.hand)
+		combat_state.enemy_actor.hand.clear()
 		_draw_enemy_cards(ENEMY_HAND_SIZE)
 		_refresh_enemy_intent()
-	_end_phase(BattlePhases.ENEMY_TURN_START, {"turn": enemy_turn, "combat_over": combat_over})
+	_end_phase(BattlePhases.ENEMY_TURN_START, {"turn": enemy_turn, "combat_over": combat_state.combat_over})
 
 func _check_enemy_defeat() -> void:
-	if enemy_actor.hp <= 0:
-		_begin_phase(BattlePhases.BATTLE_END_TRIGGER, {"turn": turn_index})
-		combat_over = true
+	if combat_state.enemy_actor.hp <= 0:
+		_begin_phase(BattlePhases.BATTLE_END_TRIGGER, {"turn": combat_state.turn_index})
+		combat_state.combat_over = true
 		_log_turn_end()
 		_append_battle_log("敌人倒下，战斗结束。")
-		_end_phase(BattlePhases.BATTLE_END_TRIGGER, {"turn": turn_index})
-		_begin_phase(BattlePhases.BATTLE_END_RESOLVE, {"turn": turn_index})
+		_end_phase(BattlePhases.BATTLE_END_TRIGGER, {"turn": combat_state.turn_index})
+		_begin_phase(BattlePhases.BATTLE_END_RESOLVE, {"turn": combat_state.turn_index})
 		var combat_score := _calculate_combat_score()
 		RunState.add_combat_score(combat_score)
-		run_complete = RunState.complete_encounter()
-		if run_complete:
+		combat_state.run_complete = RunState.complete_encounter()
+		if combat_state.run_complete:
 			_append_battle_log("你征服了 %s，登顶通关！" % GameData.MOUNTAIN_NAME)
 			RunState.log_event("登顶通关，征服 %s。" % GameData.MOUNTAIN_NAME)
 			RunState.finalize_run_score()
 			RunState.reset_after_run()
-			_end_phase(BattlePhases.BATTLE_END_RESOLVE, {"turn": turn_index, "result": "complete"})
+			_end_phase(BattlePhases.BATTLE_END_RESOLVE, {"turn": combat_state.turn_index, "result": "complete"})
 			_begin_phase(BattlePhases.BATTLE_END, {"result": "complete"})
 			_end_phase(BattlePhases.BATTLE_END, {"result": "complete"})
 		else:
-			RunState.log_event("击退了 %s。" % enemy_data.get("name", "魔物"))
-			_end_phase(BattlePhases.BATTLE_END_RESOLVE, {"turn": turn_index, "result": "continue"})
+			RunState.log_event("击退了 %s。" % combat_state.enemy_data.get("name", "魔物"))
+			_end_phase(BattlePhases.BATTLE_END_RESOLVE, {"turn": combat_state.turn_index, "result": "continue"})
 			_queue_post_battle_step()
 
 func _on_next_pressed() -> void:
-	if not combat_over:
+	if not combat_state.combat_over:
 		return
-	if run_complete:
+	if combat_state.run_complete:
 		get_tree().change_scene_to_file("res://scenes/Main.tscn")
 		return
 	_start_encounter()
@@ -770,16 +702,16 @@ func _on_back_pressed() -> void:
 	get_tree().change_scene_to_file("res://scenes/Main.tscn")
 
 func _refresh_enemy_intent() -> void:
-	enemy_intent_card = _get_enemy_intent_card()
+	combat_state.enemy_intent_card = _get_enemy_intent_card()
 
 func _get_enemy_intent_card() -> Dictionary:
-	if enemy_actor.hand.is_empty():
+	if combat_state.enemy_actor.hand.is_empty():
 		return {}
-	for card_id in enemy_actor.hand:
+	for card_id in combat_state.enemy_actor.hand:
 		var card_data := GameData.get_enemy_card_data(str(card_id))
 		if int(card_data.get("cost", 0)) <= RunState.energy_max:
 			return card_data
-	return GameData.get_enemy_card_data(str(enemy_actor.hand[0]))
+	return GameData.get_enemy_card_data(str(combat_state.enemy_actor.hand[0]))
 
 func _enemy_card_display(card_data: Dictionary) -> String:
 	if card_data.is_empty():
@@ -789,29 +721,29 @@ func _enemy_card_display(card_data: Dictionary) -> String:
 		return custom_text
 	var intent_type: String = str(card_data.get("type", ""))
 	var name: String = str(card_data.get("name", "行动"))
-	var bonus: int = enemy_attack_bonus
+	var bonus: int = combat_state.enemy_attack_bonus
 	match intent_type:
 		"attack":
-			var damage := int(round(int(card_data.get("damage", 0)) * enemy_power_mult))
+			var damage := int(round(int(card_data.get("damage", 0)) * combat_state.enemy_power_mult))
 			damage += bonus
 			return "%s %d" % [name, damage]
 		"multi_attack":
-			var damage := int(round(int(card_data.get("damage", 0)) * enemy_power_mult))
+			var damage := int(round(int(card_data.get("damage", 0)) * combat_state.enemy_power_mult))
 			var hits := int(card_data.get("hits", 1))
 			var suffix := " +%d" % bonus if bonus > 0 else ""
 			return "%s %d x %d%s" % [name, damage, hits, suffix]
 		"guard":
-			var block := int(round(int(card_data.get("block", 0)) * enemy_power_mult))
+			var block := int(round(int(card_data.get("block", 0)) * combat_state.enemy_power_mult))
 			return "%s +%d" % [name, block]
 		"charge":
-			var charge := int(round(int(card_data.get("charge", 0)) * enemy_power_mult))
+			var charge := int(round(int(card_data.get("charge", 0)) * combat_state.enemy_power_mult))
 			return "%s +%d" % [name, charge]
 		"drain":
-			var damage := int(round(int(card_data.get("damage", 0)) * enemy_power_mult))
+			var damage := int(round(int(card_data.get("damage", 0)) * combat_state.enemy_power_mult))
 			damage += bonus
 			return "%s %d" % [name, damage]
 		"heal":
-			var heal := int(round(int(card_data.get("heal", 0)) * enemy_power_mult))
+			var heal := int(round(int(card_data.get("heal", 0)) * combat_state.enemy_power_mult))
 			return "%s +%d" % [name, heal]
 		"debuff", "attack_debuff":
 			var summary := _enemy_debuff_summary(card_data)
@@ -823,20 +755,20 @@ func _enemy_card_targets_player(intent_type: String) -> bool:
 
 func _play_enemy_hand() -> void:
 	var acted := false
-	for card_id in enemy_actor.hand:
+	for card_id in combat_state.enemy_actor.hand:
 		var card_data := GameData.get_enemy_card_data(str(card_id))
 		var cost := int(card_data.get("cost", 0))
-		if cost > enemy_actor.energy:
+		if cost > combat_state.enemy_actor.energy:
 			continue
-		enemy_actor.energy -= cost
-		enemy_intent_card = card_data
+		combat_state.enemy_actor.energy -= cost
+		combat_state.enemy_intent_card = card_data
 		_update_ui()
 		await _wait(ENEMY_WINDUP_DELAY)
 		_play_enemy_action_fx(card_data)
 		_apply_enemy_card(card_data)
 		acted = true
 		_update_ui()
-		if player_actor.hp <= 0 or enemy_actor.hp <= 0:
+		if combat_state.player_actor.hp <= 0 or combat_state.enemy_actor.hp <= 0:
 			break
 		await _wait(ENEMY_ACTION_DELAY)
 	if not acted:
@@ -860,98 +792,98 @@ func _apply_enemy_card(card_data: Dictionary) -> void:
 		return
 	var intent_type: String = str(card_data.get("type", ""))
 	var card_name: String = str(card_data.get("name", "行动"))
-	if _enemy_card_targets_player(intent_type) and player_nullify_count > 0:
-		player_nullify_count -= 1
+	if _enemy_card_targets_player(intent_type) and combat_state.player_nullify_count > 0:
+		combat_state.player_nullify_count -= 1
 		_append_battle_log("护幕抵消了魔物的【%s】。" % card_name)
 		return
-	var damage := int(round(int(card_data.get("damage", 0)) * enemy_power_mult))
-	var block := int(round(int(card_data.get("block", 0)) * enemy_power_mult))
-	var heal := int(round(int(card_data.get("heal", 0)) * enemy_power_mult))
-	var charge := int(round(int(card_data.get("charge", 0)) * enemy_power_mult))
+	var damage := int(round(int(card_data.get("damage", 0)) * combat_state.enemy_power_mult))
+	var block := int(round(int(card_data.get("block", 0)) * combat_state.enemy_power_mult))
+	var heal := int(round(int(card_data.get("heal", 0)) * combat_state.enemy_power_mult))
+	var charge := int(round(int(card_data.get("charge", 0)) * combat_state.enemy_power_mult))
 	var apply_weak := int(card_data.get("apply_weak", 0))
 	var apply_vulnerable := int(card_data.get("apply_vulnerable", 0))
 	match intent_type:
 		"attack":
-			var total_damage: int = damage + enemy_attack_bonus
-			enemy_attack_bonus = 0
+			var total_damage: int = damage + combat_state.enemy_attack_bonus
+			combat_state.enemy_attack_bonus = 0
 			var dealt := _apply_enemy_damage(total_damage)
 			if dealt > 0:
 				_append_battle_log("魔物使用【%s】->你：造成%d点伤害（你HP %d/%d，护甲 %d）。" % [
 					card_name,
 					dealt,
-					player_actor.hp,
-					player_actor.max_hp,
-					player_actor.block
+					combat_state.player_actor.hp,
+					combat_state.player_actor.max_hp,
+					combat_state.player_actor.block
 				])
 			else:
-				_append_battle_log("魔物使用【%s】->你：攻击被护甲挡住（你护甲 %d）。" % [card_name, player_actor.block])
+				_append_battle_log("魔物使用【%s】->你：攻击被护甲挡住（你护甲 %d）。" % [card_name, combat_state.player_actor.block])
 		"multi_attack":
 			var hits: int = int(card_data.get("hits", 1))
-			var total_multi: int = (damage * hits) + enemy_attack_bonus
-			enemy_attack_bonus = 0
+			var total_multi: int = (damage * hits) + combat_state.enemy_attack_bonus
+			combat_state.enemy_attack_bonus = 0
 			var dealt := _apply_enemy_damage(total_multi)
 			if dealt > 0:
 				_append_battle_log("魔物使用【%s】->你：连击%d次造成%d点伤害（你HP %d/%d，护甲 %d）。" % [
 					card_name,
 					hits,
 					dealt,
-					player_actor.hp,
-					player_actor.max_hp,
-					player_actor.block
+					combat_state.player_actor.hp,
+					combat_state.player_actor.max_hp,
+					combat_state.player_actor.block
 				])
 			else:
-				_append_battle_log("魔物使用【%s】->你：连击被护甲挡住（你护甲 %d）。" % [card_name, player_actor.block])
+				_append_battle_log("魔物使用【%s】->你：连击被护甲挡住（你护甲 %d）。" % [card_name, combat_state.player_actor.block])
 		"guard":
-			var gain: int = int(max(block - enemy_block_gain_reduction, 0))
-			enemy_actor.block += gain
-			if enemy_block_gain_reduction > 0:
+			var gain: int = int(max(block - combat_state.enemy_block_gain_reduction, 0))
+			combat_state.enemy_actor.block += gain
+			if combat_state.enemy_block_gain_reduction > 0:
 				_append_battle_log("魔物使用【%s】->自己：护甲+%d（被削减 %d，护甲 %d）。" % [
 					card_name,
 					gain,
-					enemy_block_gain_reduction,
-					enemy_actor.block
+					combat_state.enemy_block_gain_reduction,
+					combat_state.enemy_actor.block
 				])
 			else:
-				_append_battle_log("魔物使用【%s】->自己：护甲+%d（护甲 %d）。" % [card_name, gain, enemy_actor.block])
+				_append_battle_log("魔物使用【%s】->自己：护甲+%d（护甲 %d）。" % [card_name, gain, combat_state.enemy_actor.block])
 		"charge":
-			enemy_attack_bonus += charge
+			combat_state.enemy_attack_bonus += charge
 			_append_battle_log("魔物使用【%s】->自己：蓄力+%d（下次攻击加成 %d）。" % [
 				card_name,
 				charge,
-				enemy_attack_bonus
+				combat_state.enemy_attack_bonus
 			])
 		"drain":
-			var drain_damage: int = damage + enemy_attack_bonus
-			enemy_attack_bonus = 0
+			var drain_damage: int = damage + combat_state.enemy_attack_bonus
+			combat_state.enemy_attack_bonus = 0
 			var dealt: int = _apply_enemy_damage(drain_damage)
 			if dealt > 0 and heal > 0:
-				enemy_actor.hp = min(enemy_actor.hp + heal, enemy_actor.max_hp)
+				combat_state.enemy_actor.hp = min(combat_state.enemy_actor.hp + heal, combat_state.enemy_actor.max_hp)
 				_append_battle_log("魔物使用【%s】->你：造成%d点伤害（你HP %d/%d）。自身恢复%d点生命（敌人HP %d/%d）。" % [
 					card_name,
 					dealt,
-					player_actor.hp,
-					player_actor.max_hp,
+					combat_state.player_actor.hp,
+					combat_state.player_actor.max_hp,
 					heal,
-					enemy_actor.hp,
-					enemy_actor.max_hp
+					combat_state.enemy_actor.hp,
+					combat_state.enemy_actor.max_hp
 				])
 			elif dealt > 0:
 				_append_battle_log("魔物使用【%s】->你：造成%d点伤害（你HP %d/%d）。" % [
 					card_name,
 					dealt,
-					player_actor.hp,
-					player_actor.max_hp
+					combat_state.player_actor.hp,
+					combat_state.player_actor.max_hp
 				])
 			else:
-				_append_battle_log("魔物使用【%s】->你：攻击被护甲挡住（你护甲 %d）。" % [card_name, player_actor.block])
+				_append_battle_log("魔物使用【%s】->你：攻击被护甲挡住（你护甲 %d）。" % [card_name, combat_state.player_actor.block])
 		"heal":
 			if heal > 0:
-				enemy_actor.hp = min(enemy_actor.hp + heal, enemy_actor.max_hp)
+				combat_state.enemy_actor.hp = min(combat_state.enemy_actor.hp + heal, combat_state.enemy_actor.max_hp)
 				_append_battle_log("魔物使用【%s】->自己：恢复%d点生命（敌人HP %d/%d）。" % [
 					card_name,
 					heal,
-					enemy_actor.hp,
-					enemy_actor.max_hp
+					combat_state.enemy_actor.hp,
+					combat_state.enemy_actor.max_hp
 				])
 		"debuff":
 			_apply_enemy_debuffs(apply_weak, apply_vulnerable)
@@ -961,8 +893,8 @@ func _apply_enemy_card(card_data: Dictionary) -> void:
 				_player_status_text()
 			])
 		"attack_debuff":
-			var debuff_damage: int = damage + enemy_attack_bonus
-			enemy_attack_bonus = 0
+			var debuff_damage: int = damage + combat_state.enemy_attack_bonus
+			combat_state.enemy_attack_bonus = 0
 			var dealt := _apply_enemy_damage(debuff_damage)
 			_apply_enemy_debuffs(apply_weak, apply_vulnerable)
 			var status_summary := _enemy_debuff_summary(card_data)
@@ -970,8 +902,8 @@ func _apply_enemy_card(card_data: Dictionary) -> void:
 				_append_battle_log("魔物使用【%s】->你：造成%d点伤害（你HP %d/%d），施加%s（你状态：%s）。" % [
 					card_name,
 					dealt,
-					player_actor.hp,
-					player_actor.max_hp,
+					combat_state.player_actor.hp,
+					combat_state.player_actor.max_hp,
 					status_summary,
 					_player_status_text()
 				])
@@ -989,43 +921,43 @@ func _apply_enemy_damage(amount: int) -> int:
 		return 0
 	sfx_attack.play()
 	var adjusted_amount := amount
-	if player_vulnerable_turns > 0:
+	if combat_state.player_vulnerable_turns > 0:
 		adjusted_amount = int(round(amount * VULNERABLE_DAMAGE_MULT))
-	var blocked: int = int(min(adjusted_amount, player_actor.block))
+	var blocked: int = int(min(adjusted_amount, combat_state.player_actor.block))
 	var damage: int = adjusted_amount - blocked
-	player_actor.block = max(player_actor.block - adjusted_amount, 0)
-	if equip_damage_reduction > 0:
-		damage = max(damage - equip_damage_reduction, 0)
+	combat_state.player_actor.block = max(combat_state.player_actor.block - adjusted_amount, 0)
+	if combat_state.equip_damage_reduction > 0:
+		damage = max(damage - combat_state.equip_damage_reduction, 0)
 	if damage > 0:
-		player_actor.hp = max(player_actor.hp - damage, 0)
+		combat_state.player_actor.hp = max(combat_state.player_actor.hp - damage, 0)
 		_sync_player_hp()
-		combat_damage_taken += damage
+		combat_state.combat_damage_taken += damage
 		_play_player_hit_effect()
-		if power_first_damage_block > 0 and not power_first_damage_block_used:
-			power_first_damage_block_used = true
-			if _gain_player_block(power_first_damage_block):
-				_append_battle_log("坚毅之魂触发：护甲+%d（护甲 %d）。" % [power_first_damage_block, player_actor.block])
+		if combat_state.power_first_damage_block > 0 and not combat_state.power_first_damage_block_used:
+			combat_state.power_first_damage_block_used = true
+			if _gain_player_block(combat_state.power_first_damage_block):
+				_append_battle_log("坚毅之魂触发：护甲+%d（护甲 %d）。" % [combat_state.power_first_damage_block, combat_state.player_actor.block])
 				sfx_block.play()
-		if player_counter_ratio > 0.0:
-			var counter_damage := int(round(float(damage) * player_counter_ratio))
+		if combat_state.player_counter_ratio > 0.0:
+			var counter_damage := int(round(float(damage) * combat_state.player_counter_ratio))
 			if counter_damage > 0:
 				var dealt := _apply_player_damage(counter_damage, false)
 				if dealt > 0:
 					_append_battle_log("反击造成%d点伤害（敌人HP %d/%d）。" % [
 						dealt,
-						enemy_actor.hp,
-						enemy_actor.max_hp
+						combat_state.enemy_actor.hp,
+						combat_state.enemy_actor.max_hp
 					])
-		if player_damage_draw > 0:
-			_draw_cards(player_damage_draw)
-			_append_battle_log("补给回响：抽%d张（手牌 %d）。" % [player_damage_draw, player_actor.hand.size()])
+		if combat_state.player_damage_draw > 0:
+			_draw_cards(combat_state.player_damage_draw)
+			_append_battle_log("补给回响：抽%d张（手牌 %d）。" % [combat_state.player_damage_draw, combat_state.player_actor.hand.size()])
 	return damage
 
 func _apply_enemy_debuffs(weak_turns: int, vulnerable_turns: int) -> void:
 	if weak_turns > 0:
-		player_weak_turns += weak_turns
+		combat_state.player_weak_turns += weak_turns
 	if vulnerable_turns > 0:
-		player_vulnerable_turns += vulnerable_turns
+		combat_state.player_vulnerable_turns += vulnerable_turns
 
 func _enemy_debuff_summary(card_data: Dictionary) -> String:
 	var parts: Array = []
@@ -1041,22 +973,22 @@ func _enemy_debuff_summary(card_data: Dictionary) -> String:
 
 func _queue_post_battle_step() -> void:
 	_begin_phase(BattlePhases.REWARD_EVENT, {"type": "shop"})
-	next_step = "shop"
+	combat_state.next_step = "shop"
 	_enter_shop()
 	_end_phase(BattlePhases.REWARD_EVENT, {"type": "shop"})
 	_begin_phase(BattlePhases.BATTLE_END, {"result": "continue"})
 	_end_phase(BattlePhases.BATTLE_END, {"result": "continue"})
 
 func _enter_shop() -> void:
-	next_step = "shop"
+	combat_state.next_step = "shop"
 	_refresh_shop_offers()
 	_set_shop_overlay_visible(true)
 	_append_battle_log("战后商店开启：可以用积分购买新卡牌。")
 
 func _refresh_shop_offers() -> void:
 	var pool: Array = _build_shop_pool()
-	shop_offer_cards.clear()
-	shop_offer_costs.clear()
+	combat_state.shop_offer_cards.clear()
+	combat_state.shop_offer_costs.clear()
 	if pool.is_empty():
 		_refresh_shop_ui()
 		return
@@ -1065,8 +997,8 @@ func _refresh_shop_offers() -> void:
 	for i in range(offer_count):
 		var card_id: String = str(pool[i])
 		var card_data: Dictionary = GameData.get_card_data(card_id, 0)
-		shop_offer_cards.append(card_id)
-		shop_offer_costs[card_id] = _calculate_shop_cost(card_data)
+		combat_state.shop_offer_cards.append(card_id)
+		combat_state.shop_offer_costs[card_id] = _calculate_shop_cost(card_data)
 	_refresh_shop_ui()
 
 func _build_shop_pool() -> Array:
@@ -1093,7 +1025,7 @@ func _refresh_shop_ui() -> void:
 	shop_refresh_button.text = "刷新商品 (-%d)" % SHOP_REFRESH_COST
 	var has_pool: bool = not _build_shop_pool().is_empty()
 	shop_refresh_button.disabled = RunState.run_score_total < SHOP_REFRESH_COST or not has_pool
-	if shop_offer_cards.is_empty():
+	if combat_state.shop_offer_cards.is_empty():
 		if has_pool:
 			shop_info_label.text = "本轮商品已购完，可刷新商品继续购买。"
 		else:
@@ -1106,8 +1038,8 @@ func _refresh_shop_ui() -> void:
 
 func _populate_shop_cards() -> void:
 	_clear_container(shop_choice_container)
-	for card_id in shop_offer_cards:
-		var cost: int = int(shop_offer_costs.get(card_id, 0))
+	for card_id in combat_state.shop_offer_cards:
+		var cost: int = int(combat_state.shop_offer_costs.get(card_id, 0))
 		var card_data: Dictionary = GameData.get_card_data(card_id, 0)
 		var slot := VBoxContainer.new()
 		slot.add_theme_constant_override("separation", 4)
@@ -1227,22 +1159,22 @@ func _calculate_shop_cost(card_data: Dictionary) -> int:
 	return max(price, 20)
 
 func _set_shop_overlay_visible(active: bool) -> void:
-	if active == shop_overlay_active:
+	if active == combat_state.shop_overlay_active:
 		return
-	shop_overlay_active = active
-	if shop_overlay_tween:
-		shop_overlay_tween.kill()
+	combat_state.shop_overlay_active = active
+	if combat_state.shop_overlay_tween:
+		combat_state.shop_overlay_tween.kill()
 	if active:
 		shop_overlay.visible = true
 		shop_overlay.modulate.a = 0.0
 		shop_panel.scale = Vector2(0.96, 0.96)
-		shop_overlay_tween = create_tween()
-		shop_overlay_tween.tween_property(shop_overlay, "modulate:a", 1.0, 0.18).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
-		shop_overlay_tween.tween_property(shop_panel, "scale", Vector2.ONE, 0.2).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+		combat_state.shop_overlay_tween = create_tween()
+		combat_state.shop_overlay_tween.tween_property(shop_overlay, "modulate:a", 1.0, 0.18).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+		combat_state.shop_overlay_tween.tween_property(shop_panel, "scale", Vector2.ONE, 0.2).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 	else:
-		shop_overlay_tween = create_tween()
-		shop_overlay_tween.tween_property(shop_overlay, "modulate:a", 0.0, 0.12).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
-		shop_overlay_tween.tween_callback(func(): shop_overlay.visible = false)
+		combat_state.shop_overlay_tween = create_tween()
+		combat_state.shop_overlay_tween.tween_property(shop_overlay, "modulate:a", 0.0, 0.12).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+		combat_state.shop_overlay_tween.tween_callback(func(): shop_overlay.visible = false)
 
 func _on_shop_refresh_pressed() -> void:
 	if RunState.run_score_total < SHOP_REFRESH_COST:
@@ -1257,7 +1189,7 @@ func _on_shop_skip_pressed() -> void:
 	_enter_route_selection()
 
 func _on_shop_buy_pressed(card_id: String) -> void:
-	var cost: int = int(shop_offer_costs.get(card_id, 0))
+	var cost: int = int(combat_state.shop_offer_costs.get(card_id, 0))
 	if cost <= 0:
 		return
 	if RunState.run_score_total < cost:
@@ -1267,43 +1199,43 @@ func _on_shop_buy_pressed(card_id: String) -> void:
 	var card_name: String = str(GameData.get_card_data(card_id, 0).get("name", "卡牌"))
 	RunState.log_event("积分购买卡牌：%s（-%d 分）。" % [card_name, cost])
 	_append_battle_log("购买卡牌：%s（-%d 积分）。" % [card_name, cost])
-	shop_offer_cards.erase(card_id)
-	shop_offer_costs.erase(card_id)
+	combat_state.shop_offer_cards.erase(card_id)
+	combat_state.shop_offer_costs.erase(card_id)
 	_refresh_shop_ui()
 	RunState.save_run()
 
 func _enter_route_selection() -> void:
-	next_step = "route"
-	route_mode = "route"
-	supply_available = randf() <= GameData.SUPPLY_CHANCE
-	if supply_available:
+	combat_state.next_step = "route"
+	combat_state.route_mode = "route"
+	combat_state.supply_available = randf() <= GameData.SUPPLY_CHANCE
+	if combat_state.supply_available:
 		route_info_label.text = "你发现一处补给点，选择前进路线。"
 	else:
 		route_info_label.text = "补给点未出现，只能继续挑战。"
-	route_supply_button.visible = supply_available
-	route_supply_button.disabled = not supply_available
+	route_supply_button.visible = combat_state.supply_available
+	route_supply_button.disabled = not combat_state.supply_available
 	_update_route_ui()
 	_set_route_overlay_visible(true)
 
 func _update_route_ui() -> void:
-	difficulty_panel.visible = route_mode == "difficulty"
+	difficulty_panel.visible = combat_state.route_mode == "difficulty"
 
 func _on_route_supply_pressed() -> void:
-	if not supply_available:
+	if not combat_state.supply_available:
 		return
-	route_mode = "supply"
+	combat_state.route_mode = "supply"
 	_set_route_overlay_visible(false)
 	_enter_supply_options()
 
 func _on_route_challenge_pressed() -> void:
-	route_mode = "difficulty"
+	combat_state.route_mode = "difficulty"
 	route_info_label.text = "请选择挑战难度。"
 	_update_route_ui()
 
 func _on_difficulty_selected(difficulty: String) -> void:
 	RunState.next_difficulty = difficulty
 	RunState.save_run()
-	route_mode = "none"
+	combat_state.route_mode = "none"
 	_set_route_overlay_visible(false)
 	_append_battle_log("你选择了%s挑战。" % _difficulty_display(difficulty))
 	RunState.log_event("选择挑战难度：%s。" % _difficulty_display(difficulty))
@@ -1314,27 +1246,27 @@ func _difficulty_display(difficulty: String) -> String:
 	return str(settings.get("label", "普通"))
 
 func _enter_supply_options() -> void:
-	next_step = "reward_options"
-	reward_mode = "supply"
-	last_reward_mode = ""
-	reward_cards.clear()
+	combat_state.next_step = "reward_options"
+	combat_state.reward_mode = "supply"
+	combat_state.last_reward_mode = ""
+	combat_state.reward_cards.clear()
 	_refresh_reward_ui()
 	_set_route_overlay_visible(false)
 	_set_reward_overlay_visible(true)
 	RunState.save_run()
 
 func _refresh_reward_ui() -> void:
-	reward_options.visible = reward_mode == "supply"
-	reward_upgrade_button.visible = reward_mode == "supply"
-	reward_remove_button.visible = reward_mode == "supply"
-	reward_heal_button.visible = reward_mode == "supply"
-	reward_draft_button.visible = reward_mode == "supply"
-	reward_skip_button.visible = reward_mode == "supply"
-	var show_choices := reward_mode in ["upgrade", "remove", "supply_draft"]
+	reward_options.visible = combat_state.reward_mode == "supply"
+	reward_upgrade_button.visible = combat_state.reward_mode == "supply"
+	reward_remove_button.visible = combat_state.reward_mode == "supply"
+	reward_heal_button.visible = combat_state.reward_mode == "supply"
+	reward_draft_button.visible = combat_state.reward_mode == "supply"
+	reward_skip_button.visible = combat_state.reward_mode == "supply"
+	var show_choices := combat_state.reward_mode in ["upgrade", "remove", "supply_draft"]
 	reward_choice_label.visible = show_choices
-	reward_choice_scroll.visible = reward_mode == "supply_draft"
-	reward_deck_scroll.visible = reward_mode in ["upgrade", "remove"]
-	match reward_mode:
+	reward_choice_scroll.visible = combat_state.reward_mode == "supply_draft"
+	reward_deck_scroll.visible = combat_state.reward_mode in ["upgrade", "remove"]
+	match combat_state.reward_mode:
 		"upgrade":
 			reward_choice_label.text = "选择一张卡牌强化"
 		"remove":
@@ -1343,53 +1275,53 @@ func _refresh_reward_ui() -> void:
 			reward_choice_label.text = "选择一张补给卡牌"
 		_:
 			reward_choice_label.text = ""
-	if reward_mode != last_reward_mode:
-		if reward_mode in ["upgrade", "remove"]:
+	if combat_state.reward_mode != combat_state.last_reward_mode:
+		if combat_state.reward_mode in ["upgrade", "remove"]:
 			_populate_reward_deck()
-		elif reward_mode == "supply_draft":
+		elif combat_state.reward_mode == "supply_draft":
 			_populate_supply_cards()
-		last_reward_mode = reward_mode
+		combat_state.last_reward_mode = combat_state.reward_mode
 
 func _set_reward_overlay_visible(active: bool) -> void:
-	if active == reward_overlay_active:
+	if active == combat_state.reward_overlay_active:
 		return
-	reward_overlay_active = active
-	if reward_overlay_tween:
-		reward_overlay_tween.kill()
+	combat_state.reward_overlay_active = active
+	if combat_state.reward_overlay_tween:
+		combat_state.reward_overlay_tween.kill()
 	if active:
 		reward_overlay.visible = true
 		reward_overlay.modulate.a = 0.0
 		reward_panel.scale = Vector2(0.96, 0.96)
-		reward_overlay_tween = create_tween()
-		reward_overlay_tween.tween_property(reward_overlay, "modulate:a", 1.0, 0.18).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
-		reward_overlay_tween.tween_property(reward_panel, "scale", Vector2.ONE, 0.2).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+		combat_state.reward_overlay_tween = create_tween()
+		combat_state.reward_overlay_tween.tween_property(reward_overlay, "modulate:a", 1.0, 0.18).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+		combat_state.reward_overlay_tween.tween_property(reward_panel, "scale", Vector2.ONE, 0.2).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 	else:
-		reward_overlay_tween = create_tween()
-		reward_overlay_tween.tween_property(reward_overlay, "modulate:a", 0.0, 0.12).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
-		reward_overlay_tween.tween_callback(func(): reward_overlay.visible = false)
+		combat_state.reward_overlay_tween = create_tween()
+		combat_state.reward_overlay_tween.tween_property(reward_overlay, "modulate:a", 0.0, 0.12).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+		combat_state.reward_overlay_tween.tween_callback(func(): reward_overlay.visible = false)
 
 func _set_discard_overlay_visible(active: bool) -> void:
-	if active == discard_overlay_active:
+	if active == combat_state.discard_overlay_active:
 		return
-	discard_overlay_active = active
-	if discard_overlay_tween:
-		discard_overlay_tween.kill()
+	combat_state.discard_overlay_active = active
+	if combat_state.discard_overlay_tween:
+		combat_state.discard_overlay_tween.kill()
 	if active:
 		discard_overlay.visible = true
 		discard_overlay.modulate.a = 0.0
 		discard_panel.scale = Vector2(0.96, 0.96)
-		discard_overlay_tween = create_tween()
-		discard_overlay_tween.tween_property(discard_overlay, "modulate:a", 1.0, 0.18).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
-		discard_overlay_tween.tween_property(discard_panel, "scale", Vector2.ONE, 0.2).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+		combat_state.discard_overlay_tween = create_tween()
+		combat_state.discard_overlay_tween.tween_property(discard_overlay, "modulate:a", 1.0, 0.18).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+		combat_state.discard_overlay_tween.tween_property(discard_panel, "scale", Vector2.ONE, 0.2).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 	else:
-		discard_overlay_tween = create_tween()
-		discard_overlay_tween.tween_property(discard_overlay, "modulate:a", 0.0, 0.12).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
-		discard_overlay_tween.tween_callback(func(): discard_overlay.visible = false)
+		combat_state.discard_overlay_tween = create_tween()
+		combat_state.discard_overlay_tween.tween_property(discard_overlay, "modulate:a", 0.0, 0.12).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+		combat_state.discard_overlay_tween.tween_callback(func(): discard_overlay.visible = false)
 
 func _open_discard_overlay(required: int) -> void:
-	discard_required = max(required, 0)
-	discard_selection.clear()
-	discard_locked_indices.clear()
+	combat_state.discard_required = max(required, 0)
+	combat_state.discard_selection.clear()
+	combat_state.discard_locked_indices.clear()
 	_build_discard_locks()
 	_populate_discard_cards()
 	_refresh_discard_ui()
@@ -1398,33 +1330,33 @@ func _open_discard_overlay(required: int) -> void:
 func _build_discard_locks() -> void:
 	var retain_indices: Array = []
 	var non_retain_count := 0
-	for index in player_actor.hand.size():
-		var card_entry = player_actor.hand[index]
+	for index in combat_state.player_actor.hand.size():
+		var card_entry = combat_state.player_actor.hand[index]
 		var card_id := RunState.get_card_id(card_entry)
 		var card_data := GameData.get_card_data(card_id, RunState.get_card_upgrade_level(card_entry))
 		if bool(card_data.get("retain", false)):
 			retain_indices.append(index)
 		else:
 			non_retain_count += 1
-	if non_retain_count >= discard_required:
+	if non_retain_count >= combat_state.discard_required:
 		for index in retain_indices:
-			discard_locked_indices[index] = true
+			combat_state.discard_locked_indices[index] = true
 
 func _refresh_discard_ui() -> void:
-	discard_info_label.text = "需要弃置%d张（已选择%d）。" % [discard_required, discard_selection.size()]
-	discard_confirm_button.disabled = discard_selection.size() != discard_required
+	discard_info_label.text = "需要弃置%d张（已选择%d）。" % [combat_state.discard_required, combat_state.discard_selection.size()]
+	discard_confirm_button.disabled = combat_state.discard_selection.size() != combat_state.discard_required
 
 func _populate_discard_cards() -> void:
 	_clear_container(discard_choice_container)
-	discard_card_widgets.clear()
-	for index in player_actor.hand.size():
-		var card_entry = player_actor.hand[index]
+	combat_state.discard_card_widgets.clear()
+	for index in combat_state.player_actor.hand.size():
+		var card_entry = combat_state.player_actor.hand[index]
 		var card_id := RunState.get_card_id(card_entry)
 		var card_data := GameData.get_card_data(card_id, RunState.get_card_upgrade_level(card_entry))
 		var widget: CardWidget = CARD_WIDGET_SCENE.instantiate()
 		widget.set_card(card_data)
 		widget.scale = Vector2(0.85, 0.85)
-		if discard_locked_indices.get(index, false):
+		if combat_state.discard_locked_indices.get(index, false):
 			widget.mouse_filter = Control.MOUSE_FILTER_IGNORE
 			widget.modulate = Color(0.75, 0.75, 0.75, 1)
 		else:
@@ -1432,59 +1364,59 @@ func _populate_discard_cards() -> void:
 		widget.hovered.connect(_on_discard_card_hovered.bind(index))
 		widget.unhovered.connect(_on_card_unhovered)
 		discard_choice_container.add_child(widget)
-		discard_card_widgets[index] = widget
+		combat_state.discard_card_widgets[index] = widget
 
 func _on_discard_card_clicked(card_id: String, index: int, widget: CardWidget) -> void:
-	if discard_required <= 0:
+	if combat_state.discard_required <= 0:
 		return
-	if discard_locked_indices.get(index, false):
+	if combat_state.discard_locked_indices.get(index, false):
 		return
-	if discard_selection.has(index):
-		discard_selection.erase(index)
+	if combat_state.discard_selection.has(index):
+		combat_state.discard_selection.erase(index)
 		if widget:
 			widget.modulate = Color(1, 1, 1, 1)
-	elif discard_selection.size() < discard_required:
-		discard_selection.append(index)
+	elif combat_state.discard_selection.size() < combat_state.discard_required:
+		combat_state.discard_selection.append(index)
 		if widget:
 			widget.modulate = Color(0.9, 0.9, 0.9, 1)
 	_refresh_discard_ui()
 
 func _on_discard_card_hovered(card_id: String, index: int) -> void:
 	var upgrade_level := 0
-	if index >= 0 and index < player_actor.hand.size():
-		upgrade_level = RunState.get_card_upgrade_level(player_actor.hand[index])
+	if index >= 0 and index < combat_state.player_actor.hand.size():
+		upgrade_level = RunState.get_card_upgrade_level(combat_state.player_actor.hand[index])
 	_on_card_hovered(card_id, upgrade_level)
 
 func _on_discard_confirm_pressed() -> void:
-	if discard_selection.size() != discard_required:
+	if combat_state.discard_selection.size() != combat_state.discard_required:
 		return
-	var discard_count := discard_required
+	var discard_count := combat_state.discard_required
 	_begin_phase(BattlePhases.DISCARD, {"count": discard_count})
 	_apply_discard_selection()
-	_end_phase(BattlePhases.DISCARD, {"remaining": player_actor.hand.size()})
-	if end_turn_phase_pending:
-		_end_phase(BattlePhases.END_TURN_TRIGGER, {"turn": turn_index, "discard_required": discard_count})
-		end_turn_phase_pending = false
+	_end_phase(BattlePhases.DISCARD, {"remaining": combat_state.player_actor.hand.size()})
+	if combat_state.end_turn_phase_pending:
+		_end_phase(BattlePhases.END_TURN_TRIGGER, {"turn": combat_state.turn_index, "discard_required": discard_count})
+		combat_state.end_turn_phase_pending = false
 	_set_discard_overlay_visible(false)
 	_refresh_hand()
 	await _resolve_end_turn()
 
 func _apply_discard_selection() -> void:
-	discard_selection.sort()
-	for i in range(discard_selection.size() - 1, -1, -1):
-		var index: int = discard_selection[i]
-		if index >= 0 and index < player_actor.hand.size():
-			var card_entry = player_actor.hand[index]
+	combat_state.discard_selection.sort()
+	for i in range(combat_state.discard_selection.size() - 1, -1, -1):
+		var index: int = combat_state.discard_selection[i]
+		if index >= 0 and index < combat_state.player_actor.hand.size():
+			var card_entry = combat_state.player_actor.hand[index]
 			var card_id := RunState.get_card_id(card_entry)
 			var card_data := GameData.get_card_data(card_id, RunState.get_card_upgrade_level(card_entry))
 			if bool(card_data.get("ethereal", false)) or bool(card_data.get("exhaust", false)):
 				_append_battle_log("【%s】已消耗。" % card_data.get("name", "卡牌"))
 			else:
-				player_actor.discard_pile.append(card_entry)
-			player_actor.hand.remove_at(index)
-	discard_selection.clear()
-	discard_required = 0
-	discard_locked_indices.clear()
+				combat_state.player_actor.discard_pile.append(card_entry)
+			combat_state.player_actor.hand.remove_at(index)
+	combat_state.discard_selection.clear()
+	combat_state.discard_required = 0
+	combat_state.discard_locked_indices.clear()
 
 func _on_reward_deck_card_hovered(card_id: String, index: int) -> void:
 	var upgrade_level := 0
@@ -1493,15 +1425,15 @@ func _on_reward_deck_card_hovered(card_id: String, index: int) -> void:
 	_on_card_hovered(card_id, upgrade_level)
 
 func _set_route_overlay_visible(active: bool) -> void:
-	if active == route_overlay_active:
+	if active == combat_state.route_overlay_active:
 		return
-	route_overlay_active = active
+	combat_state.route_overlay_active = active
 	route_overlay.visible = active
 
 func _set_score_overlay_visible(active: bool) -> void:
-	if active == score_overlay_active:
+	if active == combat_state.score_overlay_active:
 		return
-	score_overlay_active = active
+	combat_state.score_overlay_active = active
 	score_overlay.visible = active
 
 func _refresh_score_ui() -> void:
@@ -1523,32 +1455,32 @@ func _on_score_continue_pressed() -> void:
 	get_tree().change_scene_to_file("res://scenes/Main.tscn")
 
 func _calculate_combat_score() -> int:
-	var base_score := int(enemy_data.get("score", 0))
-	var settings := RunState.get_difficulty_settings(combat_difficulty)
+	var base_score := int(combat_state.enemy_data.get("score", 0))
+	var settings := RunState.get_difficulty_settings(combat_state.combat_difficulty)
 	var difficulty_mult := float(settings.get("score_mult", 1.0))
-	var damage_taken_cap := player_actor.max_hp * 3
-	var damage_taken_score: float = float(min(combat_damage_taken, damage_taken_cap)) * 0.3
+	var damage_taken_cap := combat_state.player_actor.max_hp * 3
+	var damage_taken_score: float = float(min(combat_state.combat_damage_taken, damage_taken_cap)) * 0.3
 	var score: float = float(base_score) * difficulty_mult
-	score += combat_damage_dealt * 0.6
+	score += combat_state.combat_damage_dealt * 0.6
 	score += damage_taken_score
-	score += combat_attack_count * 2
-	score += player_actor.hp * 2
+	score += combat_state.combat_attack_count * 2
+	score += combat_state.player_actor.hp * 2
 	return int(round(score))
 
 func _apply_difficulty_to_enemy(difficulty: String) -> void:
 	var settings := RunState.get_difficulty_settings(difficulty)
 	var hp_mult := float(settings.get("hp_mult", 1.0))
 	var power_mult := float(settings.get("power_mult", 1.0))
-	enemy_power_mult = power_mult
+	combat_state.enemy_power_mult = power_mult
 	if hp_mult != 1.0:
-		enemy_actor.hp = int(round(enemy_actor.hp * hp_mult))
-		enemy_actor.max_hp = enemy_actor.hp
-		enemy_data["hp"] = enemy_actor.hp
+		combat_state.enemy_actor.hp = int(round(combat_state.enemy_actor.hp * hp_mult))
+		combat_state.enemy_actor.max_hp = combat_state.enemy_actor.hp
+		combat_state.enemy_data["hp"] = combat_state.enemy_actor.hp
 
 func _populate_supply_cards() -> void:
 	_clear_container(reward_choice_container)
-	reward_cards = _roll_reward_cards(2)
-	for card_id in reward_cards:
+	combat_state.reward_cards = _roll_reward_cards(2)
+	for card_id in combat_state.reward_cards:
 		var card_data := GameData.get_card_data(card_id, false)
 		var widget: CardWidget = CARD_WIDGET_SCENE.instantiate()
 		widget.set_card(card_data)
@@ -1576,7 +1508,7 @@ func _populate_reward_deck() -> void:
 	for index in RunState.deck.size():
 		var card_entry = RunState.deck[index]
 		var card_id := RunState.get_card_id(card_entry)
-		if reward_mode == "upgrade" and RunState.get_card_upgrade_level(card_entry) >= GameData.get_max_upgrade_level(card_id):
+		if combat_state.reward_mode == "upgrade" and RunState.get_card_upgrade_level(card_entry) >= GameData.get_max_upgrade_level(card_id):
 			continue
 		any_available = true
 		var card_data := GameData.get_card_data(card_id, RunState.get_card_upgrade_level(card_entry))
@@ -1587,22 +1519,22 @@ func _populate_reward_deck() -> void:
 		widget.unhovered.connect(_on_card_unhovered)
 		reward_deck_list.add_child(widget)
 	if not any_available:
-		if reward_mode == "upgrade":
+		if combat_state.reward_mode == "upgrade":
 			_append_battle_log("没有可强化的卡牌。")
 		else:
 			_append_battle_log("牌组为空，无法移除。")
-		reward_mode = "supply"
-		last_reward_mode = ""
+		combat_state.reward_mode = "supply"
+		combat_state.last_reward_mode = ""
 		_refresh_reward_ui()
 
 func _on_reward_upgrade_pressed() -> void:
-	reward_mode = "upgrade"
-	last_reward_mode = ""
+	combat_state.reward_mode = "upgrade"
+	combat_state.last_reward_mode = ""
 	_refresh_reward_ui()
 
 func _on_reward_remove_pressed() -> void:
-	reward_mode = "remove"
-	last_reward_mode = ""
+	combat_state.reward_mode = "remove"
+	combat_state.last_reward_mode = ""
 	_refresh_reward_ui()
 
 func _on_reward_skip_pressed() -> void:
@@ -1612,18 +1544,18 @@ func _on_reward_skip_pressed() -> void:
 	_start_encounter()
 
 func _on_reward_heal_pressed() -> void:
-	var before: int = player_actor.hp
-	player_actor.hp = min(player_actor.hp + GameData.SUPPLY_HEAL_AMOUNT, player_actor.max_hp)
-	var healed: int = player_actor.hp - before
+	var before: int = combat_state.player_actor.hp
+	combat_state.player_actor.hp = min(combat_state.player_actor.hp + GameData.SUPPLY_HEAL_AMOUNT, combat_state.player_actor.max_hp)
+	var healed: int = combat_state.player_actor.hp - before
 	_sync_player_hp()
-	_append_battle_log("补给休整，恢复%d点生命（HP %d/%d）。" % [healed, player_actor.hp, player_actor.max_hp])
+	_append_battle_log("补给休整，恢复%d点生命（HP %d/%d）。" % [healed, combat_state.player_actor.hp, combat_state.player_actor.max_hp])
 	RunState.log_event("补给休整恢复%d点生命。" % healed)
 	sfx_reward.play()
 	_start_encounter()
 
 func _on_reward_draft_pressed() -> void:
-	reward_mode = "supply_draft"
-	last_reward_mode = ""
+	combat_state.reward_mode = "supply_draft"
+	combat_state.last_reward_mode = ""
 	_refresh_reward_ui()
 
 func _on_reward_card_selected(card_id: String) -> void:
@@ -1640,7 +1572,7 @@ func _on_reward_deck_card_selected(card_id: String, index: int) -> void:
 	var card_entry = RunState.deck[index]
 	var entry_id := RunState.get_card_id(card_entry)
 	var entry_level := RunState.get_card_upgrade_level(card_entry)
-	if reward_mode == "remove":
+	if combat_state.reward_mode == "remove":
 		RunState.deck.remove_at(index)
 		RunState.save_run()
 		var card_name: String = str(GameData.get_card_data(entry_id, entry_level).get("name", "卡牌"))
@@ -1649,7 +1581,7 @@ func _on_reward_deck_card_selected(card_id: String, index: int) -> void:
 		sfx_reward.play()
 		_start_encounter()
 		return
-	if reward_mode == "upgrade":
+	if combat_state.reward_mode == "upgrade":
 		RunState.upgrade_card_at(index)
 		var new_level := RunState.get_card_upgrade_level(RunState.deck[index])
 		var upgraded_name: String = str(GameData.get_card_data(entry_id, new_level).get("name", "卡牌"))
