@@ -4,14 +4,12 @@ extends Control
 @onready var continue_button: Button = $CenterContainer/VBoxContainer/ContinueButton
 @onready var save_info_label: Label = $CenterContainer/VBoxContainer/SaveInfoLabel
 @onready var clear_save_button: Button = $CenterContainer/VBoxContainer/ClearSaveButton
-@onready var deck_button: Button = $CenterContainer/VBoxContainer/DeckButton
 @onready var quit_button: Button = $CenterContainer/VBoxContainer/QuitButton
 
 func _ready() -> void:
 	start_button.pressed.connect(_on_start_pressed)
 	continue_button.pressed.connect(_on_continue_pressed)
 	clear_save_button.pressed.connect(_on_clear_save_pressed)
-	deck_button.pressed.connect(_on_deck_pressed)
 	quit_button.pressed.connect(_on_quit_pressed)
 	_refresh_save_ui()
 
@@ -27,9 +25,6 @@ func _on_continue_pressed() -> void:
 func _on_clear_save_pressed() -> void:
 	RunState.clear_save()
 	_refresh_save_ui()
-
-func _on_deck_pressed() -> void:
-	get_tree().change_scene_to_file("res://scenes/DeckBuilder.tscn")
 
 func _on_quit_pressed() -> void:
 	get_tree().quit()

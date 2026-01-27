@@ -940,8 +940,7 @@ func _enemy_turn() -> void:
 		_append_battle_log("你在山道上倒下，征途告终。")
 		RunState.log_event("你在山道上倒下。")
 		RunState.finalize_run_score()
-		RunState.run_active = false
-		RunState.save_run()
+		RunState.reset_after_run()
 		return
 	if not combat_over:
 		_apply_enemy_end_turn_effects()
@@ -969,8 +968,7 @@ func _check_enemy_defeat() -> void:
 			_append_battle_log("你征服了 %s，登顶通关！" % GameData.MOUNTAIN_NAME)
 			RunState.log_event("登顶通关，征服 %s。" % GameData.MOUNTAIN_NAME)
 			RunState.finalize_run_score()
-			RunState.run_active = false
-			RunState.save_run()
+			RunState.reset_after_run()
 		else:
 			RunState.log_event("击退了 %s。" % enemy_data.get("name", "魔物"))
 			_queue_post_battle_step()

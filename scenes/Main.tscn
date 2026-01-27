@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://c5uvr0venq7br"]
+[gd_scene load_steps=10 format=3 uid="uid://c5uvr0venq7br"]
 
 [ext_resource type="Script" path="res://scripts/Main.gd" id="1_6y6v6"]
 [ext_resource type="Theme" path="res://themes/default_theme.tres" id="2_h1d0n"]
@@ -7,7 +7,6 @@
 [ext_resource type="Texture2D" uid="uid://b4xbgr0hsb3ab" path="res://art/ui/scene_frame.svg" id="5_43v7b"]
 [ext_resource type="Texture2D" uid="uid://d3xuvyy60blwi" path="res://icons/ui_start.svg" id="6_0nkdw"]
 [ext_resource type="Texture2D" uid="uid://bksp341gf2x35" path="res://icons/ui_continue.svg" id="7_jy3tl"]
-[ext_resource type="Texture2D" uid="uid://dbhwen63btewv" path="res://icons/ui_deck.svg" id="8_5kyo0"]
 [ext_resource type="Texture2D" uid="uid://ogrfyvh1dnm7" path="res://icons/ui_remove.svg" id="9_8tt3d"]
 [ext_resource type="Texture2D" uid="uid://sliv3q2ppulc" path="res://icons/ui_back.svg" id="10_l4b6w"]
 
@@ -106,11 +105,6 @@ autowrap_mode = 3
 layout_mode = 2
 text = "清除存档"
 icon = ExtResource("9_8tt3d")
-
-[node name="DeckButton" type="Button" parent="CenterContainer/VBoxContainer"]
-layout_mode = 2
-text = "卡组构筑"
-icon = ExtResource("8_5kyo0")
 
 [node name="QuitButton" type="Button" parent="CenterContainer/VBoxContainer"]
 layout_mode = 2

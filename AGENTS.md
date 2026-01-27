@@ -12,7 +12,7 @@
 - Summarize and commit changes to Git after completion.
 
 ## Code Structure
-- Keep the current scene/script split: Main / DeckBuilder / RunScreen / CardWidget.
+- Keep the current scene/script split: Main / RunScreen / CardWidget.
 - `GameData` and `RunState` remain autoload singletons for card and run data.
 - Combat loop lives in `RunScreen` and uses hand/draw/discard plus energy each turn.
 - Enemy roster and encounter order are defined in `GameData`.

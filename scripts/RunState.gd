@@ -72,6 +72,22 @@ func start_run() -> void:
 	log_event("旅程开始。")
 	save_run()
 
+func reset_after_run() -> void:
+	deck = _build_starting_deck()
+	encounters_completed = 0
+	max_encounters = GameData.ENCOUNTERS.size()
+	run_active = false
+	player_hp = player_max_hp
+	energy_max = STARTING_ENERGY
+	next_encounter_first_strike = false
+	next_encounter_first_strike_bonus = 0
+	current_enemy_id = ""
+	upgraded_cards.clear()
+	next_difficulty = "normal"
+	run_score_total = 0
+	run_score_finalized = false
+	save_run()
+
 func get_current_enemy_id() -> String:
 	if encounters_completed < max_encounters:
 		return GameData.ENCOUNTERS[encounters_completed]
