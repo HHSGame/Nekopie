@@ -1,6 +1,8 @@
 # Changelog
 
 ## 2026-01-26
+- Replaced save info/clear buttons with a leaderboard list on the main menu.
+- Leaderboard entries now store deck snapshots and show their cards in a detail overlay.
 - Removed the DeckBuilder scene and its main menu entry.
 - Runs now reset to the starter deck after victory or defeat.
 - Updated AGENTS scene split guidance to reflect DeckBuilder removal.

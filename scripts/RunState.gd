@@ -178,7 +178,8 @@ func finalize_run_score() -> void:
 	last_run_score = run_score_total
 	var entry := {
 		"score": last_run_score,
-		"time": Time.get_datetime_string_from_system()
+		"time": Time.get_datetime_string_from_system(),
+		"deck": deck.duplicate(true)
 	}
 	leaderboard.append(entry)
 	leaderboard.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:

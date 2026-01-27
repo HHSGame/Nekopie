@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://c5uvr0venq7br"]
+[gd_scene load_steps=9 format=3 uid="uid://c5uvr0venq7br"]
 
 [ext_resource type="Script" path="res://scripts/Main.gd" id="1_6y6v6"]
 [ext_resource type="Theme" path="res://themes/default_theme.tres" id="2_h1d0n"]
@@ -7,7 +7,6 @@
 [ext_resource type="Texture2D" uid="uid://b4xbgr0hsb3ab" path="res://art/ui/scene_frame.svg" id="5_43v7b"]
 [ext_resource type="Texture2D" uid="uid://d3xuvyy60blwi" path="res://icons/ui_start.svg" id="6_0nkdw"]
 [ext_resource type="Texture2D" uid="uid://bksp341gf2x35" path="res://icons/ui_continue.svg" id="7_jy3tl"]
-[ext_resource type="Texture2D" uid="uid://ogrfyvh1dnm7" path="res://icons/ui_remove.svg" id="9_8tt3d"]
 [ext_resource type="Texture2D" uid="uid://sliv3q2ppulc" path="res://icons/ui_back.svg" id="10_l4b6w"]
 
 [node name="Main" type="Control"]
@@ -95,18 +94,103 @@ layout_mode = 2
 text = "继续冒险"
 icon = ExtResource("7_jy3tl")
 
-[node name="SaveInfoLabel" type="Label" parent="CenterContainer/VBoxContainer"]
+[node name="LeaderboardPanel" type="PanelContainer" parent="CenterContainer/VBoxContainer"]
+custom_minimum_size = Vector2(560, 220)
 layout_mode = 2
-text = "暂无存档。"
+
+[node name="LeaderboardMargin" type="MarginContainer" parent="CenterContainer/VBoxContainer/LeaderboardPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="LeaderboardVBox" type="VBoxContainer" parent="CenterContainer/VBoxContainer/LeaderboardPanel/LeaderboardMargin"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="LeaderboardTitleLabel" type="Label" parent="CenterContainer/VBoxContainer/LeaderboardPanel/LeaderboardMargin/LeaderboardVBox"]
+layout_mode = 2
+text = "排行榜"
+horizontal_alignment = 1
+
+[node name="LeaderboardEmptyLabel" type="Label" parent="CenterContainer/VBoxContainer/LeaderboardPanel/LeaderboardMargin/LeaderboardVBox"]
+layout_mode = 2
+text = "暂无记录。"
 horizontal_alignment = 1
 autowrap_mode = 3
 
-[node name="ClearSaveButton" type="Button" parent="CenterContainer/VBoxContainer"]
+[node name="LeaderboardScroll" type="ScrollContainer" parent="CenterContainer/VBoxContainer/LeaderboardPanel/LeaderboardMargin/LeaderboardVBox"]
+custom_minimum_size = Vector2(0, 140)
 layout_mode = 2
-text = "清除存档"
-icon = ExtResource("9_8tt3d")
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="LeaderboardList" type="VBoxContainer" parent="CenterContainer/VBoxContainer/LeaderboardPanel/LeaderboardMargin/LeaderboardVBox/LeaderboardScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
 
 [node name="QuitButton" type="Button" parent="CenterContainer/VBoxContainer"]
 layout_mode = 2
 text = "退出"
 icon = ExtResource("10_l4b6w")
+
+[node name="LeaderboardOverlay" type="Control" parent="."]
+visible = false
+anchors_preset = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="Dimmer" type="ColorRect" parent="LeaderboardOverlay"]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color(0, 0, 0, 0.55)
+
+[node name="CenterContainer" type="CenterContainer" parent="LeaderboardOverlay"]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="LeaderboardDetailPanel" type="PanelContainer" parent="LeaderboardOverlay/CenterContainer"]
+custom_minimum_size = Vector2(640, 420)
+layout_mode = 2
+
+[node name="LeaderboardDetailMargin" type="MarginContainer" parent="LeaderboardOverlay/CenterContainer/LeaderboardDetailPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="LeaderboardDetailVBox" type="VBoxContainer" parent="LeaderboardOverlay/CenterContainer/LeaderboardDetailPanel/LeaderboardDetailMargin"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="LeaderboardDetailTitle" type="Label" parent="LeaderboardOverlay/CenterContainer/LeaderboardDetailPanel/LeaderboardDetailMargin/LeaderboardDetailVBox"]
+layout_mode = 2
+text = "排行榜详情"
+horizontal_alignment = 1
+
+[node name="LeaderboardDetailInfo" type="Label" parent="LeaderboardOverlay/CenterContainer/LeaderboardDetailPanel/LeaderboardDetailMargin/LeaderboardDetailVBox"]
+layout_mode = 2
+text = "得分：0"
+horizontal_alignment = 1
+
+[node name="LeaderboardDetailScroll" type="ScrollContainer" parent="LeaderboardOverlay/CenterContainer/LeaderboardDetailPanel/LeaderboardDetailMargin/LeaderboardDetailVBox"]
+custom_minimum_size = Vector2(0, 240)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="LeaderboardDetailList" type="VBoxContainer" parent="LeaderboardOverlay/CenterContainer/LeaderboardDetailPanel/LeaderboardDetailMargin/LeaderboardDetailVBox/LeaderboardDetailScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="LeaderboardDetailClose" type="Button" parent="LeaderboardOverlay/CenterContainer/LeaderboardDetailPanel/LeaderboardDetailMargin/LeaderboardDetailVBox"]
+layout_mode = 2
+text = "关闭"

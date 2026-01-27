@@ -20,7 +20,7 @@ A Godot 4.3 deck-building prototype set in an isekai adventure. The main goal is
 - Card hover shows a detail panel in combat/reward screens.
 - Reward selection list rendering is stabilized for upgrade/add flows.
 - Persistence: save/load run state and log key events to `user://savegame.json`.
-- Main menu shows save summary and allows clearing saves.
+- Main menu now focuses on run start/continue plus the leaderboard.
 - Combat UI includes HP bars and intent color swatches.
 - Intent icons and stat icons are integrated into the combat UI.
 - Added illustrated portraits, card frames, and background art.
@@ -81,6 +81,7 @@ A Godot 4.3 deck-building prototype set in an isekai adventure. The main goal is
 - Moved status/buff readouts onto portrait overlays to avoid squeezing the hand dock.
 - Added a post-battle score shop to buy new unowned cards with a paid refresh.
 - Runs now reset to the starter deck after victory or defeat for permanent roguelike progression.
+- Main menu shows the leaderboard and lets players inspect historical decks.
 - Fixed dynamic shop card slots to set separation via theme overrides safely.
 
 ## Scene and Script Layout
