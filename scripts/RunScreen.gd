@@ -14,6 +14,8 @@ const HAND_EXPANDED_HEIGHT := 200.0
 const ENEMY_WINDUP_DELAY := 0.25
 const ENEMY_ACTION_DELAY := 0.35
 const ENEMY_IDLE_DELAY := 0.2
+const SHOP_OFFER_COUNT := 3
+const SHOP_REFRESH_COST := 40
 const INTENT_ICONS := {
 	"attack": preload("res://icons/intent_attack.svg"),
 	"multi_attack": preload("res://icons/intent_multi.svg"),
@@ -31,6 +33,7 @@ const INTENT_ICONS := {
 @onready var enemy_hp_label: Label = $MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/EnemyColumn/EnemyStatsPanel/EnemyStatsMargin/EnemyStatsVBox/EnemyHpRow/EnemyHpLabel
 @onready var enemy_hp_bar: ProgressBar = $MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/EnemyColumn/EnemyStatsPanel/EnemyStatsMargin/EnemyStatsVBox/EnemyHpBar
 @onready var enemy_block_label: Label = $MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/EnemyColumn/EnemyStatsPanel/EnemyStatsMargin/EnemyStatsVBox/EnemyBlockRow/EnemyBlockLabel
+@onready var enemy_status_label: Label = $MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/EnemyColumn/EnemyStatsPanel/EnemyStatsMargin/EnemyStatsVBox/EnemyStatusLabel
 @onready var enemy_intent_swatch: ColorRect = $MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/EnemyColumn/EnemyStatsPanel/EnemyStatsMargin/EnemyStatsVBox/EnemyIntentSwatch
 @onready var enemy_intent_icon: TextureRect = $MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/EnemyColumn/EnemyStatsPanel/EnemyStatsMargin/EnemyStatsVBox/EnemyIntentRow/EnemyIntentIcon
 @onready var enemy_intent_label: Label = $MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/EnemyColumn/EnemyStatsPanel/EnemyStatsMargin/EnemyStatsVBox/EnemyIntentRow/EnemyIntentLabel
@@ -43,6 +46,8 @@ const INTENT_ICONS := {
 @onready var enemy_hit_fx: TextureRect = $MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/EnemyColumn/EnemyPortraitPanel/EnemyFxCenter/EnemyHitFx
 @onready var player_hp_label: Label = $MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/PlayerColumn/PlayerStatsPanel/PlayerStatsMargin/PlayerStatsVBox/PlayerHpRow/PlayerHpLabel
 @onready var player_block_label: Label = $MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/PlayerColumn/PlayerStatsPanel/PlayerStatsMargin/PlayerStatsVBox/PlayerBlockRow/PlayerBlockLabel
+@onready var player_status_label: Label = $MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/PlayerColumn/PlayerStatsPanel/PlayerStatsMargin/PlayerStatsVBox/PlayerStatusLabel
+@onready var player_buff_label: Label = $MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/PlayerColumn/PlayerStatsPanel/PlayerStatsMargin/PlayerStatsVBox/PlayerBuffLabel
 @onready var energy_label: Label = $MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/PlayerColumn/PlayerStatsPanel/PlayerStatsMargin/PlayerStatsVBox/PlayerEnergyRow/EnergyLabel
 @onready var draw_label: Label = $MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/PlayerColumn/PlayerStatsPanel/PlayerStatsMargin/PlayerStatsVBox/PlayerDeckRow/DrawLabel
 @onready var discard_label: Label = $MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/PlayerColumn/PlayerStatsPanel/PlayerStatsMargin/PlayerStatsVBox/PlayerDeckRow/DiscardLabel
@@ -73,6 +78,14 @@ const INTENT_ICONS := {
 @onready var reward_deck_scroll: ScrollContainer = $RewardOverlay/CenterContainer/RewardPanel/RewardMargin/RewardVBox/RewardDeckScroll
 @onready var reward_deck_list: VBoxContainer = $RewardOverlay/CenterContainer/RewardPanel/RewardMargin/RewardVBox/RewardDeckScroll/RewardDeckList
 @onready var reward_panel: PanelContainer = $RewardOverlay/CenterContainer/RewardPanel
+@onready var shop_overlay: Control = $ShopOverlay
+@onready var shop_points_label: Label = $ShopOverlay/CenterContainer/ShopPanel/ShopMargin/ShopVBox/ShopPointsLabel
+@onready var shop_info_label: Label = $ShopOverlay/CenterContainer/ShopPanel/ShopMargin/ShopVBox/ShopInfoLabel
+@onready var shop_choice_scroll: ScrollContainer = $ShopOverlay/CenterContainer/ShopPanel/ShopMargin/ShopVBox/ShopChoiceScroll
+@onready var shop_choice_container: HBoxContainer = $ShopOverlay/CenterContainer/ShopPanel/ShopMargin/ShopVBox/ShopChoiceScroll/ShopChoiceContainer
+@onready var shop_refresh_button: Button = $ShopOverlay/CenterContainer/ShopPanel/ShopMargin/ShopVBox/ShopActions/ShopRefreshButton
+@onready var shop_skip_button: Button = $ShopOverlay/CenterContainer/ShopPanel/ShopMargin/ShopVBox/ShopActions/ShopSkipButton
+@onready var shop_panel: PanelContainer = $ShopOverlay/CenterContainer/ShopPanel
 @onready var discard_overlay: Control = $DiscardOverlay
 @onready var discard_info_label: Label = $DiscardOverlay/CenterContainer/DiscardPanel/DiscardMargin/DiscardVBox/DiscardInfoLabel
 @onready var discard_choice_scroll: ScrollContainer = $DiscardOverlay/CenterContainer/DiscardPanel/DiscardMargin/DiscardVBox/DiscardChoiceScroll
@@ -148,6 +161,10 @@ var last_reward_mode := ""
 var reward_cards: Array = []
 var reward_overlay_active := false
 var reward_overlay_tween: Tween
+var shop_overlay_active := false
+var shop_overlay_tween: Tween
+var shop_offer_cards: Array = []
+var shop_offer_costs: Dictionary = {}
 var battle_log: Array = []
 var turn_index := 1
 var hand_slot_tweens: Dictionary = {}
@@ -178,6 +195,8 @@ func _ready() -> void:
 	reward_heal_button.pressed.connect(_on_reward_heal_pressed)
 	reward_draft_button.pressed.connect(_on_reward_draft_pressed)
 	reward_skip_button.pressed.connect(_on_reward_skip_pressed)
+	shop_refresh_button.pressed.connect(_on_shop_refresh_pressed)
+	shop_skip_button.pressed.connect(_on_shop_skip_pressed)
 	discard_confirm_button.pressed.connect(_on_discard_confirm_pressed)
 	route_supply_button.pressed.connect(_on_route_supply_pressed)
 	route_challenge_button.pressed.connect(_on_route_challenge_pressed)
@@ -188,6 +207,9 @@ func _ready() -> void:
 	card_detail_panel.visible = false
 	reward_overlay.modulate.a = 0.0
 	reward_overlay_active = reward_overlay.visible
+	shop_overlay.visible = false
+	shop_overlay.modulate.a = 0.0
+	shop_overlay_active = shop_overlay.visible
 	discard_overlay.visible = false
 	discard_overlay.modulate.a = 0.0
 	discard_overlay_active = discard_overlay.visible
@@ -218,11 +240,78 @@ func _scroll_battle_log_to_bottom() -> void:
 	result_label.call_deferred("scroll_to_line", max(line_count - 1, 0))
 
 func _player_status_text() -> String:
+	return _player_status_summary()
+
+func _player_status_summary() -> String:
 	var parts: Array = []
 	if player_weak_turns > 0:
 		parts.append("弱化%d" % player_weak_turns)
 	if player_vulnerable_turns > 0:
 		parts.append("易伤%d" % player_vulnerable_turns)
+	if player_next_attack_mult > 1.0:
+		parts.append("蓄力x%.1f" % player_next_attack_mult)
+	if player_next_attack_bonus > 0:
+		parts.append("下次攻击+%d" % player_next_attack_bonus)
+	if player_next_attack_pierce:
+		parts.append("下次穿刺")
+	if player_counter_ratio > 0.0:
+		parts.append("反击%d%%" % int(round(player_counter_ratio * 100.0)))
+	if player_nullify_count > 0:
+		parts.append("护幕%d" % player_nullify_count)
+	if player_damage_draw > 0:
+		parts.append("受伤抽牌+%d" % player_damage_draw)
+	if player_bleed_on_attack > 0:
+		parts.append("攻击叠流血+%d" % player_bleed_on_attack)
+	if player_attack_bonus_on_attack > 0:
+		parts.append("连击伤害+%d" % player_attack_bonus_on_attack)
+	if player_damage_bonus_turn > 0:
+		parts.append("本回合伤害+%d" % player_damage_bonus_turn)
+	if player_block_disabled:
+		parts.append("禁用护甲")
+	if player_next_card_cost_delta != 0:
+		parts.append("下一卡费用%+d" % player_next_card_cost_delta)
+	if player_skip_enemy_turn:
+		parts.append("停滞")
+	if parts.is_empty():
+		return "无"
+	return "，".join(parts)
+
+func _player_buff_summary() -> String:
+	var parts: Array = []
+	if equip_attack_bonus > 0:
+		parts.append("攻击+%d" % equip_attack_bonus)
+	if equip_damage_reduction > 0:
+		parts.append("减伤%d" % equip_damage_reduction)
+	if equip_attack_chain_draw > 0:
+		parts.append("连击抽牌%d" % equip_attack_chain_draw)
+	if equip_defend_chain_block > 0:
+		parts.append("连防护甲+%d" % equip_defend_chain_block)
+	if equip_block_on_damage > 0:
+		parts.append("受击护甲+%d" % equip_block_on_damage)
+	if equip_bleed_bonus_per_stack > 0:
+		parts.append("流血伤害+%d" % equip_bleed_bonus_per_stack)
+	if power_first_attack_draw > 0:
+		parts.append("首攻抽牌%d" % power_first_attack_draw)
+	if power_first_damage_block > 0:
+		parts.append("首伤护甲+%d" % power_first_damage_block)
+	if power_bleed_on_damage > 0:
+		parts.append("伤害附流血+%d" % power_bleed_on_damage)
+	if parts.is_empty():
+		return "无"
+	return "，".join(parts)
+
+func _enemy_status_summary() -> String:
+	var parts: Array = []
+	if enemy_bleed > 0:
+		parts.append("流血%d" % enemy_bleed)
+	if enemy_poison > 0:
+		parts.append("中毒%d" % enemy_poison)
+	if enemy_burn > 0:
+		parts.append("灼烧%d" % enemy_burn)
+	if enemy_attack_bonus > 0:
+		parts.append("蓄力+%d" % enemy_attack_bonus)
+	if enemy_block_gain_reduction > 0:
+		parts.append("护甲获得-%d" % enemy_block_gain_reduction)
 	if parts.is_empty():
 		return "无"
 	return "，".join(parts)
@@ -357,6 +446,7 @@ func _update_ui() -> void:
 	enemy_hp_bar.max_value = max(enemy_max_hp, 1)
 	enemy_hp_bar.value = enemy_hp
 	enemy_block_label.text = "敌人护甲：%d" % enemy_block
+	enemy_status_label.text = "状态：%s" % _enemy_status_summary()
 	enemy_intent_label.text = "意图：%s" % _enemy_card_display(enemy_intent_card)
 	enemy_desc_label.text = enemy_data.get("desc", "")
 	var intent_color := _enemy_card_color(enemy_intent_card)
@@ -368,17 +458,21 @@ func _update_ui() -> void:
 	player_hp_bar.max_value = max(RunState.player_max_hp, 1)
 	player_hp_bar.value = RunState.player_hp
 	player_block_label.text = "护甲：%d" % player_block
+	player_status_label.text = "状态：%s" % _player_status_summary()
+	player_buff_label.text = "装备/心法：%s" % _player_buff_summary()
 	energy_label.text = "能量：%d / %d" % [energy, RunState.energy_max]
 	draw_label.text = "抽牌堆：%d" % draw_pile.size()
 	discard_label.text = "弃牌堆：%d" % discard_pile.size()
 	end_turn_button.disabled = combat_over or enemy_acting or turn_locked or discard_overlay_active
 	var show_rewards := combat_over and not run_complete and next_step == "reward_options"
 	var show_route := combat_over and not run_complete and next_step == "route"
+	var show_shop := combat_over and not run_complete and next_step == "shop"
 	var show_score := combat_over and run_complete
 	_set_reward_overlay_visible(show_rewards)
 	_set_route_overlay_visible(show_route)
+	_set_shop_overlay_visible(show_shop)
 	_set_score_overlay_visible(show_score)
-	next_button.visible = combat_over and not show_rewards and not show_route
+	next_button.visible = combat_over and not show_rewards and not show_route and not show_shop
 	if combat_over and next_button.visible:
 		if run_complete:
 			next_button.text = "返回主菜单"
@@ -1221,8 +1315,233 @@ func _tick_player_end_turn() -> void:
 	player_next_card_cost_delta = 0
 
 func _queue_post_battle_step() -> void:
-	next_step = "encounter"
+	next_step = "shop"
+	_enter_shop()
+
+func _enter_shop() -> void:
+	next_step = "shop"
+	_refresh_shop_offers()
+	_set_shop_overlay_visible(true)
+	_append_battle_log("战后商店开启：可以用积分购买新卡牌。")
+
+func _refresh_shop_offers() -> void:
+	var pool: Array = _build_shop_pool()
+	shop_offer_cards.clear()
+	shop_offer_costs.clear()
+	if pool.is_empty():
+		_refresh_shop_ui()
+		return
+	pool.shuffle()
+	var offer_count: int = int(min(SHOP_OFFER_COUNT, pool.size()))
+	for i in range(offer_count):
+		var card_id: String = str(pool[i])
+		var card_data: Dictionary = GameData.get_card_data(card_id, 0)
+		shop_offer_cards.append(card_id)
+		shop_offer_costs[card_id] = _calculate_shop_cost(card_data)
+	_refresh_shop_ui()
+
+func _build_shop_pool() -> Array:
+	var owned: Dictionary = {}
+	for entry in RunState.deck:
+		var owned_id: String = RunState.get_card_id(entry)
+		if not owned_id.is_empty():
+			owned[owned_id] = true
+	var pool: Array = []
+	for card_id in GameData.all_card_ids():
+		var entry_id: String = str(card_id)
+		if owned.has(entry_id):
+			continue
+		var data: Dictionary = GameData.get_card(entry_id)
+		if data.is_empty():
+			continue
+		if str(data.get("kind", "")) == "curse":
+			continue
+		pool.append(entry_id)
+	return pool
+
+func _refresh_shop_ui() -> void:
+	shop_points_label.text = "当前积分：%d" % RunState.run_score_total
+	shop_refresh_button.text = "刷新商品 (-%d)" % SHOP_REFRESH_COST
+	var has_pool: bool = not _build_shop_pool().is_empty()
+	shop_refresh_button.disabled = RunState.run_score_total < SHOP_REFRESH_COST or not has_pool
+	if shop_offer_cards.is_empty():
+		if has_pool:
+			shop_info_label.text = "本轮商品已购完，可刷新商品继续购买。"
+		else:
+			shop_info_label.text = "已拥有全部可购买的卡牌。"
+		shop_choice_scroll.visible = false
+	else:
+		shop_info_label.text = "使用积分购买新卡牌。"
+		shop_choice_scroll.visible = true
+	_populate_shop_cards()
+
+func _populate_shop_cards() -> void:
+	_clear_container(shop_choice_container)
+	for card_id in shop_offer_cards:
+		var cost: int = int(shop_offer_costs.get(card_id, 0))
+		var card_data: Dictionary = GameData.get_card_data(card_id, 0)
+		var slot := VBoxContainer.new()
+		slot.theme_override_constants.separation = 4
+		shop_choice_container.add_child(slot)
+		var widget: CardWidget = CARD_WIDGET_SCENE.instantiate()
+		widget.set_card(card_data)
+		widget.hovered.connect(_on_card_hovered)
+		widget.unhovered.connect(_on_card_unhovered)
+		slot.add_child(widget)
+		var buy_button := Button.new()
+		buy_button.text = "购买 %d" % cost
+		buy_button.disabled = RunState.run_score_total < cost
+		buy_button.pressed.connect(_on_shop_buy_pressed.bind(card_id))
+		slot.add_child(buy_button)
+
+func _calculate_shop_cost(card_data: Dictionary) -> int:
+	var value: float = 0.0
+	var damage: int = int(card_data.get("damage", 0))
+	var block: int = int(card_data.get("block", 0))
+	var draw: int = int(card_data.get("draw", 0))
+	var heal: int = int(card_data.get("heal", 0))
+	var bleed: int = int(card_data.get("apply_bleed", 0))
+	var poison: int = int(card_data.get("apply_poison", 0))
+	var burn: int = int(card_data.get("apply_burn", 0))
+	var damage_bonus: int = int(card_data.get("damage_bonus", 0))
+	var bleed_on_attack: int = int(card_data.get("bleed_on_attack", 0))
+	var cost_delta: int = int(card_data.get("next_card_cost_delta", 0))
+	var equip_attack: int = int(card_data.get("equip_attack_bonus", 0))
+	var equip_reduction: int = int(card_data.get("equip_damage_reduction", 0))
+	var equip_chain_draw: int = int(card_data.get("equip_attack_chain_draw", 0))
+	var equip_defend_block: int = int(card_data.get("equip_defend_chain_block", 0))
+	var equip_block_on_damage: int = int(card_data.get("equip_block_on_damage", 0))
+	var equip_bleed_bonus: int = int(card_data.get("equip_bleed_bonus_per_stack", 0))
+	var power_first_attack: int = int(card_data.get("power_first_attack_draw", 0))
+	var power_first_damage: int = int(card_data.get("power_first_damage_block", 0))
+	var power_bleed_on_damage: int = int(card_data.get("power_bleed_on_damage", 0))
+	var cost: int = int(card_data.get("cost", 0))
+	var kind: String = str(card_data.get("kind", ""))
+	var rarity: String = str(card_data.get("rarity", "common"))
+	value += float(damage) * 3.0
+	value += float(block) * 2.5
+	value += float(draw) * 12.0
+	value += float(heal) * 3.5
+	value += float(damage_bonus) * 6.0
+	value += float(bleed) * 4.0
+	value += float(poison) * 4.5
+	value += float(burn) * 4.5
+	value += float(bleed_on_attack) * 8.0
+	if cost_delta != 0:
+		value += -8.0 * float(cost_delta)
+	value += float(equip_attack) * 14.0
+	value += float(equip_reduction) * 12.0
+	value += float(equip_chain_draw) * 12.0
+	value += float(equip_defend_block) * 6.0
+	value += float(equip_block_on_damage) * 8.0
+	value += float(equip_bleed_bonus) * 10.0
+	value += float(power_first_attack) * 12.0
+	value += float(power_first_damage) * 10.0
+	value += float(power_bleed_on_damage) * 8.0
+	if bool(card_data.get("pierce", false)):
+		value += 12.0
+	if int(card_data.get("pierce_if_block", 0)) > 0:
+		value += 8.0
+	if bool(card_data.get("damage_from_block", false)):
+		value += 10.0
+	if bool(card_data.get("damage_from_missing_hp", false)):
+		value += 14.0
+	if float(card_data.get("execute_threshold", 0.0)) > 0.0:
+		value += 18.0
+	var lifesteal_ratio: float = float(card_data.get("lifesteal_ratio", 0.0))
+	if lifesteal_ratio > 0.0:
+		value += 20.0 * lifesteal_ratio
+	if bool(card_data.get("skip_enemy_turn", false)):
+		value += 35.0
+	var counter_ratio: float = float(card_data.get("counter_ratio", 0.0))
+	if counter_ratio > 0.0:
+		value += 20.0 * counter_ratio
+	var nullify_count: int = int(card_data.get("nullify_count", 0))
+	if nullify_count > 0:
+		value += 16.0 * float(nullify_count)
+	var damage_draw: int = int(card_data.get("damage_draw", 0))
+	if damage_draw > 0:
+		value += 10.0 * float(damage_draw)
+	var attack_bonus_on_attack: int = int(card_data.get("attack_bonus_on_attack", 0))
+	if attack_bonus_on_attack > 0:
+		value += 12.0 * float(attack_bonus_on_attack)
+	var charge_mult: float = float(card_data.get("charge_mult", 0.0))
+	if charge_mult > 0.0:
+		value += 12.0 * charge_mult
+	var next_attack_bonus: int = int(card_data.get("next_attack_bonus", 0))
+	if next_attack_bonus > 0:
+		value += 6.0 * float(next_attack_bonus)
+	if bool(card_data.get("next_attack_pierce", false)):
+		value += 10.0
+	var block_gain_reduction: int = int(card_data.get("enemy_block_gain_reduction", 0))
+	if block_gain_reduction > 0:
+		value += 6.0 * float(block_gain_reduction)
+	if kind == "equipment" or kind == "power":
+		value += 25.0
+	elif kind == "status":
+		value += 10.0
+	if cost == 0:
+		value += 18.0
+	elif cost >= 2:
+		value += 4.0 * float(cost)
+	var rarity_mult := 1.0
+	match rarity:
+		"uncommon":
+			rarity_mult = 1.15
+		"rare":
+			rarity_mult = 1.35
+		_:
+			rarity_mult = 1.0
+	value = max(value, 12.0) * rarity_mult + 8.0
+	var price: int = int(round(value))
+	price = int(round(float(price) / 5.0)) * 5
+	return max(price, 20)
+
+func _set_shop_overlay_visible(active: bool) -> void:
+	if active == shop_overlay_active:
+		return
+	shop_overlay_active = active
+	if shop_overlay_tween:
+		shop_overlay_tween.kill()
+	if active:
+		shop_overlay.visible = true
+		shop_overlay.modulate.a = 0.0
+		shop_panel.scale = Vector2(0.96, 0.96)
+		shop_overlay_tween = create_tween()
+		shop_overlay_tween.tween_property(shop_overlay, "modulate:a", 1.0, 0.18).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+		shop_overlay_tween.tween_property(shop_panel, "scale", Vector2.ONE, 0.2).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	else:
+		shop_overlay_tween = create_tween()
+		shop_overlay_tween.tween_property(shop_overlay, "modulate:a", 0.0, 0.12).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+		shop_overlay_tween.tween_callback(func(): shop_overlay.visible = false)
+
+func _on_shop_refresh_pressed() -> void:
+	if RunState.run_score_total < SHOP_REFRESH_COST:
+		return
+	RunState.run_score_total = max(RunState.run_score_total - SHOP_REFRESH_COST, 0)
+	RunState.log_event("积分刷新商店：-%d 分。" % SHOP_REFRESH_COST)
+	_refresh_shop_offers()
+	RunState.save_run()
+
+func _on_shop_skip_pressed() -> void:
+	_set_shop_overlay_visible(false)
 	_enter_route_selection()
+
+func _on_shop_buy_pressed(card_id: String) -> void:
+	var cost: int = int(shop_offer_costs.get(card_id, 0))
+	if cost <= 0:
+		return
+	if RunState.run_score_total < cost:
+		return
+	RunState.run_score_total = max(RunState.run_score_total - cost, 0)
+	RunState.add_card(card_id)
+	var card_name: String = str(GameData.get_card_data(card_id, 0).get("name", "卡牌"))
+	RunState.log_event("积分购买卡牌：%s（-%d 分）。" % [card_name, cost])
+	_append_battle_log("购买卡牌：%s（-%d 积分）。" % [card_name, cost])
+	shop_offer_cards.erase(card_id)
+	shop_offer_costs.erase(card_id)
+	_refresh_shop_ui()
+	RunState.save_run()
 
 func _enter_route_selection() -> void:
 	next_step = "route"

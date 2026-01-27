@@ -1,6 +1,8 @@
 # Changelog
 
 ## 2026-01-26
+- Added status/buff display rows for player and enemy combat panels.
+- Added a post-battle score shop with card pricing and paid refresh.
 - Fixed GDScript type inference warnings that were treated as errors in strict parsing.
 - Added new SVG card art placeholders for the expanded card pool and wired them in card data.
 - Added status/equipment/power/curse icon SVGs and updated card definitions to use them.

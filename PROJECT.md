@@ -78,6 +78,8 @@ A Godot 4.3 deck-building prototype set in an isekai adventure. The main goal is
 - Added per-battle equipment and power effects (combo draws, damage reduction, bleed boosts).
 - Added retain/ethereal/exhaust handling for card persistence and removal.
 - Starter deck now uses 15 cards to support the larger card pool.
+- Battle UI now shows player/enemy status effects plus active equipment and power buffs.
+- Added a post-battle score shop to buy new unowned cards with a paid refresh.
 
 ## Scene and Script Layout
 - `scenes/Main.tscn` + `scripts/Main.gd`: main menu and navigation.

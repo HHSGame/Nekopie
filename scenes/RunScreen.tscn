@@ -173,6 +173,11 @@ stretch_mode = 5
 layout_mode = 2
 text = "敌人护甲：0"
 
+[node name="EnemyStatusLabel" type="Label" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/EnemyColumn/EnemyStatsPanel/EnemyStatsMargin/EnemyStatsVBox"]
+layout_mode = 2
+text = "状态：无"
+autowrap_mode = 3
+
 [node name="EnemyIntentRow" type="HBoxContainer" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/EnemyColumn/EnemyStatsPanel/EnemyStatsMargin/EnemyStatsVBox"]
 layout_mode = 2
 theme_override_constants/separation = 6
@@ -324,6 +329,16 @@ stretch_mode = 5
 [node name="PlayerBlockLabel" type="Label" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/PlayerColumn/PlayerStatsPanel/PlayerStatsMargin/PlayerStatsVBox/PlayerBlockRow"]
 layout_mode = 2
 text = "护甲：0"
+
+[node name="PlayerStatusLabel" type="Label" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/PlayerColumn/PlayerStatsPanel/PlayerStatsMargin/PlayerStatsVBox"]
+layout_mode = 2
+text = "状态：无"
+autowrap_mode = 3
+
+[node name="PlayerBuffLabel" type="Label" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/PlayerColumn/PlayerStatsPanel/PlayerStatsMargin/PlayerStatsVBox"]
+layout_mode = 2
+text = "装备/心法：无"
+autowrap_mode = 3
 
 [node name="PlayerEnergyRow" type="HBoxContainer" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/PlayerColumn/PlayerStatsPanel/PlayerStatsMargin/PlayerStatsVBox"]
 layout_mode = 2
@@ -622,6 +637,80 @@ size_flags_vertical = 3
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 8
+
+[node name="ShopOverlay" type="Control" parent="."]
+visible = false
+anchors_preset = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="Dimmer" type="ColorRect" parent="ShopOverlay"]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color(0, 0, 0, 0.55)
+
+[node name="CenterContainer" type="CenterContainer" parent="ShopOverlay"]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="ShopPanel" type="PanelContainer" parent="ShopOverlay/CenterContainer"]
+custom_minimum_size = Vector2(820, 420)
+layout_mode = 2
+
+[node name="ShopMargin" type="MarginContainer" parent="ShopOverlay/CenterContainer/ShopPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="ShopVBox" type="VBoxContainer" parent="ShopOverlay/CenterContainer/ShopPanel/ShopMargin"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="ShopTitleLabel" type="Label" parent="ShopOverlay/CenterContainer/ShopPanel/ShopMargin/ShopVBox"]
+layout_mode = 2
+text = "战后商店"
+
+[node name="ShopPointsLabel" type="Label" parent="ShopOverlay/CenterContainer/ShopPanel/ShopMargin/ShopVBox"]
+layout_mode = 2
+text = "当前积分：0"
+
+[node name="ShopInfoLabel" type="Label" parent="ShopOverlay/CenterContainer/ShopPanel/ShopMargin/ShopVBox"]
+layout_mode = 2
+text = "使用积分购买新卡牌。"
+autowrap_mode = 3
+
+[node name="ShopChoiceScroll" type="ScrollContainer" parent="ShopOverlay/CenterContainer/ShopPanel/ShopMargin/ShopVBox"]
+custom_minimum_size = Vector2(0, 220)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="ShopChoiceContainer" type="HBoxContainer" parent="ShopOverlay/CenterContainer/ShopPanel/ShopMargin/ShopVBox/ShopChoiceScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+
+[node name="ShopActions" type="HBoxContainer" parent="ShopOverlay/CenterContainer/ShopPanel/ShopMargin/ShopVBox"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="ShopRefreshButton" type="Button" parent="ShopOverlay/CenterContainer/ShopPanel/ShopMargin/ShopVBox/ShopActions"]
+layout_mode = 2
+text = "刷新商品 (-40)"
+
+[node name="ShopActionsSpacer" type="Control" parent="ShopOverlay/CenterContainer/ShopPanel/ShopMargin/ShopVBox/ShopActions"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ShopSkipButton" type="Button" parent="ShopOverlay/CenterContainer/ShopPanel/ShopMargin/ShopVBox/ShopActions"]
+layout_mode = 2
+text = "继续前进"
 
 [node name="DiscardOverlay" type="Control" parent="."]
 visible = false
