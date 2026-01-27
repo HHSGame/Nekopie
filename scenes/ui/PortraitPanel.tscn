@@ -1,0 +1,48 @@
+[gd_scene load_steps=3 format=3 uid=uid://cxlxj1g7k5q8u]
+
+[ext_resource type="Script" path="res://scripts/ui/PortraitPanel.gd" id="1_f0b2m"]
+[ext_resource type="Theme" path="res://themes/default_theme.tres" id="2_xu7al"]
+
+[node name="PortraitPanel" type="PanelContainer"]
+custom_minimum_size = Vector2(128, 128)
+layout_mode = 2
+theme = ExtResource("2_xu7al")
+script = ExtResource("1_f0b2m")
+
+[node name="Portrait" type="TextureRect" parent="."]
+layout_mode = 2
+stretch_mode = 5
+
+[node name="PortraitFrame" type="TextureRect" parent="."]
+layout_mode = 2
+mouse_filter = 2
+stretch_mode = 5
+
+[node name="FxCenter" type="CenterContainer" parent="."]
+layout_mode = 2
+
+[node name="HitFx" type="TextureRect" parent="FxCenter"]
+visible = false
+custom_minimum_size = Vector2(96, 96)
+layout_mode = 2
+stretch_mode = 5
+
+[node name="HitFlash" type="ColorRect" parent="."]
+visible = false
+layout_mode = 2
+color = Color(1, 0.3, 0.3, 0)
+
+[node name="StatusOverlay" type="VBoxContainer" parent="."]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 2
+
+[node name="StatusLabel" type="Label" parent="StatusOverlay"]
+layout_mode = 2
+text = "状态：无"
+autowrap_mode = 3
+
+[node name="BuffLabel" type="Label" parent="StatusOverlay"]
+layout_mode = 2
+text = "装备/心法：无"
+autowrap_mode = 3

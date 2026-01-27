@@ -79,10 +79,12 @@ A Godot 4.3 deck-building prototype set in an isekai adventure. The main goal is
 - Starter deck now uses 15 cards to support the larger card pool.
 - Battle UI now shows player/enemy status effects plus active equipment and power buffs.
 - Moved status/buff readouts onto portrait overlays to avoid squeezing the hand dock.
+- Extracted portrait/status panels and the battle log into reusable UI sub-scenes.
 - Added a post-battle score shop to buy new unowned cards with a paid refresh.
 - Runs now reset to the starter deck after victory or defeat for permanent roguelike progression.
 - Main menu shows the leaderboard and lets players inspect historical decks.
 - Fixed dynamic shop card slots to set separation via theme overrides safely.
+- Added a combat event bus + phase constants and emit phase start/end signals in RunScreen.
 
 ## Scene and Script Layout
 - `scenes/Main.tscn` + `scripts/Main.gd`: main menu and navigation.

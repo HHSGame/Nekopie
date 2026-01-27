@@ -1,6 +1,14 @@
 # Changelog
 
+## 2026-01-27
+- Fixed PortraitPanel and BattleLogPanel scripts to use valid node paths and tween properties.
+- Corrected CombatActor/BattlePhases/CombatEventBus definitions for strict parsing.
+- Added a combat event bus and phase emissions for encounter start, card play, end turns, and battle end flow.
+- Enabled explicit scrolling on the battle log label for overflow lines.
+- Fixed battle log line trimming to keep the most recent entries.
+
 ## 2026-01-26
+- Extracted portrait/status panels and the battle log into reusable UI sub-scenes.
 - Replaced save info/clear buttons with a leaderboard list on the main menu.
 - Leaderboard entries now store deck snapshots and show their cards in a detail overlay.
 - Removed the DeckBuilder scene and its main menu entry.

@@ -1,0 +1,25 @@
+[gd_scene load_steps=3 format=3 uid=uid://dfe3wq7m4o16k]
+
+[ext_resource type="Script" path="res://scripts/ui/BattleLogPanel.gd" id="1_3k2ay"]
+[ext_resource type="Theme" path="res://themes/default_theme.tres" id="2_5s6q8"]
+
+[node name="BattleLogPanel" type="PanelContainer"]
+custom_minimum_size = Vector2(0, 220)
+layout_mode = 2
+size_flags_horizontal = 3
+theme = ExtResource("2_5s6q8")
+script = ExtResource("1_3k2ay")
+
+[node name="LogMargin" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 3
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 3
+
+[node name="LogLabel" type="RichTextLabel" parent="LogMargin"]
+layout_mode = 2
+text = "准备迎战。"
+scroll_active = true
+scroll_following = true
+scroll_visible = true

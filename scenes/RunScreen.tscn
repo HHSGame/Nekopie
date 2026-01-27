@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3 uid="uid://bwl47lxg5wuap"]
+[gd_scene load_steps=24 format=3 uid="uid://bwl47lxg5wuap"]
 
 [ext_resource type="Script" path="res://scripts/RunScreen.gd" id="1_3jvb6"]
 [ext_resource type="Theme" path="res://themes/default_theme.tres" id="2_xk0w6"]
@@ -13,9 +13,6 @@
 [ext_resource type="AudioStream" uid="uid://b6g0oqolapn0a" path="res://audio/sfx_block.wav" id="11_9p0r4"]
 [ext_resource type="AudioStream" uid="uid://bvki1u8qiji8s" path="res://audio/sfx_reward.wav" id="12_1p0d9"]
 [ext_resource type="Texture2D" uid="uid://b4xbgr0hsb3ab" path="res://art/ui/scene_frame.svg" id="13_0qu8n"]
-[ext_resource type="Texture2D" uid="uid://bgih372t1mwu2" path="res://art/ui/portrait_frame.svg" id="15_kj4e1"]
-[ext_resource type="Texture2D" uid="uid://0tn27b5v7fx6" path="res://art/fx/slash.svg" id="16_t5o0q"]
-[ext_resource type="Texture2D" uid="uid://b8fterojcvbmf" path="res://art/fx/impact.svg" id="17_9xo3o"]
 [ext_resource type="Texture2D" uid="uid://sliv3q2ppulc" path="res://icons/ui_back.svg" id="18_0e8pe"]
 [ext_resource type="Texture2D" uid="uid://cjna73jsv1vu" path="res://icons/ui_end_turn.svg" id="19_p2ivm"]
 [ext_resource type="Texture2D" uid="uid://8vxaem7b6ntf" path="res://icons/ui_next.svg" id="20_trx2m"]
@@ -24,6 +21,8 @@
 [ext_resource type="Texture2D" uid="uid://ogrfyvh1dnm7" path="res://icons/ui_remove.svg" id="23_7r0c1"]
 [ext_resource type="Texture2D" uid="uid://dbvleci5exo62" path="res://icons/ui_skip.svg" id="24_05s2n"]
 [ext_resource type="Texture2D" uid="uid://dpgaeb3bwpdox" path="res://icons/ui_heart.svg" id="25_1k2pn"]
+[ext_resource type="PackedScene" path="res://scenes/ui/PortraitPanel.tscn" id="26_1s0kp"]
+[ext_resource type="PackedScene" path="res://scenes/ui/BattleLogPanel.tscn" id="27_7x1jd"]
 
 [node name="RunScreen" type="Control"]
 layout_mode = 3
@@ -95,44 +94,9 @@ theme_override_constants/separation = 3
 layout_mode = 2
 text = "敌人：未知魔物"
 
-[node name="EnemyPortraitPanel" type="PanelContainer" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/EnemyColumn"]
+[node name="EnemyPortraitPanel" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/EnemyColumn" instance=ExtResource("26_1s0kp")]
 custom_minimum_size = Vector2(128, 128)
 layout_mode = 2
-
-[node name="EnemyPortrait" type="TextureRect" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/EnemyColumn/EnemyPortraitPanel"]
-layout_mode = 2
-stretch_mode = 5
-
-[node name="EnemyPortraitFrame" type="TextureRect" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/EnemyColumn/EnemyPortraitPanel"]
-layout_mode = 2
-mouse_filter = 2
-texture = ExtResource("15_kj4e1")
-stretch_mode = 5
-
-[node name="EnemyFxCenter" type="CenterContainer" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/EnemyColumn/EnemyPortraitPanel"]
-layout_mode = 2
-
-[node name="EnemyHitFx" type="TextureRect" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/EnemyColumn/EnemyPortraitPanel/EnemyFxCenter"]
-visible = false
-custom_minimum_size = Vector2(96, 96)
-layout_mode = 2
-texture = ExtResource("16_t5o0q")
-stretch_mode = 5
-
-[node name="EnemyHitFlash" type="ColorRect" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/EnemyColumn/EnemyPortraitPanel"]
-visible = false
-layout_mode = 2
-color = Color(1, 0.3, 0.3, 0)
-
-[node name="EnemyStatusOverlay" type="VBoxContainer" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/EnemyColumn/EnemyPortraitPanel"]
-layout_mode = 2
-mouse_filter = 2
-theme_override_constants/separation = 2
-
-[node name="EnemyStatusLabel" type="Label" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/EnemyColumn/EnemyPortraitPanel/EnemyStatusOverlay"]
-layout_mode = 2
-text = "状态：无"
-autowrap_mode = 3
 
 [node name="EnemyStatsPanel" type="PanelContainer" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/EnemyColumn"]
 layout_mode = 2
@@ -227,22 +191,10 @@ layout_mode = 2
 text = "旅程开始。"
 autowrap_mode = 3
 
-[node name="BattleLogPanel" type="PanelContainer" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/BattleCenterColumn"]
+[node name="BattleLogPanel" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/BattleCenterColumn" instance=ExtResource("27_7x1jd")]
 custom_minimum_size = Vector2(0, 220)
 layout_mode = 2
 size_flags_horizontal = 3
-
-[node name="BattleLogMargin" type="MarginContainer" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/BattleCenterColumn/BattleLogPanel"]
-layout_mode = 2
-theme_override_constants/margin_left = 4
-theme_override_constants/margin_top = 3
-theme_override_constants/margin_right = 4
-theme_override_constants/margin_bottom = 3
-
-[node name="ResultLabel" type="RichTextLabel" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/BattleCenterColumn/BattleLogPanel/BattleLogMargin"]
-layout_mode = 2
-text = "准备迎战。"
-scroll_following = true
 
 [node name="BattleCenterSpacer" type="Control" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/BattleCenterColumn"]
 layout_mode = 2
@@ -257,49 +209,9 @@ theme_override_constants/separation = 3
 layout_mode = 2
 text = "旅人状态"
 
-[node name="PlayerPortraitPanel" type="PanelContainer" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/PlayerColumn"]
+[node name="PlayerPortraitPanel" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/PlayerColumn" instance=ExtResource("26_1s0kp")]
 custom_minimum_size = Vector2(128, 128)
 layout_mode = 2
-
-[node name="PlayerPortrait" type="TextureRect" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/PlayerColumn/PlayerPortraitPanel"]
-layout_mode = 2
-stretch_mode = 5
-
-[node name="PlayerPortraitFrame" type="TextureRect" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/PlayerColumn/PlayerPortraitPanel"]
-layout_mode = 2
-mouse_filter = 2
-texture = ExtResource("15_kj4e1")
-stretch_mode = 5
-
-[node name="PlayerFxCenter" type="CenterContainer" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/PlayerColumn/PlayerPortraitPanel"]
-layout_mode = 2
-
-[node name="PlayerHitFx" type="TextureRect" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/PlayerColumn/PlayerPortraitPanel/PlayerFxCenter"]
-visible = false
-custom_minimum_size = Vector2(96, 96)
-layout_mode = 2
-texture = ExtResource("17_9xo3o")
-stretch_mode = 5
-
-[node name="PlayerHitFlash" type="ColorRect" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/PlayerColumn/PlayerPortraitPanel"]
-visible = false
-layout_mode = 2
-color = Color(1, 0.3, 0.3, 0)
-
-[node name="PlayerStatusOverlay" type="VBoxContainer" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/PlayerColumn/PlayerPortraitPanel"]
-layout_mode = 2
-mouse_filter = 2
-theme_override_constants/separation = 2
-
-[node name="PlayerStatusLabel" type="Label" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/PlayerColumn/PlayerPortraitPanel/PlayerStatusOverlay"]
-layout_mode = 2
-text = "状态：无"
-autowrap_mode = 3
-
-[node name="PlayerBuffLabel" type="Label" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/PlayerColumn/PlayerPortraitPanel/PlayerStatusOverlay"]
-layout_mode = 2
-text = "装备/心法：无"
-autowrap_mode = 3
 
 [node name="PlayerStatsPanel" type="PanelContainer" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/PlayerColumn"]
 layout_mode = 2
