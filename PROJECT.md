@@ -86,6 +86,7 @@ A Godot 4.3 deck-building prototype set in an isekai adventure. The main goal is
 - Fixed dynamic shop card slots to set separation via theme overrides safely.
 - Added a combat event bus + phase constants and emit phase start/end signals in RunScreen.
 - Added phase handler nodes for status resolution, card effects, and target reaction callbacks.
+- Moved status resolution (debuff decay/DOT ticks) and card effect execution into pipeline handlers.
 
 ## Scene and Script Layout
 - `scenes/Main.tscn` + `scripts/Main.gd`: main menu and navigation.

@@ -7,6 +7,7 @@
 - Enabled explicit scrolling on the battle log label for overflow lines.
 - Fixed battle log line trimming to keep the most recent entries.
 - Hooked combat phase callbacks into dedicated status/card-effect/target-reaction handler nodes.
+- Moved DOT/debuff resolution into the status handler and card effect logic into a dedicated executor.
 
 ## 2026-01-26
 - Extracted portrait/status panels and the battle log into reusable UI sub-scenes.
