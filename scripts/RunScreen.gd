@@ -100,6 +100,9 @@ const INTENT_ICONS := {
 @onready var sfx_attack: AudioStreamPlayer = $SfxAttack
 @onready var sfx_block: AudioStreamPlayer = $SfxBlock
 @onready var sfx_reward: AudioStreamPlayer = $SfxReward
+@onready var status_handler: Node = $CombatPipeline/StatusResolutionHandler
+@onready var card_effect_handler: Node = $CombatPipeline/CardEffectHandler
+@onready var target_reaction_handler: Node = $CombatPipeline/TargetReactionHandler
 
 var player_actor := CombatActor.new()
 var event_bus := CombatEventBus.new()
@@ -176,6 +179,12 @@ var end_turn_phase_pending := false
 func _ready() -> void:
 	event_bus.name = "CombatEventBus"
 	add_child(event_bus)
+	if status_handler:
+		status_handler.setup(event_bus, self)
+	if card_effect_handler:
+		card_effect_handler.setup(event_bus, self)
+	if target_reaction_handler:
+		target_reaction_handler.setup(event_bus, self)
 	story_label.text = "你踏上 %s 的山道，魔物在雾中伺机。" % GameData.MOUNTAIN_NAME
 	back_button.pressed.connect(_on_back_pressed)
 	end_turn_button.pressed.connect(_on_end_turn_pressed)
@@ -222,6 +231,15 @@ func _begin_phase(phase: String, payload: Dictionary = {}) -> void:
 
 func _end_phase(phase: String, payload: Dictionary = {}) -> void:
 	event_bus.end_phase(phase, payload)
+
+func _handle_status_resolution(payload: Dictionary) -> void:
+	return
+
+func _handle_card_effect(card_data: Dictionary, payload: Dictionary) -> void:
+	_apply_card_effect(card_data)
+
+func _handle_target_reaction(payload: Dictionary) -> void:
+	_check_enemy_defeat()
 
 func _player_status_text() -> String:
 	return _player_status_summary()
@@ -586,8 +604,7 @@ func _on_hand_card_clicked(card_id: String, index: int) -> void:
 	_begin_phase(BattlePhases.USE_CARD, {"card": card_name, "cost": cost})
 	player_actor.energy -= cost
 	player_next_card_cost_delta = 0
-	_begin_phase(BattlePhases.CARD_EFFECT, {"card": card_name})
-	_apply_card_effect(card_data)
+	_begin_phase(BattlePhases.CARD_EFFECT, {"card": card_name, "card_data": card_data, "source": "player"})
 	_end_phase(BattlePhases.CARD_EFFECT, {"card": card_name})
 	var removed = _remove_card_from_hand(index)
 	if removed != null:
@@ -595,8 +612,7 @@ func _on_hand_card_clicked(card_id: String, index: int) -> void:
 			_append_battle_log("【%s】已消耗。" % card_name)
 		else:
 			player_actor.discard_pile.append(removed)
-	_begin_phase(BattlePhases.TARGET_REACTION, {"card": card_name})
-	_check_enemy_defeat()
+	_begin_phase(BattlePhases.TARGET_REACTION, {"card": card_name, "source": "player"})
 	_end_phase(BattlePhases.TARGET_REACTION, {"card": card_name})
 	_begin_phase(BattlePhases.FINAL_RESOLVE, {"card": card_name})
 	_update_ui()
