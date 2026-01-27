@@ -124,6 +124,16 @@ visible = false
 layout_mode = 2
 color = Color(1, 0.3, 0.3, 0)
 
+[node name="EnemyStatusOverlay" type="VBoxContainer" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/EnemyColumn/EnemyPortraitPanel"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 2
+
+[node name="EnemyStatusLabel" type="Label" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/EnemyColumn/EnemyPortraitPanel/EnemyStatusOverlay"]
+layout_mode = 2
+text = "状态：无"
+autowrap_mode = 3
+
 [node name="EnemyStatsPanel" type="PanelContainer" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/EnemyColumn"]
 layout_mode = 2
 
@@ -172,11 +182,6 @@ stretch_mode = 5
 [node name="EnemyBlockLabel" type="Label" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/EnemyColumn/EnemyStatsPanel/EnemyStatsMargin/EnemyStatsVBox/EnemyBlockRow"]
 layout_mode = 2
 text = "敌人护甲：0"
-
-[node name="EnemyStatusLabel" type="Label" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/EnemyColumn/EnemyStatsPanel/EnemyStatsMargin/EnemyStatsVBox"]
-layout_mode = 2
-text = "状态：无"
-autowrap_mode = 3
 
 [node name="EnemyIntentRow" type="HBoxContainer" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/EnemyColumn/EnemyStatsPanel/EnemyStatsMargin/EnemyStatsVBox"]
 layout_mode = 2
@@ -281,6 +286,21 @@ visible = false
 layout_mode = 2
 color = Color(1, 0.3, 0.3, 0)
 
+[node name="PlayerStatusOverlay" type="VBoxContainer" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/PlayerColumn/PlayerPortraitPanel"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 2
+
+[node name="PlayerStatusLabel" type="Label" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/PlayerColumn/PlayerPortraitPanel/PlayerStatusOverlay"]
+layout_mode = 2
+text = "状态：无"
+autowrap_mode = 3
+
+[node name="PlayerBuffLabel" type="Label" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/PlayerColumn/PlayerPortraitPanel/PlayerStatusOverlay"]
+layout_mode = 2
+text = "装备/心法：无"
+autowrap_mode = 3
+
 [node name="PlayerStatsPanel" type="PanelContainer" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/PlayerColumn"]
 layout_mode = 2
 
@@ -329,16 +349,6 @@ stretch_mode = 5
 [node name="PlayerBlockLabel" type="Label" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/PlayerColumn/PlayerStatsPanel/PlayerStatsMargin/PlayerStatsVBox/PlayerBlockRow"]
 layout_mode = 2
 text = "护甲：0"
-
-[node name="PlayerStatusLabel" type="Label" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/PlayerColumn/PlayerStatsPanel/PlayerStatsMargin/PlayerStatsVBox"]
-layout_mode = 2
-text = "状态：无"
-autowrap_mode = 3
-
-[node name="PlayerBuffLabel" type="Label" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/PlayerColumn/PlayerStatsPanel/PlayerStatsMargin/PlayerStatsVBox"]
-layout_mode = 2
-text = "装备/心法：无"
-autowrap_mode = 3
 
 [node name="PlayerEnergyRow" type="HBoxContainer" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/PlayerColumn/PlayerStatsPanel/PlayerStatsMargin/PlayerStatsVBox"]
 layout_mode = 2

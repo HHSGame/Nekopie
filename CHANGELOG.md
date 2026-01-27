@@ -1,6 +1,7 @@
 # Changelog
 
 ## 2026-01-26
+- Moved status/buff readouts to portrait overlays to keep the hand area within the viewport.
 - Added status/buff display rows for player and enemy combat panels.
 - Added a post-battle score shop with card pricing and paid refresh.
 - Fixed GDScript type inference warnings that were treated as errors in strict parsing.
