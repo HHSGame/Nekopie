@@ -1,6 +1,9 @@
 # Changelog
 
 ## 2026-01-27
+- Split RunScreen responsibilities into CombatFlowController, CombatUIController, and RewardFlowController.
+- Trimmed RunScreen to orchestration and node bindings while delegating combat flow and UI updates.
+- Centralized reward/shop/discard overlay logic inside the RewardFlowController.
 - Fixed PortraitPanel and BattleLogPanel scripts to use valid node paths and tween properties.
 - Corrected CombatActor/BattlePhases/CombatEventBus definitions for strict parsing.
 - Added a combat event bus and phase emissions for encounter start, card play, end turns, and battle end flow.

@@ -88,6 +88,7 @@ A Godot 4.3 deck-building prototype set in an isekai adventure. The main goal is
 - Added phase handler nodes for status resolution, card effects, and target reaction callbacks.
 - Moved status resolution (debuff decay/DOT ticks) and card effect execution into pipeline handlers.
 - Centralized combat state into a CombatState model to reduce RunScreen responsibilities.
+- Split combat orchestration into CombatFlow/UI/Reward controllers so RunScreen only wires phases and node bindings.
 
 ## Scene and Script Layout
 - `scenes/Main.tscn` + `scripts/Main.gd`: main menu and navigation.
@@ -95,6 +96,8 @@ A Godot 4.3 deck-building prototype set in an isekai adventure. The main goal is
 - `scenes/CardWidget.tscn` + `scripts/CardWidget.gd`: card UI.
 - `scripts/GameData.gd`: card library, starter deck, world text.
 - `scripts/RunState.gd`: deck state and encounter progress.
+- `scripts/combat/CombatState.gd`: per-encounter combat state storage.
+- `scripts/combat/controllers/*.gd`: combat flow, UI updates, and reward/shop orchestration.
 
 ## Current Gaps
 - No meta progression beyond per-run rewards.
@@ -171,7 +174,7 @@ A Godot 4.3 deck-building prototype set in an isekai adventure. The main goal is
 Open the project in Godot 4.3 and run the main scene at `res://scenes/Main.tscn`.
 
 ## Next Implementation Plan
-1. Balance the expanded card pool and starter deck (costs, upgrade values, reward odds).
-2. Add UI indicators for bleed/poison/burn and active equipment/power buffs.
-3. Tune enemy deck pacing to account for the new status/equipment cards.
-4. Continue SOLID refactor: move combat resolution and enemy intent logic into dedicated pipeline components.
+1. Playtest the controller split to catch regressions in combat flow, overlays, and enemy pacing.
+2. Extract enemy intent selection/scoring into dedicated helpers to slim CombatFlowController further.
+3. Balance the expanded card pool and starter deck (costs, upgrade values, reward odds).
+4. Tune enemy deck pacing to account for the new status/equipment cards.
