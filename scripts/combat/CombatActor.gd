@@ -73,7 +73,7 @@ func set_status(key: String, value: Variant) -> void:
 	statuses[key] = value
 
 func add_status(key: String, delta: Variant) -> void:
-	var current := statuses.get(key, 0)
+	var current: Variant = statuses.get(key, 0)
 	if typeof(current) == TYPE_FLOAT or typeof(delta) == TYPE_FLOAT:
 		statuses[key] = float(current) + float(delta)
 	else:

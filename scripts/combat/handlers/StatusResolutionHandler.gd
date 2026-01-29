@@ -34,9 +34,9 @@ func _resolve_player_end() -> void:
 	context.combat_state.player_next_card_cost_delta = 0
 
 func _resolve_enemy_end() -> void:
-	var total_dot := 0
+	var total_dot: int = 0
 	if context.combat_state.enemy_bleed > 0:
-		var bleed_damage := context.combat_state.enemy_bleed * (1 + context.combat_state.equip_bleed_bonus_per_stack)
+		var bleed_damage: int = int(context.combat_state.enemy_bleed) * (1 + int(context.combat_state.equip_bleed_bonus_per_stack))
 		context.combat_state.enemy_actor.hp = max(context.combat_state.enemy_actor.hp - bleed_damage, 0)
 		context.combat_state.combat_damage_dealt += bleed_damage
 		total_dot += bleed_damage
@@ -47,7 +47,7 @@ func _resolve_enemy_end() -> void:
 			context.combat_state.enemy_actor.max_hp
 		])
 	if context.combat_state.enemy_poison > 0:
-		var poison_damage := context.combat_state.enemy_poison
+		var poison_damage: int = int(context.combat_state.enemy_poison)
 		context.combat_state.enemy_actor.hp = max(context.combat_state.enemy_actor.hp - poison_damage, 0)
 		context.combat_state.combat_damage_dealt += poison_damage
 		total_dot += poison_damage
@@ -59,7 +59,7 @@ func _resolve_enemy_end() -> void:
 		])
 		context.combat_state.enemy_poison = max(context.combat_state.enemy_poison - 1, 0)
 	if context.combat_state.enemy_burn > 0:
-		var burn_damage := context.combat_state.enemy_burn
+		var burn_damage: int = int(context.combat_state.enemy_burn)
 		context.combat_state.enemy_actor.hp = max(context.combat_state.enemy_actor.hp - burn_damage, 0)
 		context.combat_state.combat_damage_dealt += burn_damage
 		total_dot += burn_damage

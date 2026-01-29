@@ -14,9 +14,9 @@ func execute(card_data: Dictionary, payload: Dictionary) -> void:
 
 func _apply_card_effect(card_data: Dictionary) -> void:
 	var card_name: String = str(card_data.get("name", "卡牌"))
-	var is_attack := _is_attack_card(card_data)
-	var is_defend := _is_defend_card(card_data)
-	var attack_chain_before := context.combat_state.player_attack_chain
+	var is_attack: bool = _is_attack_card(card_data)
+	var is_defend: bool = _is_defend_card(card_data)
+	var attack_chain_before: int = int(context.combat_state.player_attack_chain)
 	if is_attack:
 		context.combat_state.player_attack_chain += 1
 		context.combat_state.player_defend_chain = 0
@@ -26,12 +26,12 @@ func _apply_card_effect(card_data: Dictionary) -> void:
 	else:
 		context.combat_state.player_attack_chain = 0
 		context.combat_state.player_defend_chain = 0
-	var damage := _calculate_attack_damage(card_data, attack_chain_before)
-	var pierce := _should_pierce(card_data)
+	var damage: int = _calculate_attack_damage(card_data, attack_chain_before)
+	var pierce: bool = _should_pierce(card_data)
 	if is_attack:
 		context.combat_state.combat_attack_count += 1
 	if damage > 0:
-		var dealt := context._apply_player_damage(damage, pierce)
+		var dealt: int = context._apply_player_damage(damage, pierce)
 		if dealt > 0:
 			var prefix := "穿刺" if pierce else ""
 			context._append_battle_log("你使用【%s】->敌人：%s造成%d点伤害（敌人HP %d/%d，护甲 %d）。" % [
@@ -229,7 +229,7 @@ func _calculate_attack_damage(card_data: Dictionary, combo_count: int) -> int:
 	if bool(card_data.get("damage_from_block", false)):
 		bonus += context.combat_state.player_actor.block
 	if bool(card_data.get("damage_from_missing_hp", false)):
-		var missing := context.combat_state.player_actor.max_hp - context.combat_state.player_actor.hp
+		var missing: int = int(context.combat_state.player_actor.max_hp - context.combat_state.player_actor.hp)
 		var cap := int(card_data.get("missing_hp_cap", missing))
 		bonus += min(missing, cap)
 	var hp_ratio := float(card_data.get("damage_from_current_hp_ratio", 0.0))
@@ -238,7 +238,7 @@ func _calculate_attack_damage(card_data: Dictionary, combo_count: int) -> int:
 	var per_combo := int(card_data.get("damage_per_attack_chain", 0))
 	if per_combo > 0:
 		bonus += per_combo * combo_count
-	var total := base_damage + bonus + context.combat_state.equip_attack_bonus + context.combat_state.player_damage_bonus_turn + context.combat_state.player_next_attack_bonus
+	var total: int = base_damage + bonus + int(context.combat_state.equip_attack_bonus) + int(context.combat_state.player_damage_bonus_turn) + int(context.combat_state.player_next_attack_bonus)
 	var low_hp_mult := float(card_data.get("low_hp_mult", 1.0))
 	if low_hp_mult > 1.0:
 		var threshold := float(card_data.get("low_hp_threshold", 0.5))

@@ -29,7 +29,7 @@ func enemy_status_summary() -> String:
 	return _enemy_status_summary()
 
 func update_ui() -> void:
-	var state := context.combat_state
+	var state: CombatState = context.combat_state
 	var progress_current: int = int(min(RunState.encounters_completed + 1, RunState.max_encounters))
 	context.progress_label.text = "攀登进度：%d / %d" % [progress_current, RunState.max_encounters]
 	context.enemy_name_label.text = "敌人：%s" % state.enemy_data.get("name", "未知魔物")
@@ -55,10 +55,10 @@ func update_ui() -> void:
 	context.draw_label.text = "抽牌堆：%d" % state.player_actor.draw_pile.size()
 	context.discard_label.text = "弃牌堆：%d" % state.player_actor.discard_pile.size()
 	context.end_turn_button.disabled = state.combat_over or state.enemy_acting or state.turn_locked or state.discard_overlay_active
-	var show_rewards := state.combat_over and not state.run_complete and state.next_step == "reward_options"
-	var show_route := state.combat_over and not state.run_complete and state.next_step == "route"
-	var show_shop := state.combat_over and not state.run_complete and state.next_step == "shop"
-	var show_score := state.combat_over and state.run_complete
+	var show_rewards: bool = state.combat_over and not state.run_complete and state.next_step == "reward_options"
+	var show_route: bool = state.combat_over and not state.run_complete and state.next_step == "route"
+	var show_shop: bool = state.combat_over and not state.run_complete and state.next_step == "shop"
+	var show_score: bool = state.combat_over and state.run_complete
 	reward_flow.set_reward_overlay_visible(show_rewards)
 	reward_flow.set_route_overlay_visible(show_route)
 	reward_flow.set_shop_overlay_visible(show_shop)
@@ -78,7 +78,7 @@ func update_ui() -> void:
 		reward_flow.refresh_score_ui()
 
 func refresh_hand() -> void:
-	var state := context.combat_state
+	var state: CombatState = context.combat_state
 	for tween in state.hand_slot_tweens.values():
 		if tween:
 			tween.kill()
@@ -89,7 +89,7 @@ func refresh_hand() -> void:
 		var card_entry = state.player_actor.hand[index]
 		var card_id := RunState.get_card_id(card_entry)
 		var card_data := GameData.get_card_data(card_id, RunState.get_card_upgrade_level(card_entry))
-		var collapsed_scale := context.HAND_COLLAPSED_HEIGHT / context.HAND_CARD_SIZE.y
+		var collapsed_scale: float = float(context.HAND_COLLAPSED_HEIGHT) / float(context.HAND_CARD_SIZE.y)
 		var slot := Control.new()
 		slot.custom_minimum_size = Vector2(context.HAND_CARD_SIZE.x * collapsed_scale, context.HAND_COLLAPSED_HEIGHT)
 		slot.clip_contents = true
@@ -98,7 +98,7 @@ func refresh_hand() -> void:
 		var widget: CardWidget = context.CARD_WIDGET_SCENE.instantiate()
 		widget.set_card(card_data)
 		widget.scale = Vector2(collapsed_scale, collapsed_scale)
-		widget.position = Vector2(0, context.HAND_COLLAPSED_HEIGHT - (context.HAND_CARD_SIZE.y * collapsed_scale))
+		widget.position = Vector2(0.0, float(context.HAND_COLLAPSED_HEIGHT) - (float(context.HAND_CARD_SIZE.y) * collapsed_scale))
 		widget.clicked.connect(combat_flow.on_hand_card_clicked.bind(index))
 		widget.hovered.connect(_on_hand_card_hovered.bind(index, slot))
 		widget.unhovered.connect(_on_hand_card_unhovered.bind(slot))
@@ -118,18 +118,18 @@ func _on_hand_card_unhovered(slot: Control) -> void:
 func _set_hand_slot_expanded(slot: Control, expanded: bool) -> void:
 	if not slot:
 		return
-	var state := context.combat_state
-	var tween: Tween = state.hand_slot_tweens.get(slot)
+	var state: CombatState = context.combat_state
+	var tween: Tween = state.hand_slot_tweens.get(slot) as Tween
 	if tween:
 		tween.kill()
 	var widget := slot.get_child(0) as Control
 	if not widget:
 		return
-	var collapsed_scale := context.HAND_COLLAPSED_HEIGHT / context.HAND_CARD_SIZE.y
-	var expanded_scale := context.HAND_EXPANDED_HEIGHT / context.HAND_CARD_SIZE.y
-	var target_scale := expanded_scale if expanded else collapsed_scale
-	var target_height := context.HAND_CARD_SIZE.y * target_scale
-	var target_position := Vector2(0, context.HAND_COLLAPSED_HEIGHT - target_height)
+	var collapsed_scale: float = float(context.HAND_COLLAPSED_HEIGHT) / float(context.HAND_CARD_SIZE.y)
+	var expanded_scale: float = float(context.HAND_EXPANDED_HEIGHT) / float(context.HAND_CARD_SIZE.y)
+	var target_scale: float = expanded_scale if expanded else collapsed_scale
+	var target_height: float = float(context.HAND_CARD_SIZE.y) * target_scale
+	var target_position := Vector2(0.0, float(context.HAND_COLLAPSED_HEIGHT) - target_height)
 	slot.clip_contents = not expanded
 	tween = context.create_tween()
 	tween.tween_property(widget, "scale", Vector2(target_scale, target_scale), 0.12).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
@@ -179,7 +179,7 @@ func setup_portraits(enemy_data: Dictionary) -> void:
 	context.enemy_portrait_panel.set_buff_text("", false)
 
 func _player_status_summary() -> String:
-	var state := context.combat_state
+	var state: CombatState = context.combat_state
 	var parts: Array = []
 	if state.player_weak_turns > 0:
 		parts.append("弱化%d" % state.player_weak_turns)
@@ -214,7 +214,7 @@ func _player_status_summary() -> String:
 	return "，".join(parts)
 
 func _player_buff_summary() -> String:
-	var state := context.combat_state
+	var state: CombatState = context.combat_state
 	var parts: Array = []
 	if state.equip_attack_bonus > 0:
 		parts.append("攻击+%d" % state.equip_attack_bonus)
@@ -239,7 +239,7 @@ func _player_buff_summary() -> String:
 	return "，".join(parts)
 
 func _enemy_status_summary() -> String:
-	var state := context.combat_state
+	var state: CombatState = context.combat_state
 	var parts: Array = []
 	if state.enemy_bleed > 0:
 		parts.append("流血%d" % state.enemy_bleed)

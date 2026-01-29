@@ -1,6 +1,7 @@
 # Changelog
 
 ## 2026-01-27
+- Fixed UI scene UID headers and strict-typing warnings that blocked combat scripts from compiling.
 - Split RunScreen responsibilities into CombatFlowController, CombatUIController, and RewardFlowController.
 - Trimmed RunScreen to orchestration and node bindings while delegating combat flow and UI updates.
 - Centralized reward/shop/discard overlay logic inside the RewardFlowController.

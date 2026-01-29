@@ -86,11 +86,11 @@ func _populate_shop_cards() -> void:
 		widget.hovered.connect(_on_card_hovered)
 		widget.unhovered.connect(_on_card_unhovered)
 		slot.add_child(widget)
-		var cost := int(combat_state.shop_offer_costs.get(card_id, 0))
-		var buy_button := Button.new()
-		buy_button.text = "购买 -%d" % cost
-		buy_button.disabled = RunState.run_score_total < cost
-		buy_button.pressed.connect(_on_shop_buy_pressed.bind(card_id))
+	var cost := int(combat_state.shop_offer_costs.get(card_id, 0))
+	var buy_button := Button.new()
+	buy_button.text = "购买 -%d" % cost
+	buy_button.disabled = RunState.run_score_total < cost
+	buy_button.pressed.connect(on_shop_buy_pressed.bind(card_id))
 		slot.add_child(buy_button)
 		context.shop_choice_container.add_child(slot)
 		var detail := Label.new()
@@ -299,7 +299,7 @@ func refresh_reward_ui() -> void:
 		context.reward_choice_label.text = "选择一张补给卡："
 		context.reward_choice_scroll.visible = true
 		context.reward_options.visible = false
-		_populate_supply_cards()
+		populate_supply_cards()
 
 func set_reward_overlay_visible(active: bool) -> void:
 	if active == combat_state.reward_overlay_active:
@@ -446,7 +446,7 @@ func set_score_overlay_visible(active: bool) -> void:
 
 func refresh_score_ui() -> void:
 	context.score_summary_label.text = "最终得分：%d" % RunState.run_score_total
-	var rank_text := RunState.get_current_leaderboard_rank_text()
+	var rank_text: String = str(RunState.get_current_leaderboard_rank_text())
 	context.score_rank_label.text = "排名：%s" % rank_text
 	_clear_container(context.score_list)
 	for index in RunState.leaderboard.size():
@@ -549,7 +549,7 @@ func _on_reward_deck_card_selected(card_id: String, index: int) -> void:
 		combat_flow.start_encounter()
 		return
 	if combat_state.reward_mode == "remove":
-		var removed := RunState.deck.pop_at(index)
+		var removed: Variant = RunState.deck.pop_at(index)
 		if removed != null:
 			var removed_name: String = str(GameData.get_card_data(card_id, 0).get("name", "卡牌"))
 			ui.append_battle_log("已移除卡牌：%s。" % removed_name)

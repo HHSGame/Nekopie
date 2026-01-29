@@ -1,4 +1,4 @@
-[gd_scene load_steps=3 format=3 uid=uid://cxlxj1g7k5q8u]
+[gd_scene load_steps=3 format=3 uid="uid://cxlxj1g7k5q8u"]
 
 [ext_resource type="Script" path="res://scripts/ui/PortraitPanel.gd" id="1_f0b2m"]
 [ext_resource type="Theme" path="res://themes/default_theme.tres" id="2_xu7al"]
