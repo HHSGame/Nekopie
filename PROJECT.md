@@ -90,6 +90,7 @@ A Godot 4.3 deck-building prototype set in an isekai adventure. The main goal is
 - Centralized combat state into a CombatState model to reduce RunScreen responsibilities.
 - Split combat orchestration into CombatFlow/UI/Reward controllers so RunScreen only wires phases and node bindings.
 - Fixed strict typing issues in combat controllers/handlers and corrected UI scene UID headers for Godot parsing.
+- Fixed the post-battle shop offer list to render per-card purchase actions.
 
 ## Scene and Script Layout
 - `scenes/Main.tscn` + `scripts/Main.gd`: main menu and navigation.

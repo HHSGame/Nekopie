@@ -86,11 +86,11 @@ func _populate_shop_cards() -> void:
 		widget.hovered.connect(_on_card_hovered)
 		widget.unhovered.connect(_on_card_unhovered)
 		slot.add_child(widget)
-	var cost := int(combat_state.shop_offer_costs.get(card_id, 0))
-	var buy_button := Button.new()
-	buy_button.text = "购买 -%d" % cost
-	buy_button.disabled = RunState.run_score_total < cost
-	buy_button.pressed.connect(on_shop_buy_pressed.bind(card_id))
+		var cost := int(combat_state.shop_offer_costs.get(card_id, 0))
+		var buy_button := Button.new()
+		buy_button.text = "购买 -%d" % cost
+		buy_button.disabled = RunState.run_score_total < cost
+		buy_button.pressed.connect(on_shop_buy_pressed.bind(card_id))
 		slot.add_child(buy_button)
 		context.shop_choice_container.add_child(slot)
 		var detail := Label.new()
