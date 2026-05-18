@@ -49,7 +49,7 @@ func build_shop_pool() -> Array:
 		if not owned_id.is_empty():
 			owned[owned_id] = true
 	var pool: Array = []
-	for card_ids():]
+	
 	for card_id in GameData.all_card_ids():
 		var entry_id: String = str(card_id)
 		if owned.has(entry_id):
