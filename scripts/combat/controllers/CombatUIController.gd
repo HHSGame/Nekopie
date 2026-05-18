@@ -2,13 +2,9 @@ class_name CombatUIController
 extends RefCounted
 
 var context: Node
-var combat_flow: CombatFlowController
-var reward_flow: RewardFlowController
 
-func setup(context_ref: Node, combat_flow_ref: CombatFlowController, reward_flow_ref: RewardFlowController) -> void:
+func setup(context_ref: Node, _combat_flow_ref = null) -> void:
 	context = context_ref
-	combat_flow = combat_flow_ref
-	reward_flow = reward_flow_ref
 
 func reset_battle_log() -> void:
 	context.battle_log_panel.clear()
@@ -38,7 +34,7 @@ func update_ui() -> void:
 	context.enemy_hp_bar.value = state.enemy_actor.hp
 	context.enemy_block_label.text = "敌人护甲：%d" % state.enemy_actor.block
 	context.enemy_portrait_panel.set_status_text("状态：%s" % _enemy_status_summary())
-	context.enemy_intent_label.text = "意图：%s" % combat_flow.enemy_card_display(state.enemy_intent_card)
+	context.enemy_intent_label.text = "意图：%s" % context.combat_flow.enemy_card_display(state.enemy_intent_card)
 	context.enemy_desc_label.text = state.enemy_data.get("desc", "")
 	var intent_color := _enemy_card_color(state.enemy_intent_card)
 	context.enemy_intent_label.add_theme_color_override("font_color", intent_color)
@@ -59,10 +55,10 @@ func update_ui() -> void:
 	var show_route: bool = state.combat_over and not state.run_complete and state.next_step == "route"
 	var show_shop: bool = state.combat_over and not state.run_complete and state.next_step == "shop"
 	var show_score: bool = state.combat_over and state.run_complete
-	reward_flow.set_reward_overlay_visible(show_rewards)
-	reward_flow.set_route_overlay_visible(show_route)
-	reward_flow.set_shop_overlay_visible(show_shop)
-	reward_flow.set_score_overlay_visible(show_score)
+	context.reward_flow.set_reward_overlay_visible(show_rewards)
+	context.reward_flow.set_route_overlay_visible(show_route)
+	context.reward_flow.set_shop_overlay_visible(show_shop)
+	context.reward_flow.set_score_overlay_visible(show_score)
 	context.next_button.visible = state.combat_over and not show_rewards and not show_route and not show_shop
 	if state.combat_over and context.next_button.visible:
 		if state.run_complete:
@@ -71,11 +67,11 @@ func update_ui() -> void:
 			context.next_button.text = "继续攀登"
 	refresh_hand()
 	if show_rewards:
-		reward_flow.refresh_reward_ui()
+		context.reward_flow.refresh_reward_ui()
 	if show_route:
-		reward_flow.update_route_ui()
+		context.reward_flow.update_route_ui()
 	if show_score:
-		reward_flow.refresh_score_ui()
+		context.reward_flow.refresh_score_ui()
 
 func refresh_hand() -> void:
 	var state: CombatState = context.combat_state
@@ -99,7 +95,7 @@ func refresh_hand() -> void:
 		widget.set_card(card_data)
 		widget.scale = Vector2(collapsed_scale, collapsed_scale)
 		widget.position = Vector2(0.0, float(context.HAND_COLLAPSED_HEIGHT) - (float(context.HAND_CARD_SIZE.y) * collapsed_scale))
-		widget.clicked.connect(combat_flow.on_hand_card_clicked.bind(index))
+		widget.clicked.connect(context.combat_flow.on_hand_card_clicked.bind(index))
 		widget.hovered.connect(_on_hand_card_hovered.bind(index, slot))
 		widget.unhovered.connect(_on_hand_card_unhovered.bind(slot))
 		slot.add_child(widget)
@@ -181,33 +177,33 @@ func setup_portraits(enemy_data: Dictionary) -> void:
 func _player_status_summary() -> String:
 	var state: CombatState = context.combat_state
 	var parts: Array = []
-	if state.player_weak_turns > 0:
-		parts.append("弱化%d" % state.player_weak_turns)
-	if state.player_vulnerable_turns > 0:
-		parts.append("易伤%d" % state.player_vulnerable_turns)
-	if state.player_next_attack_mult > 1.0:
-		parts.append("蓄力x%.1f" % state.player_next_attack_mult)
-	if state.player_next_attack_bonus > 0:
-		parts.append("下次攻击+%d" % state.player_next_attack_bonus)
-	if state.player_next_attack_pierce:
+	if state.weak_turns > 0:
+		parts.append("弱化%d" % state.weak_turns)
+	if state.vulnerable_turns > 0:
+		parts.append("易伤%d" % state.vulnerable_turns)
+	if state.next_attack_mult > 1.0:
+		parts.append("蓄力x%.1f" % state.next_attack_mult)
+	if state.next_attack_bonus > 0:
+		parts.append("下次攻击+%d" % state.next_attack_bonus)
+	if state.next_attack_pierce:
 		parts.append("下次穿刺")
-	if state.player_counter_ratio > 0.0:
-		parts.append("反击%d%%" % int(round(state.player_counter_ratio * 100.0)))
-	if state.player_nullify_count > 0:
-		parts.append("护幕%d" % state.player_nullify_count)
-	if state.player_damage_draw > 0:
-		parts.append("受伤抽牌+%d" % state.player_damage_draw)
-	if state.player_bleed_on_attack > 0:
-		parts.append("攻击叠流血+%d" % state.player_bleed_on_attack)
-	if state.player_attack_bonus_on_attack > 0:
-		parts.append("连击伤害+%d" % state.player_attack_bonus_on_attack)
-	if state.player_damage_bonus_turn > 0:
-		parts.append("本回合伤害+%d" % state.player_damage_bonus_turn)
-	if state.player_block_disabled:
+	if state.counter_ratio > 0.0:
+		parts.append("反击%d%%" % int(round(state.counter_ratio * 100.0)))
+	if state.nullify_count > 0:
+		parts.append("护幕%d" % state.nullify_count)
+	if state.damage_draw > 0:
+		parts.append("受伤抽牌+%d" % state.damage_draw)
+	if state.bleed_on_attack > 0:
+		parts.append("攻击叠流血+%d" % state.bleed_on_attack)
+	if state.attack_bonus_on_attack > 0:
+		parts.append("连击伤害+%d" % state.attack_bonus_on_attack)
+	if state.damage_bonus_turn > 0:
+		parts.append("本回合伤害+%d" % state.damage_bonus_turn)
+	if state.block_disabled:
 		parts.append("禁用护甲")
-	if state.player_next_card_cost_delta != 0:
-		parts.append("下一卡费用%+d" % state.player_next_card_cost_delta)
-	if state.player_skip_enemy_turn:
+	if state.next_card_cost_delta != 0:
+		parts.append("下一卡费用%+d" % state.next_card_cost_delta)
+	if state.skip_enemy_turn:
 		parts.append("停滞")
 	if parts.is_empty():
 		return "无"

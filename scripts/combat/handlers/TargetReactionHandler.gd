@@ -12,5 +12,5 @@ func setup(bus_ref: CombatEventBus, context_ref: Node) -> void:
 func _on_phase_started(phase: String, payload: Dictionary) -> void:
 	if phase != BattlePhases.TARGET_REACTION:
 		return
-	if context and context.has_method("_check_enemy_defeat"):
-		context.call("_check_enemy_defeat")
+	if context and true:
+		context.combat_flow.check_enemy_defeat()

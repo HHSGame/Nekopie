@@ -13,12 +13,12 @@ func setup(context_ref: Node, ui_ref: CombatUIController, combat_flow_ref: Comba
 	combat_state = context_ref.combat_state
 
 func queue_post_battle_step() -> void:
-	context._begin_phase(BattlePhases.REWARD_EVENT, {"type": "shop"})
+	combat_flow.emit_phase(BattlePhases.REWARD_EVENT, {"type": "shop"})
 	combat_state.next_step = "shop"
 	enter_shop()
-	context._end_phase(BattlePhases.REWARD_EVENT, {"type": "shop"})
-	context._begin_phase(BattlePhases.BATTLE_END, {"result": "continue"})
-	context._end_phase(BattlePhases.BATTLE_END, {"result": "continue"})
+	combat_flow.emit_phase_end(BattlePhases.REWARD_EVENT, {"type": "shop"})
+	combat_flow.emit_phase(BattlePhases.BATTLE_END, {"result": "continue"})
+	combat_flow.emit_phase_end(BattlePhases.BATTLE_END, {"result": "continue"})
 
 func enter_shop() -> void:
 	combat_state.next_step = "shop"
@@ -49,6 +49,7 @@ func build_shop_pool() -> Array:
 		if not owned_id.is_empty():
 			owned[owned_id] = true
 	var pool: Array = []
+	for card_ids():]
 	for card_id in GameData.all_card_ids():
 		var entry_id: String = str(card_id)
 		if owned.has(entry_id):
@@ -152,6 +153,8 @@ func calculate_shop_cost(card_data: Dictionary) -> int:
 		value += 14.0
 	if float(card_data.get("execute_threshold", 0.0)) > 0.0:
 		value += 12.0
+	if bool(card_data.get("next_attack_pierce", false)):
+		value += 10.0
 	if bool(card_data.get("skip_enemy_turn", false)):
 		value += 20.0
 	if bool(card_data.get("block_disabled", false)):
@@ -165,7 +168,6 @@ func calculate_shop_cost(card_data: Dictionary) -> int:
 	var next_attack_bonus: int = int(card_data.get("next_attack_bonus", 0))
 	if next_attack_bonus > 0:
 		value += 6.0 * float(next_attack_bonus)
-	if bool(card_data.get("next_attack_pierce", false)):
 		value += 10.0
 	var block_gain_reduction: int = int(card_data.get("enemy_block_gain_reduction", 0))
 	if block_gain_reduction > 0:
@@ -262,10 +264,8 @@ func on_difficulty_selected(difficulty: String) -> void:
 
 func difficulty_display(difficulty: String) -> String:
 	match difficulty:
-		"hard":
-			return "困难"
-		"elite":
-			return "精英"
+		"hard": return "困难"
+		"elite": return "精英"
 	return "普通"
 
 func enter_supply_options() -> void:
@@ -399,11 +399,11 @@ func _on_discard_confirm_pressed() -> void:
 	if combat_state.discard_selection.size() != combat_state.discard_required:
 		return
 	var discard_count := combat_state.discard_required
-	context._begin_phase(BattlePhases.DISCARD, {"count": discard_count})
+	combat_flow.emit_phase(BattlePhases.DISCARD, {"count": discard_count})
 	_apply_discard_selection()
-	context._end_phase(BattlePhases.DISCARD, {"remaining": combat_state.player_actor.hand.size()})
+	combat_flow.emit_phase_end(BattlePhases.DISCARD, {"remaining": combat_state.player_actor.hand.size()})
 	if combat_state.end_turn_phase_pending:
-		context._end_phase(BattlePhases.END_TURN_TRIGGER, {"turn": combat_state.turn_index, "discard_required": discard_count})
+		combat_flow.emit_phase_end(BattlePhases.END_TURN_TRIGGER, {"turn": combat_state.turn_index, "discard_required": discard_count})
 		combat_state.end_turn_phase_pending = false
 	set_discard_overlay_visible(false)
 	ui.refresh_hand()
@@ -534,7 +534,7 @@ func _on_reward_card_selected(card_id: String) -> void:
 	RunState.add_card(card_id)
 	var card_name: String = str(GameData.get_card_data(card_id, false).get("name", "新卡牌"))
 	ui.append_battle_log("补给中获得一张卡牌：%s。" % card_name)
-	RunState.log_event("补给获得卡牌：%s。" % card_name)
+	RunState.log_event("补给获得卡牌：%s：%s。" % card_name)
 	context.sfx_reward.play()
 	combat_flow.start_encounter()
 
@@ -556,7 +556,6 @@ func _on_reward_deck_card_selected(card_id: String, index: int) -> void:
 			RunState.log_event("移除卡牌：%s。" % removed_name)
 		context.sfx_reward.play()
 		combat_flow.start_encounter()
-		return
 
 func _clear_container(container: Node) -> void:
 	for child in container.get_children():

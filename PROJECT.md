@@ -9,7 +9,11 @@ A Godot 4.3 deck-building prototype set in an isekai adventure. The main goal is
 - Card UI widget with blank art block.
 - Autoload data/state for cards, run progress, and player HP.
 - Mountain enemy roster, encounter order, and intent-based behaviors.
-- UI node bindings use explicit paths for Godot 4.3 compatibility.
+- UI node bindings use unique name (%StoryLabel) references for robust scene path resolution.
+- Hand dock is now a ScrollContainer to handle overflow with >5 cards.
+- Card detail panel uses relative anchors instead of absolute pixel offsets.
+- Scene frame is enabled and visible on RunScreen.
+- Reward/Shop/Discard overlays default to hidden (visible=false) at scene load.
 - Card widgets now safely accept data before entering the scene tree.
 - Bundled Noto Sans CJK SC font via a global theme for HTML5 Chinese rendering.
 - Applied the global theme explicitly to UI scenes for HTML5 consistency.
@@ -94,12 +98,18 @@ A Godot 4.3 deck-building prototype set in an isekai adventure. The main goal is
 
 ## Scene and Script Layout
 - `scenes/Main.tscn` + `scripts/Main.gd`: main menu and navigation.
-- `scenes/RunScreen.tscn` + `scripts/RunScreen.gd`: climb progress.
+- `scenes/RunScreen.tscn` + `scripts/RunScreen.gd`: climb progress. Node references use unique names (% prefix).
 - `scenes/CardWidget.tscn` + `scripts/CardWidget.gd`: card UI.
 - `scripts/GameData.gd`: card library, starter deck, world text.
-- `scripts/RunState.gd`: deck state and encounter progress.
-- `scripts/combat/CombatState.gd`: per-encounter combat state storage.
+- `scripts/RunState.gd`: deck state, encounter progress, persistence, leaderboard.
+- `scripts/combat/CombatState.gd`: per-encounter combat state (organized by actor/status/equip/power groups).
 - `scripts/combat/controllers/*.gd`: combat flow, UI updates, and reward/shop orchestration.
+- `scripts/combat/handlers/*.gd`: phase-driven status resolution, card effect execution, target reactions.
+
+## Architecture Notes
+- Controllers use `context` reference to access RunScreen nodes; `context._method()` wrappers are eliminated in favor of direct `context.node` access.
+- `CombatEventBus` emits phase start/end signals for handler nodes to react.
+- CombatState fields grouped by concern: actor refs, enemy data, player statuses, equipment, powers, combat flow, overlay state.
 
 ## Current Gaps
 - No meta progression beyond per-run rewards.

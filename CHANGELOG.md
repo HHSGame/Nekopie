@@ -1,5 +1,17 @@
 # Changelog
 
+## 2026-05-18
+- Replaced HandScroll (plain Control) with ScrollContainer to handle hand card overflow.
+- Fixed CardDetailPanel anchoring to use relative positions instead of absolute pixel offsets.
+- Set RewardOverlay visible=false by default in scene to prevent flash on load.
+- Enabled SceneFrame visibility on RunScreen.
+- Converted all RunScreen node references from long $ paths to % unique-name references.
+- Restructured CombatState fields into logical groups (actor, enemy, statuses, equipment, powers, combat flow, overlays).
+- Removed player_ prefix from 16 status fields (e.g., player_weak_turns to weak_turns).
+- Eliminated RunScreen _method() wrapper layer; controllers access context directly.
+- Rewired handler scripts to use direct controller APIs instead of context._method() callbacks.
+- Added missing RunState methods: roll_supply_available(), set_card_upgrade_level(), get_current_leaderboard_rank_text().
+
 ## 2026-01-27
 - Fixed UI scene UID headers and strict-typing warnings that blocked combat scripts from compiling.
 - Fixed shop offer rendering to add a buy button/detail per card entry.

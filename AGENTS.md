@@ -20,7 +20,7 @@
 - Combat loop lives in `RunScreen` and uses hand/draw/discard plus energy each turn.
 - Enemy roster and encounter order are defined in `GameData`.
 - Avoid `class_name` on autoload scripts to prevent singleton name conflicts.
-- Use explicit `$` node paths unless nodes are marked as unique names for `%` access.
+- Use explicit `$` node paths or unique % names for robust node resolution. % names are preferred for frequently accessed UI nodes.
 - `CardWidget` caches card data until ready so it can be populated before adding to the tree.
 - Enemy intents and event definitions live in `GameData`, with combat execution in `RunScreen`.
 - Keep the bundled Noto Sans CJK SC font and global theme for HTML5 Chinese text rendering.
@@ -37,5 +37,5 @@
 - Portraits, card art, and background textures live under `art/`.
 - Decorative UI assets (banners, frames, glows, FX) live under `art/ui` and `art/fx`.
 - Card data now includes `rarity` and `icon` fields for UI badges.
-- `HandDock` lives under `MarginContainer/RootVBox` in `RunScreen`, and hand cards sit inside `HandScroll` (a plain `Control`).
-- `HandContainer` is anchored to fill `HandScroll` so hand cards don't collapse to zero size.
+- `HandDock` lives under `MarginContainer/RootVBox` in `RunScreen`, and hand cards sit inside `HandScroll` (a `ScrollContainer`).
+- `HandContainer` is anchored inside HandScroll so hand cards can scroll when >5 cards present.

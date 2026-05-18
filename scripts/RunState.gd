@@ -171,6 +171,22 @@ func add_combat_score(score: int) -> void:
 	run_score_total += score
 	save_run()
 
+func roll_supply_available() -> bool:
+	return randf() < GameData.SUPPLY_CHANCE
+
+func set_card_upgrade_level(card_entry: Variant, level: int) -> void:
+	if typeof(card_entry) == TYPE_DICTIONARY:
+		card_entry["upgrade"] = level
+	else:
+		upgraded_cards[str(card_entry)] = level > 0
+
+func get_current_leaderboard_rank_text() -> String:
+	if leaderboard.is_empty():
+		return "无记录"
+	if last_run_rank > 0:
+		return "第%d名" % last_run_rank
+	return "未上榜"
+
 func finalize_run_score() -> void:
 	if run_score_finalized:
 		return
