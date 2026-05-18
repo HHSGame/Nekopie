@@ -113,6 +113,7 @@ layout_mode = 2
 text = "敌人：未知魔物"
 
 [node name="EnemyPortraitPanel" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/EnemyColumn" instance=ExtResource("26_1s0kp")]
+	unique_name_in_owner = true
 custom_minimum_size = Vector2(128, 128)
 layout_mode = 2
 
@@ -218,6 +219,7 @@ text = "旅程开始。"
 autowrap_mode = 3
 
 [node name="BattleLogPanel" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/BattleCenterColumn" instance=ExtResource("27_7x1jd")]
+	unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 220)
 layout_mode = 2
 size_flags_horizontal = 3
@@ -236,6 +238,7 @@ layout_mode = 2
 text = "旅人状态"
 
 [node name="PlayerPortraitPanel" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/PlayerColumn" instance=ExtResource("26_1s0kp")]
+	unique_name_in_owner = true
 custom_minimum_size = Vector2(128, 128)
 layout_mode = 2
 
