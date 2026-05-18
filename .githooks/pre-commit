@@ -1,0 +1,48 @@
+#!/bin/bash
+# Pre-commit hook: reject commits referencing old-style CombatState field names
+# Targets only added lines (+), ignoring removed lines (-)
+
+set -e
+
+OLD_FIELDS=(
+  "player_weak_turns"
+  "player_vulnerable_turns"
+  "player_next_attack_mult"
+  "player_next_attack_bonus"
+  "player_next_attack_pierce"
+  "player_counter_ratio"
+  "player_nullify_count"
+  "player_damage_draw"
+  "player_bleed_on_attack"
+  "player_attack_bonus_on_attack"
+  "player_damage_bonus_turn"
+  "player_block_disabled"
+  "player_next_card_cost_delta"
+  "player_skip_enemy_turn"
+  "player_attack_chain"
+  "player_defend_chain"
+)
+
+cd "$(git rev-parse --show-toplevel)" || exit 1
+
+errors=0
+for field in "${OLD_FIELDS[@]}"; do
+  # Check only added lines (starting with +), exclude ---/+++ header
+  while IFS= read -r line; do
+    if [[ $line == "+"* && $line != "+++"* ]]; then
+      if echo "$line" | grep -qP "(combat_state|state)\.$field\b"; then
+        echo "❌ '$field' in: $(echo "$line" | sed 's/^+//')"
+        errors=$((errors + 1))
+      fi
+    fi
+  done < <(git diff --cached -U0 -- scripts/ 2>/dev/null)
+done
+
+if [ $errors -gt 0 ]; then
+  echo ""
+  echo "❌ $errors old-style field name(s) found in staged changes."
+  echo "   Use the new names (without player_ prefix, e.g. state.weak_turns)."
+  exit 1
+fi
+
+echo "✅ CombatState field names check passed."

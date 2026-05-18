@@ -16,16 +16,16 @@ func _apply_card_effect(card_data: Dictionary) -> void:
 	var card_name: String = str(card_data.get("name", "卡牌"))
 	var is_attack: bool = _is_attack_card(card_data)
 	var is_defend: bool = _is_defend_card(card_data)
-	var attack_chain_before: int = int(context.combat_state.player_attack_chain)
+	var attack_chain_before: int = int(context.combat_state.attack_chain)
 	if is_attack:
-		context.combat_state.player_attack_chain += 1
-		context.combat_state.player_defend_chain = 0
+		context.combat_state.attack_chain += 1
+		context.combat_state.defend_chain = 0
 	elif is_defend:
-		context.combat_state.player_defend_chain += 1
-		context.combat_state.player_attack_chain = 0
+		context.combat_state.defend_chain += 1
+		context.combat_state.attack_chain = 0
 	else:
-		context.combat_state.player_attack_chain = 0
-		context.combat_state.player_defend_chain = 0
+		context.combat_state.attack_chain = 0
+		context.combat_state.defend_chain = 0
 	var damage: int = _calculate_attack_damage(card_data, attack_chain_before)
 	var pierce: bool = _should_pierce(card_data)
 	if is_attack:
@@ -58,25 +58,25 @@ func _apply_card_effect(card_data: Dictionary) -> void:
 						context.combat_state.player_actor.hp,
 						context.combat_state.player_actor.max_hp
 					])
-	if is_attack and context.combat_state.player_bleed_on_attack > 0:
-		context.combat_state.enemy_bleed += context.combat_state.player_bleed_on_attack
-		context.battle_log_panel.append_line("血痕持续扩散，敌人流血+%d（%d）。" % [context.combat_state.player_bleed_on_attack, context.combat_state.enemy_bleed])
-	if is_attack and context.combat_state.player_attack_bonus_on_attack > 0:
-		context.combat_state.player_damage_bonus_turn += context.combat_state.player_attack_bonus_on_attack
-		context.battle_log_panel.append_line("嗜战叠加，攻击伤害+%d（本回合 +%d）。" % [context.combat_state.player_attack_bonus_on_attack, context.combat_state.player_damage_bonus_turn])
+	if is_attack and context.combat_state.bleed_on_attack > 0:
+		context.combat_state.enemy_bleed += context.combat_state.bleed_on_attack
+		context.battle_log_panel.append_line("血痕持续扩散，敌人流血+%d（%d）。" % [context.combat_state.bleed_on_attack, context.combat_state.enemy_bleed])
+	if is_attack and context.combat_state.attack_bonus_on_attack > 0:
+		context.combat_state.damage_bonus_turn += context.combat_state.attack_bonus_on_attack
+		context.battle_log_panel.append_line("嗜战叠加，攻击伤害+%d（本回合 +%d）。" % [context.combat_state.attack_bonus_on_attack, context.combat_state.damage_bonus_turn])
 	if is_attack and context.combat_state.power_first_attack_draw > 0 and not context.combat_state.power_first_attack_draw_used:
 		context.combat_state.power_first_attack_draw_used = true
 		context.combat_flow.draw_cards(context.combat_state.power_first_attack_draw)
 		context.battle_log_panel.append_line("迅捷心法触发：抽%d张（手牌 %d）。" % [context.combat_state.power_first_attack_draw, context.combat_state.player_actor.hand.size()])
-	if is_attack and context.combat_state.equip_attack_chain_draw > 0 and context.combat_state.player_attack_chain >= 2:
+	if is_attack and context.combat_state.equip_attack_chain_draw > 0 and context.combat_state.attack_chain >= 2:
 		context.combat_flow.draw_cards(context.combat_state.equip_attack_chain_draw)
 		context.battle_log_panel.append_line("连击腕轮触发：抽%d张（手牌 %d）。" % [context.combat_state.equip_attack_chain_draw, context.combat_state.player_actor.hand.size()])
-		context.combat_state.player_attack_chain = 0
-	if is_defend and context.combat_state.equip_defend_chain_block > 0 and context.combat_state.player_defend_chain >= 2:
+		context.combat_state.attack_chain = 0
+	if is_defend and context.combat_state.equip_defend_chain_block > 0 and context.combat_state.defend_chain >= 2:
 		context.combat_flow.gain_player_block(context.combat_state.equip_defend_chain_block)
 		context.battle_log_panel.append_line("守势腰带触发：护甲+%d（护甲 %d）。" % [context.combat_state.equip_defend_chain_block, context.combat_state.player_actor.block])
 		context.sfx_block.play()
-		context.combat_state.player_defend_chain = 0
+		context.combat_state.defend_chain = 0
 	var block := int(card_data.get("block", 0))
 	if block > 0:
 		if context.combat_flow.gain_player_block(block):
@@ -119,37 +119,37 @@ func _apply_card_effect(card_data: Dictionary) -> void:
 		context.battle_log_panel.append_line("你使用【%s】->敌人：灼烧+%d（%d）。" % [card_name, apply_burn, context.combat_state.enemy_burn])
 	var charge_mult := float(card_data.get("charge_mult", 0.0))
 	if charge_mult > 0.0:
-		context.combat_state.player_next_attack_mult = max(context.combat_state.player_next_attack_mult, charge_mult)
-		context.battle_log_panel.append_line("你使用【%s】->自己：蓄力x%.1f。" % [card_name, context.combat_state.player_next_attack_mult])
+		context.combat_state.next_attack_mult = max(context.combat_state.next_attack_mult, charge_mult)
+		context.battle_log_panel.append_line("你使用【%s】->自己：蓄力x%.1f。" % [card_name, context.combat_state.next_attack_mult])
 	if bool(card_data.get("skip_enemy_turn", false)):
-		context.combat_state.player_skip_enemy_turn = true
+		context.combat_state.skip_enemy_turn = true
 		context.battle_log_panel.append_line("你使用【%s】->敌人：进入停滞，本回合无法行动。" % card_name)
 	var counter_ratio := float(card_data.get("counter_ratio", 0.0))
 	if counter_ratio > 0.0:
-		context.combat_state.player_counter_ratio = max(context.combat_state.player_counter_ratio, counter_ratio)
-		context.battle_log_panel.append_line("你使用【%s】->自己：反击比例提升至%.0f%%。" % [card_name, context.combat_state.player_counter_ratio * 100.0])
+		context.combat_state.counter_ratio = max(context.combat_state.counter_ratio, counter_ratio)
+		context.battle_log_panel.append_line("你使用【%s】->自己：反击比例提升至%.0f%%。" % [card_name, context.combat_state.counter_ratio * 100.0])
 	var nullify_count := int(card_data.get("nullify_count", 0))
 	if nullify_count > 0:
-		context.combat_state.player_nullify_count += nullify_count
-		context.battle_log_panel.append_line("你使用【%s】->自己：护幕生效（%d次）。" % [card_name, context.combat_state.player_nullify_count])
+		context.combat_state.nullify_count += nullify_count
+		context.battle_log_panel.append_line("你使用【%s】->自己：护幕生效（%d次）。" % [card_name, context.combat_state.nullify_count])
 	var damage_draw := int(card_data.get("damage_draw", 0))
 	if damage_draw > 0:
-		context.combat_state.player_damage_draw += damage_draw
-		context.battle_log_panel.append_line("你使用【%s】->自己：受伤抽牌+%d（本回合 %d）。" % [card_name, damage_draw, context.combat_state.player_damage_draw])
+		context.combat_state.damage_draw += damage_draw
+		context.battle_log_panel.append_line("你使用【%s】->自己：受伤抽牌+%d（本回合 %d）。" % [card_name, damage_draw, context.combat_state.damage_draw])
 	var bleed_on_attack := int(card_data.get("bleed_on_attack", 0))
 	if bleed_on_attack > 0:
-		context.combat_state.player_bleed_on_attack += bleed_on_attack
-		context.battle_log_panel.append_line("你使用【%s】->自己：每次攻击流血+%d（本回合 %d）。" % [card_name, bleed_on_attack, context.combat_state.player_bleed_on_attack])
+		context.combat_state.bleed_on_attack += bleed_on_attack
+		context.battle_log_panel.append_line("你使用【%s】->自己：每次攻击流血+%d（本回合 %d）。" % [card_name, bleed_on_attack, context.combat_state.bleed_on_attack])
 	var attack_bonus_on_attack := int(card_data.get("attack_bonus_on_attack", 0))
 	if attack_bonus_on_attack > 0:
-		context.combat_state.player_attack_bonus_on_attack += attack_bonus_on_attack
-		context.battle_log_panel.append_line("你使用【%s】->自己：每次攻击伤害+%d（本回合 %d）。" % [card_name, attack_bonus_on_attack, context.combat_state.player_attack_bonus_on_attack])
+		context.combat_state.attack_bonus_on_attack += attack_bonus_on_attack
+		context.battle_log_panel.append_line("你使用【%s】->自己：每次攻击伤害+%d（本回合 %d）。" % [card_name, attack_bonus_on_attack, context.combat_state.attack_bonus_on_attack])
 	var next_bonus := int(card_data.get("next_attack_bonus", 0))
 	if next_bonus > 0:
-		context.combat_state.player_next_attack_bonus += next_bonus
+		context.combat_state.next_attack_bonus += next_bonus
 	if bool(card_data.get("next_attack_pierce", false)):
-		context.combat_state.player_next_attack_pierce = true
-	if next_bonus > 0 or context.combat_state.player_next_attack_pierce:
+		context.combat_state.next_attack_pierce = true
+	if next_bonus > 0 or context.combat_state.next_attack_pierce:
 		context.battle_log_panel.append_line("你使用【%s】->自己：强化下一次攻击。" % card_name)
 	var enemy_block_reduce := int(card_data.get("enemy_block_gain_reduction", 0))
 	if enemy_block_reduce > 0:
@@ -157,10 +157,10 @@ func _apply_card_effect(card_data: Dictionary) -> void:
 		context.battle_log_panel.append_line("你使用【%s】->敌人：本回合护甲获得-%d。" % [card_name, context.combat_state.enemy_block_gain_reduction])
 	var cost_delta := int(card_data.get("next_card_cost_delta", 0))
 	if cost_delta != 0:
-		context.combat_state.player_next_card_cost_delta += cost_delta
+		context.combat_state.next_card_cost_delta += cost_delta
 		context.battle_log_panel.append_line("你使用【%s】->自己：下一张牌费用%+d。" % [card_name, cost_delta])
 	if bool(card_data.get("block_disabled", false)):
-		context.combat_state.player_block_disabled = true
+		context.combat_state.block_disabled = true
 		context.battle_log_panel.append_line("你使用【%s】->自己：本回合无法获得护甲。" % card_name)
 	var equip_attack := int(card_data.get("equip_attack_bonus", 0))
 	if equip_attack > 0:
@@ -209,9 +209,9 @@ func _apply_card_effect(card_data: Dictionary) -> void:
 		context.battle_log_panel.append_line("你使用【%s】->下场战斗先手伤害提升至%d。" % [card_name, strike])
 		RunState.log_event("踏勘山势，获得先手优势。")
 	if is_attack:
-		context.combat_state.player_next_attack_mult = 1.0
-		context.combat_state.player_next_attack_bonus = 0
-		context.combat_state.player_next_attack_pierce = false
+		context.combat_state.next_attack_mult = 1.0
+		context.combat_state.next_attack_bonus = 0
+		context.combat_state.next_attack_pierce = false
 
 func _is_attack_card(card_data: Dictionary) -> bool:
 	if str(card_data.get("kind", "")) == "attack":
@@ -238,7 +238,7 @@ func _calculate_attack_damage(card_data: Dictionary, combo_count: int) -> int:
 	var per_combo := int(card_data.get("damage_per_attack_chain", 0))
 	if per_combo > 0:
 		bonus += per_combo * combo_count
-	var total: int = base_damage + bonus + int(context.combat_state.equip_attack_bonus) + int(context.combat_state.player_damage_bonus_turn) + int(context.combat_state.player_next_attack_bonus)
+	var total: int = base_damage + bonus + int(context.combat_state.equip_attack_bonus) + int(context.combat_state.damage_bonus_turn) + int(context.combat_state.next_attack_bonus)
 	var low_hp_mult := float(card_data.get("low_hp_mult", 1.0))
 	if low_hp_mult > 1.0:
 		var threshold := float(card_data.get("low_hp_threshold", 0.5))
@@ -249,9 +249,9 @@ func _calculate_attack_damage(card_data: Dictionary, combo_count: int) -> int:
 		if context.combat_state.enemy_actor.max_hp > 0 and float(context.combat_state.enemy_actor.hp) <= float(context.combat_state.enemy_actor.max_hp) * execute_threshold:
 			var execute_mult := float(card_data.get("execute_mult", 2.0))
 			total = int(round(float(total) * execute_mult))
-	if context.combat_state.player_next_attack_mult > 1.0:
-		total = int(round(float(total) * context.combat_state.player_next_attack_mult))
-	if context.combat_state.player_weak_turns > 0:
+	if context.combat_state.next_attack_mult > 1.0:
+		total = int(round(float(total) * context.combat_state.next_attack_mult))
+	if context.combat_state.weak_turns > 0:
 		total = int(round(float(total) * context.WEAK_DAMAGE_MULT))
 	return max(total, 0)
 
@@ -261,6 +261,6 @@ func _should_pierce(card_data: Dictionary) -> bool:
 	var pierce_threshold := int(card_data.get("pierce_if_block", 0))
 	if pierce_threshold > 0 and context.combat_state.player_actor.block >= pierce_threshold:
 		return true
-	if context.combat_state.player_next_attack_pierce:
+	if context.combat_state.next_attack_pierce:
 		return true
 	return false
