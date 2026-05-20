@@ -53,7 +53,7 @@ func set_card(card_data: Dictionary) -> void:
 func _apply_card_data(card_data: Dictionary) -> void:
 	card_id = card_data.get("id", "")
 	var name_text: String = str(card_data.get("name", "未知卡牌"))
-	var upgrade_lvl := card_data.get("upgrade_level", 0)
+	var upgrade_lvl: int = int(card_data.get("upgrade_level", 0))
 	if upgrade_lvl > 0:
 		name_text += " +%d" % upgrade_lvl
 	name_label.text = name_text
@@ -63,7 +63,7 @@ func _apply_card_data(card_data: Dictionary) -> void:
 	
 	# Rarity gem tint
 	var rarity: String = str(card_data.get("rarity", "common"))
-	var gem_color := RARITY_COLORS.get(rarity, RARITY_COLORS["common"])
+	var gem_color: Color = RARITY_COLORS.get(rarity, RARITY_COLORS["common"])
 	gem_icon.modulate = gem_color
 	
 	# Kind icon
@@ -88,7 +88,7 @@ func _apply_card_data(card_data: Dictionary) -> void:
 		art_texture.texture = loaded if loaded else DEFAULT_ART
 	
 	# Kind-based cost color
-	var kind_color := KIND_COLORS.get(kind, Color(1, 1, 1))
+	var kind_color: Color = KIND_COLORS.get(kind, Color(1, 1, 1))
 	cost_label.add_theme_color_override("font_color", kind_color)
 	
 	# Rarity-based frame border hint via self-modulate
