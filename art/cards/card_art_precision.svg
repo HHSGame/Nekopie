@@ -1,6 +1,18 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 120">
-  <rect x="0" y="0" width="200" height="120" rx="14" fill="#2a2e3d"/>
-  <rect x="16" y="14" width="168" height="92" rx="12" fill="#2a2e3d" stroke="#f2c45f" stroke-width="3" opacity="0.9"/>
-  <circle cx="100" cy="60" r="34" fill="none" stroke="#fff3c4" stroke-width="8"/>
-  <circle cx="100" cy="60" r="12" fill="#f2c45f"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="140" viewBox="0 0 200 140">
+
+<defs>
+  <linearGradient id="s_bg" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0%" stop-color="#1a2535"/><stop offset="100%" stop-color="#0e1825"/>
+  </linearGradient>
+</defs>
+<rect x="0" y="0" width="200" height="140" rx="12" fill="url(#s_bg)"/>
+<circle cx="100" cy="70" r="50" fill="#1a2a4a" opacity="0.4"/>
+
+<circle cx="100" cy="70" r="25" fill="none" stroke="#ffaa44" stroke-width="2"/>
+<circle cx="100" cy="70" r="4" fill="#ffaa44"/>
+<line x1="30" y1="70" x2="75" y2="70" stroke="#ffaa44" stroke-width="2"/>
+<line x1="125" y1="70" x2="170" y2="70" stroke="#ffaa44" stroke-width="2"/>
+<line x1="100" y1="20" x2="100" y2="45" stroke="#ffaa44" stroke-width="2"/>
+<line x1="100" y1="95" x2="100" y2="120" stroke="#ffaa44" stroke-width="2"/>
+
 </svg>

@@ -1,3 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
-  <path d="M64 6 L76 42 L122 36 L88 64 L122 92 L76 86 L64 122 L52 86 L6 92 L40 64 L6 36 L52 42 Z" fill="#ffcc7a" stroke="#b36b2c" stroke-width="4"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96">
+
+<circle cx="48" cy="48" r="30" fill="#ff6644" opacity="0.5"/>
+<circle cx="48" cy="48" r="18" fill="#ffaa44" opacity="0.6"/>
+<circle cx="48" cy="48" r="8" fill="#ffffff" opacity="0.8"/>
+<path d="M18 48 L38 48 M58 48 L78 48 M48 18 L48 38 M48 58 L48 78" stroke="#ffcc00" stroke-width="3" stroke-linecap="round" opacity="0.6"/>
+<path d="M28 28 L38 38 M58 58 L68 68 M28 68 L38 58 M58 38 L68 28" stroke="#ffcc00" stroke-width="2" stroke-linecap="round" opacity="0.4"/>
+
 </svg>

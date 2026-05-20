@@ -1,7 +1,17 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 96">
-  <rect x="8" y="16" width="496" height="64" rx="18" fill="#2b223d" stroke="#a98dff" stroke-width="2"/>
-  <path d="M40 48 L16 64 L16 32 Z" fill="#f6d58b" opacity="0.8"/>
-  <path d="M472 48 L496 64 L496 32 Z" fill="#f6d58b" opacity="0.8"/>
-  <circle cx="256" cy="48" r="10" fill="#f6d58b"/>
-  <circle cx="256" cy="48" r="18" fill="none" stroke="#f6d58b" stroke-width="2" opacity="0.6"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="96" viewBox="0 0 512 96">
+
+<defs>
+  <linearGradient id="tb" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#3a2a5a"/><stop offset="100%" stop-color="#1a1a30"/>
+  </linearGradient>
+</defs>
+<rect x="8" y="16" width="496" height="64" rx="18" fill="url(#tb)" stroke="#a98dff" stroke-width="2"/>
+<path d="M40 48 L16 64 L16 32 Z" fill="#f6d58b" opacity="0.8"/>
+<path d="M472 48 L496 64 L496 32 Z" fill="#f6d58b" opacity="0.8"/>
+<circle cx="256" cy="48" r="10" fill="#f6d58b"/>
+<circle cx="256" cy="48" r="18" fill="none" stroke="#f6d58b" stroke-width="2" opacity="0.6"/>
+<!-- decorative inlays -->
+<path d="M120 48 Q140 38 160 48 Q180 58 200 48" fill="none" stroke="#6b4a8b" stroke-width="1.5" opacity="0.6"/>
+<path d="M312 48 Q332 38 352 48 Q372 58 392 48" fill="none" stroke="#6b4a8b" stroke-width="1.5" opacity="0.6"/>
+
 </svg>

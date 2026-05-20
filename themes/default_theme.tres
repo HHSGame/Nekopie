@@ -5,3 +5,109 @@
 [resource]
 default_font = ExtResource("1_lh2lq")
 default_font_size = 20
+
+# ── Base colors ──
+default_theme_item/panel_styles/default = SubResource("panel_base")
+default_theme_item/button_styles/default = SubResource("button_base")
+default_theme_item/button_styles/hover = SubResource("button_hover")
+default_theme_item/button_styles/pressed = SubResource("button_pressed")
+default_theme_item/progress_bar_styles/background = SubResource("progress_bg")
+default_theme_item/progress_bar_styles/fill = SubResource("progress_fill")
+default_theme_item/scroll_bar_styles/grabber = SubResource("scroll_grab")
+default_theme_item/scroll_bar_styles/grabber_highlight = SubResource("scroll_grab_hover")
+default_theme_item/scroll_container_styles/panel = SubResource("scroll_panel")
+
+[sub_resource type="StyleBoxFlat" id="panel_base"]
+content_margin_left = 8
+content_margin_top = 6
+content_margin_right = 8
+content_margin_bottom = 6
+bg_color = Color(0.12, 0.10, 0.16, 0.92)
+border_color = Color(0.43, 0.30, 0.55, 0.6)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_left = 12
+corner_radius_bottom_right = 12
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+
+[sub_resource type="StyleBoxFlat" id="button_base"]
+content_margin_left = 16
+content_margin_top = 8
+content_margin_right = 16
+content_margin_bottom = 8
+bg_color = Color(0.20, 0.16, 0.26, 0.9)
+border_color = Color(0.60, 0.47, 0.72, 0.6)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_left = 8
+corner_radius_bottom_right = 8
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+
+[sub_resource type="StyleBoxFlat" id="button_hover"]
+content_margin_left = 16
+content_margin_top = 8
+content_margin_right = 16
+content_margin_bottom = 8
+bg_color = Color(0.28, 0.22, 0.34, 0.95)
+border_color = Color(0.75, 0.62, 0.85, 0.8)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_left = 8
+corner_radius_bottom_right = 8
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+
+[sub_resource type="StyleBoxFlat" id="button_pressed"]
+content_margin_left = 16
+content_margin_top = 8
+content_margin_right = 16
+content_margin_bottom = 8
+bg_color = Color(0.16, 0.12, 0.20, 0.95)
+border_color = Color(0.95, 0.78, 0.40, 0.9)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_left = 8
+corner_radius_bottom_right = 8
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+
+[sub_resource type="StyleBoxFlat" id="progress_bg"]
+bg_color = Color(0.08, 0.06, 0.12, 0.8)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_left = 4
+corner_radius_bottom_right = 4
+
+[sub_resource type="StyleBoxFlat" id="progress_fill"]
+bg_color = Color(0.60, 0.15, 0.15, 0.9)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_left = 4
+corner_radius_bottom_right = 4
+
+[sub_resource type="StyleBoxFlat" id="scroll_panel"]
+bg_color = Color(0, 0, 0, 0)
+
+[sub_resource type="StyleBoxFlat" id="scroll_grab"]
+bg_color = Color(0.50, 0.40, 0.60, 0.6)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_left = 4
+corner_radius_bottom_right = 4
+
+[sub_resource type="StyleBoxFlat" id="scroll_grab_hover"]
+bg_color = Color(0.65, 0.55, 0.75, 0.8)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_left = 4
+corner_radius_bottom_right = 4

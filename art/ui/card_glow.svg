@@ -1,3 +1,12 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 260">
-  <rect x="6" y="6" width="208" height="248" rx="18" fill="none" stroke="#ffd37d" stroke-width="6"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="220" height="260" viewBox="0 0 220 260">
+
+<defs>
+  <radialGradient id="glowg" cx="0.5" cy="0.5" r="0.6">
+    <stop offset="0%" stop-color="#ffd37d" stop-opacity="0.4"/>
+    <stop offset="100%" stop-color="#ffd37d" stop-opacity="0"/>
+  </radialGradient>
+</defs>
+<rect x="0" y="0" width="220" height="260" rx="18" fill="url(#glowg)"/>
+<rect x="4" y="4" width="212" height="252" rx="16" fill="none" stroke="#ffd37d" stroke-width="3" opacity="0.7"/>
+
 </svg>

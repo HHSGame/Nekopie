@@ -1,9 +1,19 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="320" height="320" viewBox="0 0 320 320">
-  <rect width="320" height="320" fill="#141826"/>
-  <circle cx="160" cy="190" r="74" fill="#3b4a6b"/>
-  <polygon points="108,130 88,72 136,104" fill="#d19a66"/>
-  <polygon points="212,130 232,72 184,104" fill="#d19a66"/>
-  <circle cx="136" cy="190" r="10" fill="#0b0f18"/>
-  <circle cx="184" cy="190" r="10" fill="#0b0f18"/>
-  <path d="M140 222 C152 234 168 234 180 222" fill="none" stroke="#0b0f18" stroke-width="8" stroke-linecap="round"/>
+
+<defs>
+  <linearGradient id="port_bg" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0%" stop-color="#1a2232"/><stop offset="100%" stop-color="#0e1420"/>
+  </linearGradient>
+</defs>
+<rect width="320" height="320" fill="url(#port_bg)"/>
+
+<ellipse cx="160" cy="150" rx="60" ry="65" fill="#8866aa" opacity="0.8"/>
+<circle cx="160" cy="140" r="40" fill="#a088cc" opacity="0.7"/>
+<ellipse cx="145" cy="135" rx="6" ry="8" fill="#ff88cc"/>
+<ellipse cx="175" cy="135" rx="6" ry="8" fill="#ff88cc"/>
+<ellipse cx="145" cy="133" rx="3" ry="4" fill="#2a1a3a"/>
+<ellipse cx="175" cy="133" rx="3" ry="4" fill="#2a1a3a"/>
+<ellipse cx="160" cy="155" rx="4" ry="3" fill="#cc66aa"/>
+<path d="M130 170 Q160 190 190 170" fill="none" stroke="#cc88aa" stroke-width="2"/>
+
 </svg>

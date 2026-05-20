@@ -1,3 +1,3 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
-  <path d="M20 46 L42 18 L50 26 L28 54 Z" fill="#ffffff"/><rect x="14" y="48" width="20" height="8" rx="3" fill="#ffffff"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+<rect x="4" y="8" width="16" height="12" rx="3" fill="#aa8844"/><rect x="6" y="10" width="12" height="8" rx="2" fill="#ccaa66"/>
 </svg>

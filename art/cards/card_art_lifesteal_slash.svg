@@ -1,6 +1,16 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 120">
-  <rect x="0" y="0" width="200" height="120" rx="14" fill="#3a1f2d"/>
-  <rect x="16" y="14" width="168" height="92" rx="12" fill="#3a1f2d" stroke="#e07474" stroke-width="3" opacity="0.9"/>
-  <path d="M52 30 C70 24 92 24 110 30 L96 94 L66 94 Z" fill="#f6d1d1"/>
-  <path d="M110 30 C130 36 146 50 150 68 L110 88 Z" fill="#e07474"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="140" viewBox="0 0 200 140">
+
+<defs>
+  <linearGradient id="a_bg" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0%" stop-color="#2a1525"/><stop offset="100%" stop-color="#1a0a18"/>
+  </linearGradient>
+</defs>
+<rect x="0" y="0" width="200" height="140" rx="12" fill="url(#a_bg)"/>
+<circle cx="100" cy="70" r="50" fill="#3a1a2a" opacity="0.6"/>
+
+<path d="M40 100 L100 40 L110 50 L50 110 Z" fill="#ddd"/>
+<path d="M60 105 L120 45" stroke="#ff6688" stroke-width="3" stroke-linecap="round"/>
+<circle cx="100" cy="75" r="8" fill="#ff4466" opacity="0.5"/>
+<path d="M105 70 L125 60 L115 80 Z" fill="#ff4466"/>
+
 </svg>

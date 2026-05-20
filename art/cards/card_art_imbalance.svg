@@ -1,7 +1,16 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 120">
-  <rect x="0" y="0" width="200" height="120" rx="14" fill="#2e2a3a"/>
-  <rect x="16" y="14" width="168" height="92" rx="12" fill="#2e2a3a" stroke="#b38cff" stroke-width="3" opacity="0.9"/>
-  <rect x="96" y="24" width="8" height="60" fill="#eadbff"/>
-  <path d="M50 40 L96 40 L74 74 Z" fill="#b38cff"/>
-  <path d="M104 40 L150 40 L126 74 Z" fill="#b38cff"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="140" viewBox="0 0 200 140">
+
+<defs>
+  <linearGradient id="s_bg" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0%" stop-color="#1a2535"/><stop offset="100%" stop-color="#0e1825"/>
+  </linearGradient>
+</defs>
+<rect x="0" y="0" width="200" height="140" rx="12" fill="url(#s_bg)"/>
+<circle cx="100" cy="70" r="50" fill="#1a2a4a" opacity="0.4"/>
+
+<path d="M50 80 L150 80" stroke="#ff8844" stroke-width="4"/>
+<path d="M60 65 L140 65" stroke="#ffaa66" stroke-width="2" opacity="0.6"/>
+<path d="M70 95 L130 95" stroke="#ffaa66" stroke-width="2" opacity="0.6"/>
+<circle cx="100" cy="80" r="6" fill="#ff8844" opacity="0.5"/>
+
 </svg>

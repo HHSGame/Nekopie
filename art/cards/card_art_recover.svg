@@ -1,8 +1,15 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 120">
-  <rect x="0" y="0" width="200" height="120" rx="14" fill="#2f3b5c"/>
-  <circle cx="70" cy="64" r="26" fill="#4fd0b5"/>
-  <rect x="66" y="46" width="8" height="36" rx="2" fill="#ffffff"/>
-  <rect x="52" y="60" width="36" height="8" rx="2" fill="#ffffff"/>
-  <path d="M134 34 C122 52 128 70 144 84 C160 70 166 52 154 34 Z" fill="#f2b36b"/>
-  <rect x="34" y="96" width="48" height="10" rx="3" fill="#1b2a3f"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="140" viewBox="0 0 200 140">
+
+<defs>
+  <linearGradient id="s_bg" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0%" stop-color="#1a2535"/><stop offset="100%" stop-color="#0e1825"/>
+  </linearGradient>
+</defs>
+<rect x="0" y="0" width="200" height="140" rx="12" fill="url(#s_bg)"/>
+<circle cx="100" cy="70" r="50" fill="#1a2a4a" opacity="0.4"/>
+
+<circle cx="100" cy="70" r="25" fill="#44aa66" opacity="0.3"/>
+<path d="M100 50 L100 90 M80 70 L120 70" stroke="#66dd88" stroke-width="4" stroke-linecap="round"/>
+<circle cx="100" cy="70" r="10" fill="#88ffaa" opacity="0.4"/>
+
 </svg>

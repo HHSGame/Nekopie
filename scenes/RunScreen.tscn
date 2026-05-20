@@ -90,6 +90,7 @@ theme_override_constants/separation = 6
 [node name="BattlePanel" type="PanelContainer" parent="MarginContainer/RootVBox"]
 layout_mode = 2
 size_flags_vertical = 3
+theme_override_styles/panel = SubResource("panel_base")
 
 [node name="BattleMargin" type="MarginContainer" parent="MarginContainer/RootVBox/BattlePanel"]
 layout_mode = 2
@@ -341,6 +342,7 @@ text = "弃牌堆：0"
 
 [node name="HandDock" type="PanelContainer" parent="MarginContainer/RootVBox"]
 custom_minimum_size = Vector2(0, 170)
+theme_override_constants/separation = 0
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 0
@@ -392,6 +394,7 @@ theme_override_constants/separation = 8
 [node name="BackButton" type="Button" parent="MarginContainer/RootVBox/HandDock/HandMargin/HandVBox/Actions"]
 	unique_name_in_owner = true
 layout_mode = 2
+custom_minimum_size = Vector2(100, 36)
 text = "返回"
 icon = ExtResource("18_0e8pe")
 
@@ -419,6 +422,7 @@ size_flags_horizontal = 3
 [node name="EndTurnButton" type="Button" parent="MarginContainer/RootVBox/HandDock/HandMargin/HandVBox/Actions"]
 	unique_name_in_owner = true
 layout_mode = 2
+custom_minimum_size = Vector2(140, 36)
 text = "结束回合"
 icon = ExtResource("19_p2ivm")
 
@@ -426,6 +430,7 @@ icon = ExtResource("19_p2ivm")
 	unique_name_in_owner = true
 visible = false
 layout_mode = 2
+custom_minimum_size = Vector2(140, 36)
 text = "继续攀登"
 icon = ExtResource("20_trx2m")
 

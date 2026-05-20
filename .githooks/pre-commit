@@ -30,7 +30,7 @@ for field in "${OLD_FIELDS[@]}"; do
   # Check only added lines (starting with +), exclude ---/+++ header
   while IFS= read -r line; do
     if [[ $line == "+"* && $line != "+++"* ]]; then
-      if echo "$line" | grep -qP "(combat_state|state)\.$field\b"; then
+      if echo "$line" | grep -qE "(combat_state|state)\.$field\b"; then
         echo "❌ '$field' in: $(echo "$line" | sed 's/^+//')"
         errors=$((errors + 1))
       fi

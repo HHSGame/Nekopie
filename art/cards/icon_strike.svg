@@ -1,3 +1,3 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
-  <path d="M12 50 L46 16 L52 22 L18 56 Z" fill="#ffffff"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+<path d="M5 19 L15 9 L17 11 L7 21 Z" fill="#ffffff"/><line x1="17" y1="5" x2="21" y2="9" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
 </svg>

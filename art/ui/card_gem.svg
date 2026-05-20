@@ -1,4 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <path d="M16 3 L29 12 L16 29 L3 12 Z" fill="#f5d38b" stroke="#8b6b32" stroke-width="2"/>
-  <path d="M16 6 L24 12 L16 24 L8 12 Z" fill="#fff2c6" opacity="0.8"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+
+<defs>
+  <radialGradient id="gg" cx="0.3" cy="0.3" r="0.7">
+    <stop offset="0%" stop-color="#fff8d6"/><stop offset="60%" stop-color="#f1c86b"/><stop offset="100%" stop-color="#a67c33"/>
+  </radialGradient>
+</defs>
+<polygon points="16,2 30,12 16,30 2,12" fill="url(#gg)" stroke="#8b6b32" stroke-width="1.5"/>
+<polygon points="16,5 26,12 16,26 6,12" fill="#fff2c6" opacity="0.3"/>
+
 </svg>

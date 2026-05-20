@@ -1,12 +1,34 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
-  <defs>
-    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#0b1220"/>
-      <stop offset="100%" stop-color="#1f2a3b"/>
-    </linearGradient>
-  </defs>
-  <rect width="1280" height="720" fill="url(#sky)"/>
-  <path d="M0 520 L240 320 L420 460 L600 260 L820 520 L1000 360 L1280 520 L1280 720 L0 720 Z" fill="#131a28"/>
-  <path d="M0 600 L180 460 L360 560 L520 420 L740 600 L940 460 L1120 560 L1280 520 L1280 720 L0 720 Z" fill="#0e141f"/>
-  <circle cx="1020" cy="140" r="60" fill="#2a3b55" opacity="0.4"/>
+
+<defs>
+  <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#0b1220"/>
+    <stop offset="30%" stop-color="#1a2240"/>
+    <stop offset="100%" stop-color="#2a1a3a"/>
+  </linearGradient>
+  <linearGradient id="moon" cx="0.5" cy="0.3" r="0.5" gradientUnits="objectBoundingBox">
+    <stop offset="0%" stop-color="#ddeeff"/>
+    <stop offset="100%" stop-color="#8899cc"/>
+  </radialGradient>
+</defs>
+<rect width="1280" height="720" fill="url(#sky)"/>
+<circle cx="1000" cy="120" r="55" fill="url(#moon)" opacity="0.6"/>
+<path d="M0 520 L180 360 L300 420 L480 280 L620 400 L780 320 L960 380 L1100 260 L1280 400 L1280 720 L0 720 Z" fill="#131a28"/>
+<path d="M0 580 L140 440 L260 500 L400 380 L560 500 L720 400 L860 460 L1020 360 L1200 480 L1280 520 L1280 720 L0 720 Z" fill="#0e141f"/>
+<path d="M0 650 L200 540 L340 600 L520 480 L640 580 L800 500 L940 560 L1140 460 L1280 600 L1280 720 L0 720 Z" fill="#0a1018"/>
+<!-- Clouds -->
+<ellipse cx="300" cy="180" rx="120" ry="25" fill="#1a2240" opacity="0.5"/>
+<ellipse cx="700" cy="200" rx="150" ry="20" fill="#1a2240" opacity="0.4"/>
+<ellipse cx="1100" cy="160" rx="100" ry="25" fill="#1a2240" opacity="0.5"/>
+<!-- Stars -->
+<circle cx="100" cy="80" r="1.5" fill="#fff" opacity="0.6"/>
+<circle cx="250" cy="50" r="1" fill="#fff" opacity="0.4"/>
+<circle cx="450" cy="100" r="1.5" fill="#fff" opacity="0.5"/>
+<circle cx="600" cy="60" r="1" fill="#fff" opacity="0.3"/>
+<circle cx="800" cy="90" r="1.5" fill="#fff" opacity="0.5"/>
+<circle cx="950" cy="40" r="1" fill="#fff" opacity="0.4"/>
+<circle cx="1150" cy="80" r="1.5" fill="#fff" opacity="0.6"/>
+<circle cx="350" cy="130" r="1" fill="#fff" opacity="0.3"/>
+<circle cx="750" cy="140" r="1" fill="#fff" opacity="0.4"/>
+
 </svg>

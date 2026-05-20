@@ -1,6 +1,16 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 120">
-  <rect x="0" y="0" width="200" height="120" rx="14" fill="#2b2b35"/>
-  <rect x="16" y="14" width="168" height="92" rx="12" fill="#2b2b35" stroke="#b8c0ff" stroke-width="3" opacity="0.9"/>
-  <circle cx="100" cy="60" r="34" fill="#e6e9ff"/>
-  <path d="M100 40 V64 L118 70" stroke="#b8c0ff" stroke-width="6" stroke-linecap="round"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="140" viewBox="0 0 200 140">
+
+<defs>
+  <linearGradient id="c_bg" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0%" stop-color="#181018"/><stop offset="100%" stop-color="#0a080a"/>
+  </linearGradient>
+</defs>
+<rect x="0" y="0" width="200" height="140" rx="12" fill="url(#c_bg)"/>
+<circle cx="100" cy="70" r="50" fill="#2a1020" opacity="0.5"/>
+
+<circle cx="100" cy="70" r="25" fill="none" stroke="#666" stroke-width="3"/>
+<line x1="100" y1="70" x2="115" y2="55" stroke="#888" stroke-width="2" stroke-linecap="round"/>
+<line x1="100" y1="70" x2="100" y2="50" stroke="#888" stroke-width="2" stroke-linecap="round"/>
+<circle cx="100" cy="70" r="4" fill="#888"/>
+
 </svg>

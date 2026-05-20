@@ -1,6 +1,15 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 120">
-  <rect x="0" y="0" width="200" height="120" rx="14" fill="#3a221b"/>
-  <rect x="16" y="14" width="168" height="92" rx="12" fill="#3a221b" stroke="#f08a5d" stroke-width="3" opacity="0.9"/>
-  <path d="M100 18 C118 36 126 48 122 64 C118 82 100 96 80 98 C86 80 82 70 92 58 C84 44 90 30 100 18 Z" fill="#f08a5d"/>
-  <path d="M100 40 C110 54 108 66 100 74 C94 66 92 54 100 40 Z" fill="#ffe0b3"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="140" viewBox="0 0 200 140">
+
+<defs>
+  <linearGradient id="a_bg" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0%" stop-color="#2a1525"/><stop offset="100%" stop-color="#1a0a18"/>
+  </linearGradient>
+</defs>
+<rect x="0" y="0" width="200" height="140" rx="12" fill="url(#a_bg)"/>
+<circle cx="100" cy="70" r="50" fill="#3a1a2a" opacity="0.6"/>
+
+<path d="M50 95 L110 35 L120 45 L60 105 Z" fill="#f0d0a0"/>
+<path d="M80 85 Q100 45 120 85 Q110 65 100 85 Q90 65 80 85 Z" fill="#ff6600" opacity="0.7"/>
+<path d="M70 95 Q90 55 110 95 Q100 75 90 95 Q80 75 70 95 Z" fill="#ffaa00" opacity="0.5"/>
+
 </svg>
