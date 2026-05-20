@@ -78,14 +78,14 @@ script = ExtResource("30_5g0a2")
 layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
-theme_override_constants/margin_left = 16
-theme_override_constants/margin_top = 8
-theme_override_constants/margin_right = 16
-theme_override_constants/margin_bottom = 8
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 12
 
 [node name="RootVBox" type="VBoxContainer" parent="MarginContainer"]
 layout_mode = 2
-theme_override_constants/separation = 6
+theme_override_constants/separation = 8
 
 [node name="BattlePanel" type="PanelContainer" parent="MarginContainer/RootVBox"]
 layout_mode = 2
@@ -103,7 +103,7 @@ layout_mode = 2
 theme_override_constants/separation = 9
 
 [node name="EnemyColumn" type="VBoxContainer" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox"]
-custom_minimum_size = Vector2(180, 0)
+custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 theme_override_constants/separation = 3
 
@@ -114,7 +114,7 @@ text = "敌人：未知魔物"
 
 [node name="EnemyPortraitPanel" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/EnemyColumn" instance=ExtResource("26_1s0kp")]
 	unique_name_in_owner = true
-custom_minimum_size = Vector2(128, 128)
+custom_minimum_size = Vector2(160, 160)
 layout_mode = 2
 
 [node name="EnemyStatsPanel" type="PanelContainer" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/EnemyColumn"]
@@ -220,7 +220,7 @@ autowrap_mode = 3
 
 [node name="BattleLogPanel" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/BattleCenterColumn" instance=ExtResource("27_7x1jd")]
 	unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 220)
+custom_minimum_size = Vector2(0, 280)
 layout_mode = 2
 size_flags_horizontal = 3
 
@@ -229,7 +229,7 @@ layout_mode = 2
 size_flags_vertical = 3
 
 [node name="PlayerColumn" type="VBoxContainer" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox"]
-custom_minimum_size = Vector2(180, 0)
+custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 theme_override_constants/separation = 3
 
@@ -239,7 +239,7 @@ text = "旅人状态"
 
 [node name="PlayerPortraitPanel" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/PlayerColumn" instance=ExtResource("26_1s0kp")]
 	unique_name_in_owner = true
-custom_minimum_size = Vector2(128, 128)
+custom_minimum_size = Vector2(160, 160)
 layout_mode = 2
 
 [node name="PlayerStatsPanel" type="PanelContainer" parent="MarginContainer/RootVBox/BattlePanel/BattleMargin/BattleHBox/PlayerColumn"]
@@ -340,7 +340,7 @@ layout_mode = 2
 text = "弃牌堆：0"
 
 [node name="HandDock" type="PanelContainer" parent="MarginContainer/RootVBox"]
-custom_minimum_size = Vector2(0, 170)
+custom_minimum_size = Vector2(0, 240)
 theme_override_constants/separation = 0
 layout_mode = 2
 size_flags_horizontal = 3
@@ -370,7 +370,7 @@ size_flags_horizontal = 3
 
 [node name="HandScroll" type="ScrollContainer" parent="MarginContainer/RootVBox/HandDock/HandMargin/HandVBox"]
 	unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 72)
+custom_minimum_size = Vector2(0, 180)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 0
@@ -618,7 +618,7 @@ theme_override_constants/separation = 10
 
 [node name="RewardDeckScroll" type="ScrollContainer" parent="RewardOverlay/CenterContainer/RewardPanel/RewardMargin/RewardVBox"]
 	unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 220)
+custom_minimum_size = Vector2(0, 280)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -682,7 +682,7 @@ autowrap_mode = 3
 
 [node name="ShopChoiceScroll" type="ScrollContainer" parent="ShopOverlay/CenterContainer/ShopPanel/ShopMargin/ShopVBox"]
 	unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 220)
+custom_minimum_size = Vector2(0, 280)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -758,7 +758,7 @@ text = "需要弃置0张。"
 
 [node name="DiscardChoiceScroll" type="ScrollContainer" parent="DiscardOverlay/CenterContainer/DiscardPanel/DiscardMargin/DiscardVBox"]
 	unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 220)
+custom_minimum_size = Vector2(0, 280)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
