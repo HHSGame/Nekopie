@@ -1,23 +1,8 @@
-[gd_resource type="Theme" load_steps=2 format=3]
+[gd_resource type="Theme" load_steps=11 format=3]
 
 [ext_resource type="FontFile" path="res://fonts/NotoSansCJKsc-Regular.otf" id="1_lh2lq"]
 
-[resource]
-default_font = ExtResource("1_lh2lq")
-default_font_size = 20
-
-# ── Base colors ──
-default_theme_item/panel_styles/default = SubResource("panel_base")
-default_theme_item/button_styles/default = SubResource("button_base")
-default_theme_item/button_styles/hover = SubResource("button_hover")
-default_theme_item/button_styles/pressed = SubResource("button_pressed")
-default_theme_item/progress_bar_styles/background = SubResource("progress_bg")
-default_theme_item/progress_bar_styles/fill = SubResource("progress_fill")
-default_theme_item/scroll_bar_styles/grabber = SubResource("scroll_grab")
-default_theme_item/scroll_bar_styles/grabber_highlight = SubResource("scroll_grab_hover")
-default_theme_item/scroll_container_styles/panel = SubResource("scroll_panel")
-
-[sub_resource type="StyleBoxFlat" id="panel_base"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0vjmi"]
 content_margin_left = 8
 content_margin_top = 6
 content_margin_right = 8
@@ -33,7 +18,7 @@ border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
 
-[sub_resource type="StyleBoxFlat" id="button_base"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mhuei"]
 content_margin_left = 16
 content_margin_top = 8
 content_margin_right = 16
@@ -49,7 +34,7 @@ border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
 
-[sub_resource type="StyleBoxFlat" id="button_hover"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3lqao"]
 content_margin_left = 16
 content_margin_top = 8
 content_margin_right = 16
@@ -65,7 +50,7 @@ border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
 
-[sub_resource type="StyleBoxFlat" id="button_pressed"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7j4ua"]
 content_margin_left = 16
 content_margin_top = 8
 content_margin_right = 16
@@ -81,33 +66,56 @@ border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
 
-[sub_resource type="StyleBoxFlat" id="progress_bg"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qn6pd"]
 bg_color = Color(0.08, 0.06, 0.12, 0.8)
 corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_left = 4
 corner_radius_bottom_right = 4
 
-[sub_resource type="StyleBoxFlat" id="progress_fill"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5okwv"]
 bg_color = Color(0.60, 0.15, 0.15, 0.9)
 corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_left = 4
 corner_radius_bottom_right = 4
 
-[sub_resource type="StyleBoxFlat" id="scroll_panel"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hrms0"]
 bg_color = Color(0, 0, 0, 0)
 
-[sub_resource type="StyleBoxFlat" id="scroll_grab"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_a2x81"]
 bg_color = Color(0.50, 0.40, 0.60, 0.6)
 corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_left = 4
 corner_radius_bottom_right = 4
 
-[sub_resource type="StyleBoxFlat" id="scroll_grab_hover"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6i1wm"]
 bg_color = Color(0.65, 0.55, 0.75, 0.8)
 corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_left = 4
 corner_radius_bottom_right = 4
+
+[resource]
+default_font = ExtResource("1_lh2lq")
+default_font_size = 20
+
+# ── Base panel style ──
+default_theme_item/panel_styles/default = SubResource("StyleBoxFlat_0vjmi")
+
+# ── Button states ──
+default_theme_item/button_styles/default = SubResource("StyleBoxFlat_mhuei")
+default_theme_item/button_styles/hover = SubResource("StyleBoxFlat_3lqao")
+default_theme_item/button_styles/pressed = SubResource("StyleBoxFlat_7j4ua")
+
+# ── Progress bar ──
+default_theme_item/progress_bar_styles/background = SubResource("StyleBoxFlat_qn6pd")
+default_theme_item/progress_bar_styles/fill = SubResource("StyleBoxFlat_5okwv")
+
+# ── Scroll bar ──
+default_theme_item/scroll_bar_styles/grabber = SubResource("StyleBoxFlat_a2x81")
+default_theme_item/scroll_bar_styles/grabber_highlight = SubResource("StyleBoxFlat_6i1wm")
+
+# ── Scroll container panel ──
+default_theme_item/scroll_container_styles/panel = SubResource("StyleBoxFlat_hrms0")
