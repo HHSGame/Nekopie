@@ -1,10 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="150" height="210" viewBox="0 0 150 210">
+<svg xmlns="http://www.w3.org/2000/svg" width="150" height="150" viewBox="0 0 150 150">
 <defs>
   <radialGradient id="glowg" cx="0.5" cy="0.5" r="0.6">
-    <stop offset="0%" stop-color="#ffd37d" stop-opacity="0.4"/>
+    <stop offset="0%" stop-color="#ffd37d" stop-opacity="0.35"/>
     <stop offset="100%" stop-color="#ffd37d" stop-opacity="0"/>
   </radialGradient>
 </defs>
-<rect x="0" y="0" width="150" height="210" rx="14" fill="url(#glowg)"/>
-<rect x="3" y="3" width="144" height="204" rx="12" fill="none" stroke="#ffd37d" stroke-width="3" opacity="0.7"/>
+<rect x="0" y="0" width="150" height="150" rx="10" fill="url(#glowg)"/>
+<rect x="2" y="2" width="146" height="146" rx="8" fill="none" stroke="#ffd37d" stroke-width="2.5" opacity="0.6"/>
 </svg>

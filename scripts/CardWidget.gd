@@ -122,9 +122,9 @@ func _set_hovered(active: bool) -> void:
 		hover_glow.modulate.a = 0.0
 		# Lift effect
 		hover_tween = create_tween()
-		hover_tween.tween_property(self, "scale", Vector2(1.06, 1.06), 0.12).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
-		hover_tween.parallel().tween_property(hover_glow, "modulate:a", 0.85, 0.12).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
-		hover_tween.parallel().tween_property(self, "position", Vector2(0, -8), 0.12).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+		hover_tween.tween_property(self, "scale", Vector2(1.04, 1.04), 0.1).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+		hover_tween.parallel().tween_property(hover_glow, "modulate:a", 0.6, 0.1).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+		hover_tween.parallel().tween_property(self, "position", Vector2(0, -4), 0.1).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 	else:
 		hover_tween = create_tween()
 		hover_tween.tween_property(self, "scale", Vector2.ONE, 0.12).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
