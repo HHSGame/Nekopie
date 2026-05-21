@@ -118,7 +118,6 @@ func _set_hovered(active: bool) -> void:
 	if hover_tween:
 		hover_tween.kill()
 	if active:
-		z_index = 10
 		hover_glow.visible = true
 		hover_glow.modulate.a = 0.0
 		hover_tween = create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
@@ -128,8 +127,5 @@ func _set_hovered(active: bool) -> void:
 		hover_tween = create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 		hover_tween.tween_property(self, "scale", Vector2.ONE, 0.1)
 		hover_tween.parallel().tween_property(hover_glow, "modulate:a", 0.0, 0.1)
-		hover_tween.tween_callback(_reset_hover)
+		hover_tween.tween_callback(func(): hover_glow.visible = false)
 
-func _reset_hover() -> void:
-	hover_glow.visible = false
-	z_index = 0
