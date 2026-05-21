@@ -118,16 +118,18 @@ func _set_hovered(active: bool) -> void:
 	if hover_tween:
 		hover_tween.kill()
 	if active:
+		z_index = 10
 		hover_glow.visible = true
 		hover_glow.modulate.a = 0.0
-		# Lift effect
-		hover_tween = create_tween()
-		hover_tween.tween_property(self, "scale", Vector2(1.04, 1.04), 0.1).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
-		hover_tween.parallel().tween_property(hover_glow, "modulate:a", 0.6, 0.1).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
-		hover_tween.parallel().tween_property(self, "position", Vector2(0, -4), 0.1).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+		hover_tween = create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+		hover_tween.tween_property(self, "scale", Vector2(1.05, 1.05), 0.1)
+		hover_tween.parallel().tween_property(hover_glow, "modulate:a", 0.7, 0.1)
 	else:
-		hover_tween = create_tween()
-		hover_tween.tween_property(self, "scale", Vector2.ONE, 0.12).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
-		hover_tween.parallel().tween_property(hover_glow, "modulate:a", 0.0, 0.12).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
-		hover_tween.parallel().tween_property(self, "position", Vector2.ZERO, 0.12).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
-		hover_tween.tween_callback(func(): hover_glow.visible = false)
+		hover_tween = create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+		hover_tween.tween_property(self, "scale", Vector2.ONE, 0.1)
+		hover_tween.parallel().tween_property(hover_glow, "modulate:a", 0.0, 0.1)
+		hover_tween.tween_callback(_reset_hover)
+
+func _reset_hover() -> void:
+	hover_glow.visible = false
+	z_index = 0
