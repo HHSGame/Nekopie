@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://dhm0boh5yrkmi"]
+[gd_scene load_steps=9 format=3 uid="uid://dhm0boh5yrkmi"]
 
 [ext_resource type="Script" path="res://scripts/CardWidget.gd" id="1_lgshh"]
 [ext_resource type="Theme" path="res://themes/default_theme.tres" id="2_s5q7b"]
@@ -7,6 +7,28 @@
 [ext_resource type="Texture2D" uid="uid://ddec2nem1ud6f" path="res://art/ui/card_glow.svg" id="5_5cypv"]
 [ext_resource type="Texture2D" uid="uid://cdvyvmhuh2iis" path="res://art/ui/card_gem.svg" id="6_bv6m0"]
 
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_art"]
+bg_color = Color(0.08, 0.06, 0.14, 0.85)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_left = 6
+corner_radius_bottom_right = 6
+content_margin_left = 2
+content_margin_top = 2
+content_margin_right = 2
+content_margin_bottom = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_desc"]
+bg_color = Color(0.10, 0.08, 0.18, 0.88)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_left = 6
+corner_radius_bottom_right = 6
+content_margin_left = 4
+content_margin_top = 3
+content_margin_right = 4
+content_margin_bottom = 3
 [node name="CardWidget" type="PanelContainer"]
 custom_minimum_size = Vector2(150, 210)
 theme = ExtResource("2_s5q7b")
@@ -33,24 +55,24 @@ mouse_filter = 2
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-theme_override_constants/margin_left = 6
-theme_override_constants/margin_top = 5
-theme_override_constants/margin_right = 4
-theme_override_constants/margin_bottom = 4
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 6
 
 [node name="VBox" type="VBoxContainer" parent="ContentMargin"]
 layout_mode = 2
-theme_override_constants/separation = 2
-
-[node name="Header" type="HBoxContainer" parent="ContentMargin/VBox"]
-custom_minimum_size = Vector2(0, 16)
-layout_mode = 2
 theme_override_constants/separation = 3
 
-[node name="GemIcon" type="TextureRect" parent="ContentMargin/VBox/Header"]
-custom_minimum_size = Vector2(12, 12)
+[node name="Header" type="HBoxContainer" parent="ContentMargin/VBox"]
+custom_minimum_size = Vector2(0, 18)
 layout_mode = 2
-size_flags_vertical = 0
+theme_override_constants/separation = 4
+
+[node name="GemIcon" type="TextureRect" parent="ContentMargin/VBox/Header"]
+custom_minimum_size = Vector2(14, 14)
+layout_mode = 2
+size_flags_vertical = 4
 texture = ExtResource("6_bv6m0")
 stretch_mode = 5
 mouse_filter = 2
@@ -72,27 +94,34 @@ vertical_alignment = 1
 mouse_filter = 2
 
 [node name="TypeIcon" type="TextureRect" parent="ContentMargin/VBox/Header"]
-custom_minimum_size = Vector2(12, 12)
+custom_minimum_size = Vector2(14, 14)
 layout_mode = 2
-size_flags_vertical = 0
+size_flags_vertical = 4
 stretch_mode = 5
 mouse_filter = 2
 
-[node name="ArtTexture" type="TextureRect" parent="ContentMargin/VBox"]
+[node name="ArtPanel" type="PanelContainer" parent="ContentMargin/VBox"]
 custom_minimum_size = Vector2(0, 80)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-expand_mode = 1
+theme_override_styles/panel = SubResource("StyleBoxFlat_art")
+
+[node name="ArtTexture" type="TextureRect" parent="ContentMargin/VBox/ArtPanel"]
+layout_mode = 2
 texture = ExtResource("4_gx2tu")
 stretch_mode = 5
 mouse_filter = 2
 
-[node name="DescriptionLabel" type="Label" parent="ContentMargin/VBox"]
-custom_minimum_size = Vector2(0, 42)
+[node name="DescriptionPanel" type="PanelContainer" parent="ContentMargin/VBox"]
+custom_minimum_size = Vector2(0, 54)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_desc")
+
+[node name="DescriptionLabel" type="Label" parent="ContentMargin/VBox/DescriptionPanel"]
+layout_mode = 2
 text = "卡面留空"
 autowrap_mode = 3
 max_lines_visible = 3

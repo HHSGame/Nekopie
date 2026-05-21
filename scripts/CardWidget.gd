@@ -14,8 +14,8 @@ const GEM_BASE := preload("res://art/ui/card_gem.svg")
 @onready var cost_label: Label = $ContentMargin/VBox/Header/CostLabel
 @onready var gem_icon: TextureRect = $ContentMargin/VBox/Header/GemIcon
 @onready var type_icon: TextureRect = $ContentMargin/VBox/Header/TypeIcon
-@onready var desc_label: Label = $ContentMargin/VBox/DescriptionLabel
-@onready var art_texture: TextureRect = $ContentMargin/VBox/ArtTexture
+@onready var desc_label: Label = $ContentMargin/VBox/DescriptionPanel/DescriptionLabel
+@onready var art_texture: TextureRect = $ContentMargin/VBox/ArtPanel/ArtTexture
 @onready var hover_glow: TextureRect = $HoverGlow
 
 var pending_card_data: Dictionary = {}
