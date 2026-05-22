@@ -340,7 +340,7 @@ layout_mode = 2
 text = "弃牌堆：0"
 
 [node name="HandDock" type="PanelContainer" parent="MarginContainer/RootVBox"]
-custom_minimum_size = Vector2(0, 195)
+custom_minimum_size = Vector2(0, 245)
 theme_override_constants/separation = 0
 layout_mode = 2
 size_flags_horizontal = 3
@@ -370,7 +370,7 @@ size_flags_horizontal = 3
 
 [node name="HandScroll" type="ScrollContainer" parent="MarginContainer/RootVBox/HandDock/HandMargin/HandVBox"]
 	unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 145)
+custom_minimum_size = Vector2(0, 160)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 0
