@@ -96,6 +96,9 @@ A Godot 4.3 deck-building prototype set in an isekai adventure. The main goal is
 - Fixed strict typing issues in combat controllers/handlers and corrected UI scene UID headers for Godot parsing.
 - Fixed the post-battle shop offer list to render per-card purchase actions.
 
+## Done
+- [x] Debug and fix hand card clipping: HAND constants, wrapper type, CardWidget expansion flags, hover expansion system
+
 ## Scene and Script Layout
 - `scenes/Main.tscn` + `scripts/Main.gd`: main menu and navigation.
 - `scenes/RunScreen.tscn` + `scripts/RunScreen.gd`: climb progress. Node references use unique names (% prefix).
