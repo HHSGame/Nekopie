@@ -86,15 +86,14 @@ func refresh_hand() -> void:
 		var card_id := RunState.get_card_id(card_entry)
 		var card_data := GameData.get_card_data(card_id, RunState.get_card_upgrade_level(card_entry))
 		var collapsed_scale: float = float(context.HAND_COLLAPSED_HEIGHT) / float(context.HAND_CARD_SIZE.y)
-		var slot := Control.new()
+		var slot := MarginContainer.new()
 		slot.custom_minimum_size = Vector2(context.HAND_CARD_SIZE.x * collapsed_scale, context.HAND_COLLAPSED_HEIGHT)
-		slot.clip_contents = false
 		slot.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		context.hand_container.add_child(slot)
 		var widget: CardWidget = context.CARD_WIDGET_SCENE.instantiate()
 		widget.set_card(card_data)
 		widget.scale = Vector2(collapsed_scale, collapsed_scale)
-		widget.position = Vector2(0.0, float(context.HAND_COLLAPSED_HEIGHT) - (float(context.HAND_CARD_SIZE.y) * collapsed_scale))
+		# No position needed — MarginContainer constrains child to full rect
 		widget.clicked.connect(context.combat_flow.on_hand_card_clicked.bind(index))
 		widget.hovered.connect(_on_hand_card_hovered.bind(index, slot))
 		widget.unhovered.connect(_on_hand_card_unhovered.bind(slot))

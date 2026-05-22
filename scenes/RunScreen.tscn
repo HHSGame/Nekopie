@@ -896,4 +896,4 @@ stream = ExtResource("11_9p0r4")
 [node name="SfxReward" type="AudioStreamPlayer" parent="."]
 	unique_name_in_owner = true
 stream = ExtResource("12_1p0d9")
-
+layout_mode = 0
