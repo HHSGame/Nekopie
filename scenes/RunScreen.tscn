@@ -90,6 +90,7 @@ theme_override_constants/separation = 8
 [node name="BattlePanel" type="PanelContainer" parent="MarginContainer/RootVBox"]
 layout_mode = 2
 size_flags_vertical = 3
+clip_contents = true
 
 [node name="BattleMargin" type="MarginContainer" parent="MarginContainer/RootVBox/BattlePanel"]
 layout_mode = 2
@@ -345,6 +346,7 @@ theme_override_constants/separation = 0
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 0
+clip_contents = true
 z_index = 1
 
 [node name="HandMargin" type="MarginContainer" parent="MarginContainer/RootVBox/HandDock"]

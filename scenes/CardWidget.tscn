@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://dhm0boh5yrkmi"]
+[gd_scene load_steps=10 format=3 uid="uid://dhm0boh5yrkmi"]
 
 [ext_resource type="Script" path="res://scripts/CardWidget.gd" id="1_lgshh"]
 [ext_resource type="Theme" path="res://themes/default_theme.tres" id="2_s5q7b"]
@@ -7,6 +7,17 @@
 [ext_resource type="Texture2D" uid="uid://ddec2nem1ud6f" path="res://art/ui/card_glow.svg" id="5_5cypv"]
 [ext_resource type="Texture2D" uid="uid://cdvyvmhuh2iis" path="res://art/ui/card_gem.svg" id="6_bv6m0"]
 
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cardbg"]
+bg_color = Color(0.12, 0.10, 0.16, 1.0)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_left = 8
+corner_radius_bottom_right = 8
+content_margin_left = 2
+content_margin_top = 2
+content_margin_right = 2
+content_margin_bottom = 2
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_art"]
 bg_color = Color(0.08, 0.06, 0.14, 0.85)
 corner_radius_top_left = 6
@@ -32,6 +43,7 @@ content_margin_bottom = 3
 [node name="CardWidget" type="PanelContainer"]
 custom_minimum_size = Vector2(150, 150)
 theme = ExtResource("2_s5q7b")
+theme_override_styles/panel = SubResource("StyleBoxFlat_cardbg")
 script = ExtResource("1_lgshh")
 
 [node name="HoverGlow" type="TextureRect" parent="."]
