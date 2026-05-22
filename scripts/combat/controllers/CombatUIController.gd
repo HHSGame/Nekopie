@@ -88,7 +88,7 @@ func refresh_hand() -> void:
 		var collapsed_scale: float = float(context.HAND_COLLAPSED_HEIGHT) / float(context.HAND_CARD_SIZE.y)
 		var slot := Control.new()
 		slot.custom_minimum_size = Vector2(context.HAND_CARD_SIZE.x * collapsed_scale, context.HAND_COLLAPSED_HEIGHT)
-		slot.clip_contents = true
+		slot.clip_contents = false
 		slot.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		context.hand_container.add_child(slot)
 		var widget: CardWidget = context.CARD_WIDGET_SCENE.instantiate()
@@ -126,17 +126,11 @@ func _set_hand_slot_expanded(slot: Control, expanded: bool) -> void:
 	var target_scale: float = expanded_scale if expanded else collapsed_scale
 	var target_height: float = float(context.HAND_CARD_SIZE.y) * target_scale
 	var target_position := Vector2(0.0, float(context.HAND_COLLAPSED_HEIGHT) - target_height)
-	slot.clip_contents = not expanded
+	# No clipping — cards are full-size in the hand, overflow handled by HandScroll
+	slot.clip_contents = false
 	tween = context.create_tween()
 	tween.tween_property(widget, "scale", Vector2(target_scale, target_scale), 0.12).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 	tween.parallel().tween_property(widget, "position", target_position, 0.12).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
-	if expanded:
-		slot.z_index = 20
-	else:
-		tween.tween_callback(func():
-			if is_instance_valid(slot):
-				slot.z_index = 0
-		)
 	state.hand_slot_tweens[slot] = tween
 
 func _on_card_hovered(card_id: String, upgrade_level: int = 0) -> void:

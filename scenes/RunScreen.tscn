@@ -28,6 +28,7 @@
 [ext_resource type="Script" path="res://scripts/combat/handlers/TargetReactionHandler.gd" id="30_5g0a2"]
 [ext_resource type="Script" path="res://scripts/combat/handlers/CardEffectExecutor.gd" id="31_9m2co"]
 
+
 [node name="RunScreen" type="Control"]
 layout_mode = 3
 anchors_preset = 15
@@ -895,3 +896,4 @@ stream = ExtResource("11_9p0r4")
 [node name="SfxReward" type="AudioStreamPlayer" parent="."]
 	unique_name_in_owner = true
 stream = ExtResource("12_1p0d9")
+
