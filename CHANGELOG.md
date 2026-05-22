@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-05-22
+- Fixed parse error in RunScreen.tscn (ext_resource placed after node entries).
+- Fixed hand card clipping: HAND constants updated from 220x260/72.0 to 150x150/150.0 to match CardWidget min size.
+- Fixed hand card overflow: Control wrapper changed to use PRESET_FULL_RECT + custom_minimum_size override, preventing cards from rendering at 220x234 natural size inside 150x150 slots.
+- Fixed CardWidget expansion: ArtPanel/DescriptionPanel size_flags_vertical changed from EXPAND|FILL (3) to FILL (1) to prevent unbounded layout growth.
+- Fixed hover expansion: _set_hand_slot_expanded simplified with ratio-based scale, clip_contents toggle, and z_index=20 layering. Position tween removed (conflicts with PRESET_FULL_RECT).
+- Removed temp debug scripts.
+
 ## 2026-05-18
 - Replaced HandScroll (plain Control) with ScrollContainer to handle hand card overflow.
 - Fixed CardDetailPanel anchoring to use relative positions instead of absolute pixel offsets.
