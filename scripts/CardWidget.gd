@@ -128,4 +128,3 @@ func _set_hovered(active: bool) -> void:
 		hover_tween.tween_property(self, "scale", Vector2.ONE, 0.1)
 		hover_tween.parallel().tween_property(hover_glow, "modulate:a", 0.0, 0.1)
 		hover_tween.tween_callback(func(): hover_glow.visible = false)
-

@@ -61,6 +61,7 @@ theme_override_constants/margin_right = 6
 theme_override_constants/margin_bottom = 5
 
 [node name="VBox" type="VBoxContainer" parent="ContentMargin"]
+mouse_filter = 2
 layout_mode = 2
 theme_override_constants/separation = 2
 
@@ -68,6 +69,7 @@ theme_override_constants/separation = 2
 custom_minimum_size = Vector2(0, 16)
 layout_mode = 2
 theme_override_constants/separation = 3
+mouse_filter = 2
 
 [node name="GemIcon" type="TextureRect" parent="ContentMargin/VBox/Header"]
 custom_minimum_size = Vector2(12, 12)
@@ -101,6 +103,7 @@ stretch_mode = 5
 mouse_filter = 2
 
 [node name="ArtPanel" type="PanelContainer" parent="ContentMargin/VBox"]
+mouse_filter = 2
 custom_minimum_size = Vector2(0, 60)
 layout_mode = 2
 size_flags_horizontal = 3
@@ -114,6 +117,7 @@ stretch_mode = 5
 mouse_filter = 2
 
 [node name="DescriptionPanel" type="PanelContainer" parent="ContentMargin/VBox"]
+mouse_filter = 2
 custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 size_flags_horizontal = 3
