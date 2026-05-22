@@ -121,7 +121,7 @@ func _set_hovered(active: bool) -> void:
 		hover_glow.visible = true
 		hover_glow.modulate.a = 0.0
 		hover_tween = create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
-		hover_tween.tween_property(self, "scale", Vector2(1.05, 1.05), 0.1)
+		hover_tween.tween_property(self, "scale", Vector2(1.05, 1.0), 0.1)
 		hover_tween.parallel().tween_property(hover_glow, "modulate:a", 0.7, 0.1)
 	else:
 		hover_tween = create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
